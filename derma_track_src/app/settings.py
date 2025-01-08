@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    "connection.apps.ConnectionConfig",
+    "login.apps.LoginConfig",
     "super_resolution.apps.SuperResolutionConfig",
     "core.apps.CoreConfig",
     "django.contrib.admin",

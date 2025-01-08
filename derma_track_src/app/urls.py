@@ -22,6 +22,6 @@ from django.urls import path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("connection/", include("connection.urls")),
+    path("", include("login.urls")),
     path("super_resolution/", include("super_resolution.urls")),
 ]
