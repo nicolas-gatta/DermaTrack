@@ -1,0 +1,128 @@
+[
+    {
+        "model": "core.BodyPart",
+        "pk":1,
+        "fields":{
+            "name": "Head"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":2,
+        "fields":{
+            "name": "Neck"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":3,
+        "fields":{
+            "name": "Chest"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":4,
+        "fields":{
+            "name": "Abdomen"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":5,
+        "fields":{
+            "name": "Back"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":6,
+        "fields":{
+            "name": "Pelvis"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":7,
+        "fields":{
+            "name": "Forearm"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":8,
+        "fields":{
+            "name": "Hand"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":9,
+        "fields":{
+            "name": "Leg"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":10,
+        "fields":{
+            "name": "Thigh"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":11,
+        "fields":{
+            "name": "Knee"
+        }
+    },
+    {
+        "model": "core.BodyPart",
+        "pk":12,
+        "fields":{
+            "name": "Foot"
+        }
+    },
+    {
+        "model": "core.Patient",
+        "pk": 1,
+        "fields": {
+            "name": "Gatta",
+            "surname": "Nicolas",
+            "street": "Rue du Nord",
+            "number": 700,
+            "city": "Courcelles",
+            "zip_code": 6180,
+            "phone_number": "+32485551699",
+            "other_phone_number": ""
+        }
+    },
+    {
+        "model": "core.Patient",
+        "pk": 2,
+        "fields": {
+            "name": "Desonniaux",
+            "surname": "Pierre",
+            "street": "Rue du Nord",
+            "number": 590,
+            "city": "Courcelles",
+            "zip_code": 6180,
+            "phone_number": "+32485551699",
+            "other_phone_number": ""
+        }
+    },
+    {
+        "model": "core.Patient",
+        "pk": 3,
+        "fields": {
+            "name": "Vancauwenberghe",
+            "surname": "Emilien",
+            "street": "Rue du Nord",
+            "number": 580,
+            "city": "Courcelles",
+            "zip_code": 6180,
+            "phone_number": "+32485551699",
+            "other_phone_number": ""
+        }
+    }
+]

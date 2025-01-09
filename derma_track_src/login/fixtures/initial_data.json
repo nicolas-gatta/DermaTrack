@@ -1,0 +1,768 @@
+[
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 1,
+        "fields": {
+            "app_label": "login",
+            "model": "doctor"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 2,
+        "fields": {
+            "app_label": "core",
+            "model": "patient"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 3,
+        "fields": {
+            "app_label": "core",
+            "model": "visit"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 4,
+        "fields": {
+            "app_label": "core",
+            "model": "bodypart"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 5,
+        "fields": {
+            "app_label": "core",
+            "model": "visitbodypart"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 6,
+        "fields": {
+            "app_label": "admin",
+            "model": "logentry"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 7,
+        "fields": {
+            "app_label": "auth",
+            "model": "permission"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 8,
+        "fields": {
+            "app_label": "auth",
+            "model": "group"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 9,
+        "fields": {
+            "app_label": "auth",
+            "model": "user"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 10,
+        "fields": {
+            "app_label": "contenttypes",
+            "model": "contenttype"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 11,
+        "fields": {
+            "app_label": "sessions",
+            "model": "session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 1,
+        "fields": {
+            "name": "Can add doctor",
+            "content_type": [
+                "login",
+                "doctor"
+            ],
+            "codename": "add_doctor"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 2,
+        "fields": {
+            "name": "Can change doctor",
+            "content_type": [
+                "login",
+                "doctor"
+            ],
+            "codename": "change_doctor"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 3,
+        "fields": {
+            "name": "Can delete doctor",
+            "content_type": [
+                "login",
+                "doctor"
+            ],
+            "codename": "delete_doctor"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 4,
+        "fields": {
+            "name": "Can view doctor",
+            "content_type": [
+                "login",
+                "doctor"
+            ],
+            "codename": "view_doctor"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 5,
+        "fields": {
+            "name": "Can add patient",
+            "content_type": [
+                "core",
+                "patient"
+            ],
+            "codename": "add_patient"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 6,
+        "fields": {
+            "name": "Can change patient",
+            "content_type": [
+                "core",
+                "patient"
+            ],
+            "codename": "change_patient"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 7,
+        "fields": {
+            "name": "Can delete patient",
+            "content_type": [
+                "core",
+                "patient"
+            ],
+            "codename": "delete_patient"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 8,
+        "fields": {
+            "name": "Can view patient",
+            "content_type": [
+                "core",
+                "patient"
+            ],
+            "codename": "view_patient"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 9,
+        "fields": {
+            "name": "Can add visit",
+            "content_type": [
+                "core",
+                "visit"
+            ],
+            "codename": "add_visit"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 10,
+        "fields": {
+            "name": "Can change visit",
+            "content_type": [
+                "core",
+                "visit"
+            ],
+            "codename": "change_visit"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 11,
+        "fields": {
+            "name": "Can delete visit",
+            "content_type": [
+                "core",
+                "visit"
+            ],
+            "codename": "delete_visit"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 12,
+        "fields": {
+            "name": "Can view visit",
+            "content_type": [
+                "core",
+                "visit"
+            ],
+            "codename": "view_visit"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 13,
+        "fields": {
+            "name": "Can add body part",
+            "content_type": [
+                "core",
+                "bodypart"
+            ],
+            "codename": "add_bodypart"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 14,
+        "fields": {
+            "name": "Can change body part",
+            "content_type": [
+                "core",
+                "bodypart"
+            ],
+            "codename": "change_bodypart"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 15,
+        "fields": {
+            "name": "Can delete body part",
+            "content_type": [
+                "core",
+                "bodypart"
+            ],
+            "codename": "delete_bodypart"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 16,
+        "fields": {
+            "name": "Can view body part",
+            "content_type": [
+                "core",
+                "bodypart"
+            ],
+            "codename": "view_bodypart"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 17,
+        "fields": {
+            "name": "Can add visit body part",
+            "content_type": [
+                "core",
+                "visitbodypart"
+            ],
+            "codename": "add_visitbodypart"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 18,
+        "fields": {
+            "name": "Can change visit body part",
+            "content_type": [
+                "core",
+                "visitbodypart"
+            ],
+            "codename": "change_visitbodypart"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 19,
+        "fields": {
+            "name": "Can delete visit body part",
+            "content_type": [
+                "core",
+                "visitbodypart"
+            ],
+            "codename": "delete_visitbodypart"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 20,
+        "fields": {
+            "name": "Can view visit body part",
+            "content_type": [
+                "core",
+                "visitbodypart"
+            ],
+            "codename": "view_visitbodypart"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 21,
+        "fields": {
+            "name": "Can add log entry",
+            "content_type": [
+                "admin",
+                "logentry"
+            ],
+            "codename": "add_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 22,
+        "fields": {
+            "name": "Can change log entry",
+            "content_type": [
+                "admin",
+                "logentry"
+            ],
+            "codename": "change_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 23,
+        "fields": {
+            "name": "Can delete log entry",
+            "content_type": [
+                "admin",
+                "logentry"
+            ],
+            "codename": "delete_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 24,
+        "fields": {
+            "name": "Can view log entry",
+            "content_type": [
+                "admin",
+                "logentry"
+            ],
+            "codename": "view_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 25,
+        "fields": {
+            "name": "Can add permission",
+            "content_type": [
+                "auth",
+                "permission"
+            ],
+            "codename": "add_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 26,
+        "fields": {
+            "name": "Can change permission",
+            "content_type": [
+                "auth",
+                "permission"
+            ],
+            "codename": "change_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 27,
+        "fields": {
+            "name": "Can delete permission",
+            "content_type": [
+                "auth",
+                "permission"
+            ],
+            "codename": "delete_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 28,
+        "fields": {
+            "name": "Can view permission",
+            "content_type": [
+                "auth",
+                "permission"
+            ],
+            "codename": "view_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 29,
+        "fields": {
+            "name": "Can add group",
+            "content_type": [
+                "auth",
+                "group"
+            ],
+            "codename": "add_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 30,
+        "fields": {
+            "name": "Can change group",
+            "content_type": [
+                "auth",
+                "group"
+            ],
+            "codename": "change_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 31,
+        "fields": {
+            "name": "Can delete group",
+            "content_type": [
+                "auth",
+                "group"
+            ],
+            "codename": "delete_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 32,
+        "fields": {
+            "name": "Can view group",
+            "content_type": [
+                "auth",
+                "group"
+            ],
+            "codename": "view_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 33,
+        "fields": {
+            "name": "Can add user",
+            "content_type": [
+                "auth",
+                "user"
+            ],
+            "codename": "add_user"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 34,
+        "fields": {
+            "name": "Can change user",
+            "content_type": [
+                "auth",
+                "user"
+            ],
+            "codename": "change_user"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 35,
+        "fields": {
+            "name": "Can delete user",
+            "content_type": [
+                "auth",
+                "user"
+            ],
+            "codename": "delete_user"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 36,
+        "fields": {
+            "name": "Can view user",
+            "content_type": [
+                "auth",
+                "user"
+            ],
+            "codename": "view_user"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 37,
+        "fields": {
+            "name": "Can add content type",
+            "content_type": [
+                "contenttypes",
+                "contenttype"
+            ],
+            "codename": "add_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 38,
+        "fields": {
+            "name": "Can change content type",
+            "content_type": [
+                "contenttypes",
+                "contenttype"
+            ],
+            "codename": "change_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 39,
+        "fields": {
+            "name": "Can delete content type",
+            "content_type": [
+                "contenttypes",
+                "contenttype"
+            ],
+            "codename": "delete_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 40,
+        "fields": {
+            "name": "Can view content type",
+            "content_type": [
+                "contenttypes",
+                "contenttype"
+            ],
+            "codename": "view_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 41,
+        "fields": {
+            "name": "Can add session",
+            "content_type": [
+                "sessions",
+                "session"
+            ],
+            "codename": "add_session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 42,
+        "fields": {
+            "name": "Can change session",
+            "content_type": [
+                "sessions",
+                "session"
+            ],
+            "codename": "change_session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 43,
+        "fields": {
+            "name": "Can delete session",
+            "content_type": [
+                "sessions",
+                "session"
+            ],
+            "codename": "delete_session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 44,
+        "fields": {
+            "name": "Can view session",
+            "content_type": [
+                "sessions",
+                "session"
+            ],
+            "codename": "view_session"
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 1,
+        "fields": {
+            "name": "Doctor",
+            "permissions": [
+                [
+                    "add_patient",
+                    "core",
+                    "patient"
+                ],
+                [
+                    "change_patient",
+                    "core",
+                    "patient"
+                ],
+                [
+                    "view_patient",
+                    "core",
+                    "patient"
+                ],
+                [
+                    "add_visit",
+                    "core",
+                    "visit"
+                ],
+                [
+                    "change_visit",
+                    "core",
+                    "visit"
+                ],
+                [
+                    "view_visit",
+                    "core",
+                    "visit"
+                ]
+            ]
+        }
+    },
+    {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "username": "admin",
+        "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+        "email": "admin@derma.com",
+        "first_name": "Nicolas",
+        "last_name": "Gatta",
+        "is_staff": true,
+        "is_active": true,
+        "is_superuser": true
+    }
+    },
+    {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "username": "johdoe",
+        "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+        "email": "johndoe@derma.com",
+        "first_name": "John",
+        "last_name": "Doe",
+        "is_staff": false,
+        "is_active": true,
+        "is_superuser": false,
+        "groups": [1]
+    }
+    },
+    {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "username": "jansmi",
+        "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+        "email": "janesmith@derma.com",
+        "first_name": "Jane",
+        "last_name": "Smith",
+        "is_staff": false,
+        "is_active": false,
+        "is_superuser": false,
+        "groups": [1]
+    }
+    },
+    {
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+        "username": "alijoh",
+        "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+        "email": "alicejohnson@derma.com",
+        "first_name": "Alice",
+        "last_name": "Johnson",
+        "is_staff": false,
+        "is_active": true,
+        "is_superuser": false,
+        "groups": [1]
+    }
+    },
+    {
+        "model": "login.Doctor",
+        "pk": 1,
+        "fields": {
+            "user": 2,
+            "INAMI": "123456789012",
+            "name": "Doe",
+            "surname": "John",
+            "street": "Rue du Nord",
+            "number": 556,
+            "city": "Courcelles",
+            "zip_code": 6180,
+            "phone_number": "+32485551699",
+            "other_phone_number": "+32485559952",
+            "is_retired": false
+        }
+    },
+    {
+        "model": "login.Doctor",
+        "pk": 2,
+        "fields": {
+            "user": 3,
+            "INAMI": "987654321098",
+            "name": "Smith",
+            "surname": "Jane",
+            "street": "Rue du Repos",
+            "number": 89,
+            "city": "Charleroi",
+            "zip_code": 6060,
+            "phone_number": "+3245655084",
+            "other_phone_number": "",
+            "is_retired": true
+        }
+    },
+    {
+        "model": "login.Doctor",
+        "pk": 3,
+        "fields": {
+            "user": 4,
+            "INAMI": "567890123456",
+            "name": "Johnson",
+            "surname": "Alice",
+            "street": "Pine Road",
+            "number": 789,
+            "city": "Lakeview",
+            "zip_code": 67890,
+            "phone_number": "+3245655740",
+            "other_phone_number": "",
+            "is_retired": false
+        }
+    }
+]
+  
