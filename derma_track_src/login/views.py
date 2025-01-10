@@ -7,8 +7,8 @@ from django.contrib.auth import logout
 
 
 class Connection(forms.Form):
-    username = forms.CharField(label ="Username", max_length=50)
-    password = forms.CharField(label="Password", max_length=20, widget=forms.PasswordInput())
+    username = forms.CharField(label = "Username", max_length=50)
+    password = forms.CharField(label = "Password", max_length=20, widget=forms.PasswordInput())
     
     
 # Create your views here.
@@ -19,14 +19,14 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return HttpResponse("Login sucessful")
+            return redirect("/core")
         
         else:
             messages.success(request, "The password or username are invalid. Please try again")
             return redirect("/")
             
     elif request.user.is_authenticated:
-        return HttpResponse("You are already login")
+        return redirect("/core")
     else:   
         return render(request, "login/index.html", {})
 
