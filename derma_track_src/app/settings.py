@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "login.apps.LoginConfig",
     "super_resolution.apps.SuperResolutionConfig",
     "core.apps.CoreConfig",
+    "administrator.apps.AdministratorConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
