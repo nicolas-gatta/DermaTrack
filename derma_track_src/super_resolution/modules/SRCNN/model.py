@@ -22,12 +22,12 @@ class SRCNN(nn.Module):
     def forward(self, x):
         
         # Feature Extraction Layer
-        x = self.relu(self.conv1(x))
+        out = self.relu(self.conv1(x))
         
         # Non Linear Mapping Layer 
-        x = self.relu(self.conv2(x))
+        out = self.relu(self.conv2(out))
         
         # Reconstruction Layer
-        x = self.conv3(x)
+        out = self.conv3(out)
         
-        return x
+        return out

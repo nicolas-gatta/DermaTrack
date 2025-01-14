@@ -1,1 +1,2 @@
 Base on the paper https://arxiv.org/pdf/1609.04802
+https://github.com/ziwei-jiang/SRGAN-PyTorch/blob/master/model.py

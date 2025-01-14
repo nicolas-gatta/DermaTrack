@@ -7,8 +7,9 @@ import copy
 
 from torch import nn
 from tqdm import tqdm
-from models import SRCNN
+from super_resolution.modules.SRCNN.model import SRCNN
 from super_resolution.modules.SRCNN.dataloader import H5Dataset
+from super_resolution.modules.utils.running_average import RunningAverage
 from torch.utils.data.dataloader import DataLoader
 
 def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
@@ -40,17 +41,20 @@ def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, 
         {'params': model.conv3.parameters(), 'lr': learning_rate * 0.1}
     ], lr=learning_rate)
     
-    train_loss, val_loss = 0.0, 0.0
-    
+    train_loss, val_loss = RunningAverage(), RunningAverage()
+            
     # Trainign and Validation loop
     for epoch in range(num_epochs):
         
-        for loop_type in ["Training", "Validation"]:
-                
-            total_loss = 0.0
+        train_loss.reset()
+        val_loss.reset()
         
-            dataloader = train_loader if loop_type == "Training" else val_loader
-            with torch.set_grad_enabled(loop_type == "Training"):
+        with tqdm(total=len(train_loader) + len(val_loader), desc=f"Epoch {epoch+1}/{num_epochs}", leave=True) as pbar:
+            
+            for loop_type, dataloader in [("Training", train_loader), ("Validation", val_loader)]:
+                
+                torch.set_grad_enabled(loop_type == "Training")
+                
                 for low_res, high_res in tqdm(dataloader, desc = loop_type, leave=False):
                     
                     low_res, high_res = low_res.to(device), high_res.to(device)
@@ -64,12 +68,21 @@ def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, 
                         optimizer.zero_grad()
                         loss.backward()
                         optimizer.step()
-
-                    total_loss += loss.item()
                         
-                train_loss if loop_type == "Training" else val_loss = total_loss / len(dataloader)
-
-            print(f"Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+                        train_loss.update(loss.item())
+                    
+                    else:
+                        
+                        val_loss.update(loss.item())
+                        
+                    
+                    pbar.update(1)
+                    
+                    pbar.set_postfix({
+                        "Mode": loop_type,
+                        "Train Loss": f"{train_loss:.4f}" if train_loss > 0 else "N/A",
+                        "Val Loss": f"{val_loss:.4f}" if val_loss > 0 else "N/A",
+                    })
 
     # Save the model
     torch.save(model.state_dict(), output_dir)

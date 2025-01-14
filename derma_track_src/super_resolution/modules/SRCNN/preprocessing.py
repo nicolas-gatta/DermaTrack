@@ -3,6 +3,8 @@ import os
 import numpy as np
 import h5py
 
+from super_resolution.modules.utils import image_color_convert
+
 def prepare_images(image_folder, scale):
     lr_images = []
     hr_images = []
@@ -15,7 +17,7 @@ def prepare_images(image_folder, scale):
             
             # High resolution image
             hr = cv2.imread(img_path)  
-            hr = cv2.cvtColor(hr, cv2.COLOR_BGR2YCrCb)
+            hr = image_color_convert.convert_image_BGR_to_YCrCb(hr)
             
             # Downsize the high resolution image
             lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation=cv2.INTER_CUBIC)
