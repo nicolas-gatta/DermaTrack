@@ -14,8 +14,8 @@ class H5Dataset(Dataset):
         return len(self.lr_images)
 
     def __getitem__(self, index):
-        lr = torch.tensor(self.lr_images[str(index)][:], dtype=torch.float32).permute(2, 0, 1) / 255.0
-        hr = torch.tensor(self.hr_images[str(index)][:], dtype=torch.float32).permute(2, 0, 1) / 255.0
+        lr = torch.tensor(self.lr_images[str(index)][:], dtype=torch.float32).permute(2, 0, 1) 
+        hr = torch.tensor(self.hr_images[str(index)][:], dtype=torch.float32).permute(2, 0, 1)
         return lr, hr
 
     def close(self):

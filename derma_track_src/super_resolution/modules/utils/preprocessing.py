@@ -3,9 +3,9 @@ import os
 import numpy as np
 import h5py
 
-from super_resolution.modules.utils import image_color_convert
+from super_resolution.modules.utils.image_converter import ImageConverter
 
-def prepare_images(image_folder, scale):
+def prepare_images(image_folder, scale, mode):
     lr_images = []
     hr_images = []
     
@@ -17,7 +17,8 @@ def prepare_images(image_folder, scale):
             
             # High resolution image
             hr = cv2.imread(img_path)  
-            hr = image_color_convert.convert_image_BGR_to_YCrCb(hr)
+            
+            hr = ImageConverter.convert_image(hr, mode)
             
             # Downsize the high resolution image
             lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation=cv2.INTER_CUBIC)
@@ -30,14 +31,14 @@ def prepare_images(image_folder, scale):
     
     return np.array(lr_images), np.array(hr_images)
 
-def create_h5_image_file(image_folder, scale, output_path):
+def create_h5_image_file(image_folder, scale, output_path, mode):
     
     with h5py.File(output_path, 'w') as h5_file:
         
-        lr_patches, hr_patches = prepare_images(image_folder, scale)
+        lr_patches, hr_patches = prepare_images(image_folder, scale, mode)
         
-        h5_file.create_dataset('hi_res_dataset', data=hr_patches)
+        h5_file.create_dataset('hi_res_dataset', data = hr_patches,)
         
-        h5_file.create_dataset('low_res_dataset', data=lr_patches)
+        h5_file.create_dataset('low_res_dataset', data = lr_patches)
         
     print(f"File created sucessfully at the path: {output_path}")

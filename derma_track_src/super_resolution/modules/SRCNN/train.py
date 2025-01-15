@@ -8,7 +8,7 @@ import copy
 from torch import nn
 from tqdm import tqdm
 from super_resolution.modules.SRCNN.model import SRCNN
-from super_resolution.modules.SRCNN.dataloader import H5Dataset
+from super_resolution.modules.utils.dataloader import H5Dataset
 from super_resolution.modules.utils.running_average import RunningAverage
 from torch.utils.data.dataloader import DataLoader
 
@@ -61,12 +61,15 @@ def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, 
 
                     # Forward
                     output = model(low_res)
+                    
                     loss = criterion(output, high_res)
                     
                     if loop_type == "Training":
                         # Backward
                         optimizer.zero_grad()
+                        
                         loss.backward()
+                        
                         optimizer.step()
                         
                         train_loss.update(loss.item())
