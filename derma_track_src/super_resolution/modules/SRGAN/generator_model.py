@@ -4,26 +4,27 @@ import numpy as np
 
 # Residual Block
 class ResidualBlock(nn.Module):
-    def __init__(self, channels):
+    def __init__(self, channels = 64):
         super(ResidualBlock, self).__init__()
         self.block = nn.Sequential(
-            nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(channels),
+            nn.Conv2d(in_channels = channels, out_channels = channels, kernel_size = 3, stride = 1, padding = 1),
+            nn.BatchNorm2d(num_features = channels),
             nn.PReLU(),
-            nn.Conv2d(channels, channels, kernel_size=3, stride=1, padding=1),
-            nn.BatchNorm2d(channels)
+            nn.Conv2d(in_channels = channels, out_channels = channels, kernel_size = 3, stride = 1, padding = 1),
+            nn.BatchNorm2d(num_features = channels)
         )
 
+    # TODO CHECK IF SKIP CONNECTION = ELEMENT WISE SUM
     def forward(self, x):
-        return x + self.block(x) # ElementWise Sum
+        return x + self.block(x) 
 
 # Sub-Pixel Convolution Layers (Increase Image resolution) each block is 2x factor
 class UpsampleBlock(nn.Module):
-    def __init__(self, in_channels, out_channels):
+    def __init__(self, in_channels = 64, out_channels = 256):
         super(UpsampleBlock, self).__init__()
         self.block = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1),
-            nn.PixelShuffle(2),
+            nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = 1),
+            nn.PixelShuffle(upscale_factor = 2),
             nn.PReLU()
         )
 
@@ -31,14 +32,14 @@ class UpsampleBlock(nn.Module):
         return self.block(x)
 
 
-class SRGAN_Generator(nn.Module):
+class SRGANGenerator(nn.Module):
     def __init__(self, channels = 64, num_residual_blocks = 16, up_scale = 4):
-        super(SRGAN_Generator, self).__init__()
+        super(SRGANGenerator, self).__init__()
         
         upscale_block = int(np.log2(up_scale))
         
         self.initial = nn.Sequential(
-            nn.Conv2d(3, 64, kernel_size=9, stride=1, padding=4),
+            nn.Conv2d(in_channels = 3, out_channels = 64, kernel_size = 9, stride = 1, padding = 4),
             nn.PReLU()
         )
 
@@ -47,15 +48,15 @@ class SRGAN_Generator(nn.Module):
         )
 
         self.post_residual = nn.Sequential(
-            nn.Conv2d(channels, channels, kernel_size = 3, stride=1, padding=1),
-            nn.BatchNorm2d(channels)
+            nn.Conv2d(in_channels = channels, out_channels = channels, kernel_size = 3, stride = 1, padding = 1),
+            nn.BatchNorm2d(num_features = channels)
         )
 
         self.upsampling = nn.Sequential(
-            *([UpsampleBlock(channels, channels * 4)] * upscale_block)
+            *([UpsampleBlock(in_channels = channels, out_channels = channels * 4)] * upscale_block)
         )
 
-        self.final = nn.Conv2d(channels, 3, kernel_size = 9, stride=1, padding=4)
+        self.final = nn.Conv2d(in_channels = channels, out_channels = 3, kernel_size = 9, stride = 1, padding = 4)
 
     def forward(self, x):
         start = self.initial(x)

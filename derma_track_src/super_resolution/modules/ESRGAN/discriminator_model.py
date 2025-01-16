@@ -13,9 +13,9 @@ class DiscriminatorBlock(nn.Module):
         return self.block(x)
 
 
-class SRGAN_Discriminator(nn.Module):
+class ESRGANDiscriminator(nn.Module):
     def __init__(self):
-        super(SRGAN_Discriminator, self).__init__()
+        super(ESRGANDiscriminator, self).__init__()
         
         layer_channel_size = [64, 128, 128, 256, 256, 512, 512]
         

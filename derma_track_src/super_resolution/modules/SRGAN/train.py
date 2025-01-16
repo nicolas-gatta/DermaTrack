@@ -4,8 +4,8 @@ import torch.backends.cudnn as cudnn
 
 from torch import nn
 from tqdm import tqdm
-from super_resolution.modules.SRGAN.discriminator_model import SRGAN_Discriminator
-from super_resolution.modules.SRGAN.generator_model import SRGAN_Generator
+from super_resolution.modules.SRGAN.discriminator_model import SRGANDiscriminator
+from super_resolution.modules.SRGAN.generator_model import SRGANGenerator
 from super_resolution.modules.SRGAN.loss import VGGLoss
 from super_resolution.modules.utils.running_average import RunningAverage
 from torch.utils.data.dataloader import DataLoader
@@ -29,8 +29,8 @@ def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, 
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
     # GAN Model
-    generator = SRGAN_Generator().to(device)
-    discriminator = SRGAN_Discriminator().to(device)
+    generator = SRGANGenerator().to(device)
+    discriminator = SRGANDiscriminator().to(device)
     
     # VGG LOSS Error
     content_loss = VGGLoss().to(device)
