@@ -655,6 +655,60 @@
         }
     },
     {
+        "model": "auth.group",
+        "pk": 2,
+        "fields": {
+            "name": "Nurse",
+            "permissions": [
+                [
+                    "view_bodypart",
+                    "core",
+                    "bodypart"
+                ],
+                [
+                    "add_patient",
+                    "core",
+                    "patient"
+                ],
+                [
+                    "change_patient",
+                    "core",
+                    "patient"
+                ],
+                [
+                    "view_patient",
+                    "core",
+                    "patient"
+                ],
+                [
+                    "add_visit",
+                    "core",
+                    "visit"
+                ],
+                [
+                    "change_visit",
+                    "core",
+                    "visit"
+                ],
+                [
+                    "delete_visit",
+                    "core",
+                    "visit"
+                ],
+                [
+                    "view_visit",
+                    "core",
+                    "visit"
+                ],
+                [
+                    "view_doctor",
+                    "login",
+                    "doctor"
+                ]
+            ]
+        }
+    },
+    {
     "model": "auth.user",
     "pk": 1,
     "fields": {
@@ -717,10 +771,12 @@
         "model": "login.Doctor",
         "pk": 1,
         "fields": {
-            "user": 2,
+            "user": ["johdoe"],
+            "national_number": "70100212312",
             "INAMI": "123456789012",
             "name": "Doe",
             "surname": "John",
+            "date_of_birth": "1970-10-02",
             "street": "Rue du Nord",
             "number": 556,
             "city": "Courcelles",
@@ -734,10 +790,12 @@
         "model": "login.Doctor",
         "pk": 2,
         "fields": {
-            "user": 3,
+            "user": ["jansmi"],
+            "national_number": "80100212312",
             "INAMI": "987654321098",
             "name": "Smith",
             "surname": "Jane",
+            "date_of_birth": "1980-10-02",
             "street": "Rue du Repos",
             "number": 89,
             "city": "Charleroi",
@@ -751,10 +809,12 @@
         "model": "login.Doctor",
         "pk": 3,
         "fields": {
-            "user": 4,
+            "user": ["alijoh"],
+            "national_number": "80110212312",
             "INAMI": "567890123456",
             "name": "Johnson",
             "surname": "Alice",
+            "date_of_birth": "1980-11-02",
             "street": "Pine Road",
             "number": 789,
             "city": "Lakeview",

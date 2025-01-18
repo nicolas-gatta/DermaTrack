@@ -1,0 +1,29 @@
+<table class="table align-middle mb-0 bg-white">
+    <thead class="bg-light">
+        <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Doctor Name</th>
+            <th>Patient Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for visit in visits %}
+        <tr>
+            <td>{{ visit.date|date:"D d M Y"  }}</td>
+            <td>{{ visit.date|time:"H:i" }}</td>
+            <td>{{ visit.doctor.full_name }}</td>
+            <td>{{ visit.patient.full_name }}</td>
+            <td>       
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <form action='visit' method='POST' style="margin: 0; display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" class="form-control" value="{{ visit.pk }}" required=""> 
+                        <button type="submit" class="btn btn-success" data-mdb-ripple-color="dark">View</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

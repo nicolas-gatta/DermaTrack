@@ -7,7 +7,7 @@ let response = null;
  * @param {HTMLElement} button - The button that was clicked.
  */
 
-async function loadBodyContent(state, button) {
+async function loadBodyContentAdmin(state, button) {
     try {
         // Send a GET request to the server to fetch the partial HTML
         if(activeButton){
@@ -16,28 +16,41 @@ async function loadBodyContent(state, button) {
 
         switch (state) {
             case 1:
-                response = await fetch('patient_list')
                 break;
-            
+
             case 2:
-                response = await fetch('visit_list')
                 break;
 
             case 3:
-                response = await fetch('doctor_list')
+                break;
+                
+            case 4:
+                response = await fetch('patient_list');
+                break;
+            
+            case 5:
+                response = await fetch('visit_list');
+                break;
+
+            case 6:
+                response = await fetch('doctor_list');
+                break;
+
+            case 7:
+                response =  await fetch('doctor_list');
                 break;
 
             default:
-                loadBodyContent(1, document.getElementById("patient"))
+                response = await fetch('patient_list');
                 break;
         }
 
 
         button.classList.add('active');
 
-        localStorage.setItem('currentState', state);
+        localStorage.setItem('admin_currentState', state);
 
-        localStorage.setItem('activeButton', button.id);
+        localStorage.setItem('admin_activeButton', button.id);
 
         activeButton = button;
 
@@ -50,18 +63,17 @@ async function loadBodyContent(state, button) {
     }
 }
 
-function initializeState(){
-    state = parseInt(localStorage.getItem('currentState'));
-    button = document.getElementById(localStorage.getItem('activeButton'));
+function initializeStateAdmin(){
+    state = parseInt(localStorage.getItem('admin_currentState'));
+    button = document.getElementById(localStorage.getItem('admin_activeButton'));
     if (state == null || button == null){
-        console.log("hello");
         state = 1;
-        button = document.getElementById("patient");
+        button = document.getElementById("train");
     }else{
         activeButton = button;
     }
-    loadBodyContent(state, button);
-}
+    loadBodyContentAdmin(state, button);
+} 
 
 // Initialize the state when the page loads
-window.addEventListener('DOMContentLoaded', initializeState);
+window.addEventListener('DOMContentLoaded', initializeStateAdmin);

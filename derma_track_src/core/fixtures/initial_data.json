@@ -87,8 +87,10 @@
         "model": "core.Patient",
         "pk": 1,
         "fields": {
+            "national_number": "97112512312",
             "name": "Gatta",
             "surname": "Nicolas",
+            "date_of_birth":"1997-11-25",
             "street": "Rue du Nord",
             "number": 700,
             "city": "Courcelles",
@@ -101,8 +103,10 @@
         "model": "core.Patient",
         "pk": 2,
         "fields": {
+            "national_number": "98092812312",
             "name": "Desonniaux",
             "surname": "Pierre",
+            "date_of_birth": "1998-09-28",
             "street": "Rue du Nord",
             "number": 590,
             "city": "Courcelles",
@@ -115,8 +119,10 @@
         "model": "core.Patient",
         "pk": 3,
         "fields": {
+            "national_number": "99121612312",
             "name": "Vancauwenberghe",
             "surname": "Emilien",
+            "date_of_birth": "1999-12-16",
             "street": "Rue du Nord",
             "number": 580,
             "city": "Courcelles",
