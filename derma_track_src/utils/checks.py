@@ -1,9 +1,9 @@
 from django.shortcuts import redirect
 from functools import wraps
 
-def group_checks(group_names, redirect_url='core'):
+def group_and_super_user_checks(group_names, redirect_url='/'):
     """
-    Decorator to restrict access to users in specific groups, redirecting unauthorized users.
+    Decorator to restrict access to users in specific groups or super user, redirecting unauthorized users.
 
     Args:
         group_names (str or list): The group name(s) to check. Can be a string or a list of strings.
@@ -21,7 +21,7 @@ def group_checks(group_names, redirect_url='core'):
         def _wrapper(request, *args, **kwargs):
 
             # Check if the user belongs to at least one of the specified groups
-            if not request.user.groups.filter(name__in=group_names).exists():
+            if not request.user.groups.filter(name__in=group_names).exists() and not request.user.is_superuser:
                 return redirect(redirect_url)
             
             # Proceed with the view if the user is in the group

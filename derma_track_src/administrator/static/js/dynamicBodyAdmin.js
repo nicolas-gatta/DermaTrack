@@ -16,6 +16,7 @@ async function loadBodyContentAdmin(state, button) {
 
         switch (state) {
             case 1:
+                response = await fetch('model_form');
                 break;
 
             case 2:
