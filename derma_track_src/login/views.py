@@ -5,10 +5,7 @@ from django.contrib import messages
 from django import forms
 from django.contrib.auth import logout
 
-
-class Connection(forms.Form):
-    username = forms.CharField(label = "Username", max_length=50)
-    password = forms.CharField(label = "Password", max_length=20, widget=forms.PasswordInput())
+from .forms.login_form import LoginForm
     
     
 # Create your views here.
@@ -28,7 +25,8 @@ def login_view(request):
     elif request.user.is_authenticated:
         return redirect("/core")
     else:   
-        return render(request, "login/index.html", {})
+        form = LoginForm()
+        return render(request, "login/index.html", {"form": form })
 
 def logout_view(request):
     logout(request)

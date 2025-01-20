@@ -1,0 +1,53 @@
+{% load static %}
+
+<script src="{% static 'js/chart.js' %}" defer></script>
+<table class="table align-middle mb-0 bg-white">
+
+
+    <thead class="bg-light">
+        <tr>
+            <th>Name</th>
+            <th>Architecture</th>
+            <th>Training Dataset</th>
+            <th>Eval Dataset</th>
+            <th>Learning Rate</th>
+            <th>Batch Size</th>
+            <th>Seed</th>
+            <th>Epochs</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for model_name, data in models.items %}
+        <tr>
+            <td>{{ model_name }}</td>
+            <td>{{ data.architecture }}</td>
+            <td>{{ data.train_file }}</td>
+            <td>{{ data.eval_file }}</td>
+            <td>{{ data.learning_rate }}</td>
+            <td>{{ data.batch_size }}</td>
+            <td>{{ data.seed }}</td>
+            <td>{{ data.num_epochs }}</td>
+            <td>       
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="hidden" name="validation_losses" class="form-control" value="{{ data.validation_losses }}" required=""> 
+                    <input type="hidden" name="training_losses" class="form-control" value="{{ data.training_losses }}" required="">
+                    <button type="button" class="btn btn-success view-chart-btn" data-mdb-ripple-color="dark" data-modelname="{{ model_name }}">View Chart</button>
+                </div>
+            </td>
+        </tr>
+        <tr class="chart-row" style="display: none;">
+            <td colspan="9">
+            <!-- A container for our chart -->
+            <div class="chart-container" style="width: 100%; height: 300px;">
+                <canvas 
+                id="chartCanvas_{{ forloop.counter }}" 
+                width="400" 
+                height="200"
+                ></canvas>
+            </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

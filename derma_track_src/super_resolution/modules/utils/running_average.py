@@ -1,7 +1,8 @@
 class RunningAverage:
     def __init__(self):
-        self.total = 0.0  # Sum of all values added
-        self.count = 0    # Number of values added
+        self.total = 0.0
+        self.count = 0
+        self.values = []
 
     def update(self, value):
         """
@@ -9,6 +10,7 @@ class RunningAverage:
         """
         self.total += value
         self.count += 1
+        self.values.append(value)
         
     def reset(self):
         """
@@ -23,5 +25,10 @@ class RunningAverage:
         Returns the current average.
         """
         if self.count == 0:
-            return 0.0  # Avoid division by zero
+            return 0.0 
         return self.total / self.count
+    
+    @property
+    def all_values(self):
+        
+        return self.values

@@ -20,6 +20,7 @@ async function loadBodyContentAdmin(state, button) {
                 break;
 
             case 2:
+                response = await fetch('show_models');
                 break;
 
             case 3:

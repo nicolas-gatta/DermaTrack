@@ -1,0 +1,80 @@
+{
+    "Hello": {
+        "architecture": "SRCNN",
+        "train_file": "blablabla",
+        "eval_file": "blueblueblue",
+        "learning_rate": 1e-10,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 100,
+        "num_workers": 8,
+        "validation_losses": [
+            2,
+            1,
+            0.5,
+            0.3,
+            0.4
+        ],
+        "training_losses": [
+            4,
+            5,
+            1,
+            0.8,
+            0.2
+        ],
+        "time_needed": 240,
+        "timestamp": "2025-01-20 18:57:32"
+    },
+    "Hello_1": {
+        "architecture": "SRGAN",
+        "train_file": "blablabla",
+        "eval_file": "blueblueblue",
+        "learning_rate": 1e-10,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 100,
+        "num_workers": 8,
+        "validation_losses": [
+            2,
+            1,
+            0.5,
+            0.3,
+            0.4
+        ],
+        "training_losses": [
+            4,
+            5,
+            1,
+            0.8,
+            0.2
+        ],
+        "time_needed": 240,
+        "timestamp": "2025-01-20 18:57:32"
+    },
+    "Hello_2": {
+        "architecture": "ESRGAN",
+        "train_file": "blablabla",
+        "eval_file": "blueblueblue",
+        "learning_rate": 1e-10,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 100,
+        "num_workers": 8,
+        "validation_losses": [
+            2,
+            1,
+            0.5,
+            0.3,
+            0.4
+        ],
+        "training_losses": [
+            4,
+            5,
+            1,
+            0.8,
+            0.2
+        ],
+        "time_needed": 240,
+        "timestamp": "2025-01-20 18:57:32"
+    }
+}
