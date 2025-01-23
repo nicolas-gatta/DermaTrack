@@ -11,6 +11,7 @@ class TrainingForm(forms.Form):
         }),
         label="Train File"
     )
+    
     eval_file = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -21,6 +22,7 @@ class TrainingForm(forms.Form):
         }),
         label="Eval File"
     )
+    
     output_dir = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={
@@ -31,6 +33,7 @@ class TrainingForm(forms.Form):
         }),
         label="Output Directory"
     )
+    
     learning_rate = forms.FloatField(
         widget=forms.NumberInput(attrs={
             'class': 'form-control',
@@ -42,6 +45,7 @@ class TrainingForm(forms.Form):
         }),
         label="Learning Rate"
     )
+    
     seed = forms.IntegerField(
         widget=forms.NumberInput(attrs={
             'class': 'form-control',
@@ -52,6 +56,7 @@ class TrainingForm(forms.Form):
         }),
         label="Seed"
     )
+    
     batch_size = forms.IntegerField(
         widget=forms.NumberInput(attrs={
             'class': 'form-control',

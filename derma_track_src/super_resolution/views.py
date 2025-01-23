@@ -67,14 +67,16 @@ def training_esrgan(request):
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def show_models(request):
-    models = JsonManager.load_training_results()
-    return HttpResponse(render_to_string('partial/show_models.html', {"models": models}, request=request))
+    if request.headers.get('HX-Request'):
+        models = JsonManager.load_training_results()
+        return render(request, 'partial/show_models.html', {"models": models})
 
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def model_form(request):
-    form = TrainingForm()
-    return HttpResponse(render_to_string('partial/model_form.html', {"form": form}, request=request))
+    if request.headers.get('HX-Request'):
+        #form = TrainingForm()
+        return render(request, 'partial/model_form.html', {"form": None})
 
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
@@ -82,8 +84,30 @@ def training_model(request):
     pass
 
 def test(request):
-    JsonManager.training_results_to_json("SRCNN", "Hello", "blablabla", "blueblueblue", 1e-10, 1, 16, 100, 8, [2,1,0.5,0.3,0.4], [4,5,1,0.8,0.2], 240)
-    JsonManager.training_results_to_json("SRGAN", "Hello", "blablabla", "blueblueblue", 1e-10, 1, 16, 100, 8, [2,1,0.5,0.3,0.4], [4,5,1,0.8,0.2], 240)
-    JsonManager.training_results_to_json("ESRGAN", "Hello", "blablabla", "blueblueblue", 1e-10, 1, 16, 100, 8, [2,1,0.5,0.3,0.4], [4,5,1,0.8,0.2], 240)
-    return redirect("/")
+    
+    model_base_string = "super_resolution/modules/srcnn/"
+    
+    dataset_base_string = "super_resolution/base_dataset/"
+    
+    scale = 2 
+    
+    # Create Training file
+    create_h5_image_file(image_folder = PathFinder.get_complet_path(f"{dataset_base_string}training/DIV2k_train_HR"),
+                         scale = scale,
+                         output_path = PathFinder.get_complet_path(f"{model_base_string}training/DIV2k_train_HR_x{scale}"),
+                         mode = "BGR_to_YCrCb")
+    
+    # Create Validation file
+    create_h5_image_file(image_folder = PathFinder.get_complet_path(f"{dataset_base_string}validation/DIV2k_valid_HR"),
+                         scale = scale,
+                         output_path = PathFinder.get_complet_path(f"{model_base_string}validation/DIV2k_valid_HR_x{scale}"),
+                         mode = "BGR_to_YCrCb")
+    
+    # Create Evaluation file
+    create_h5_image_file(image_folder = PathFinder.get_complet_path(f"{dataset_base_string}dataset/DIV2k_train_HR"),
+                         scale = scale,
+                         output_path = PathFinder.get_complet_path(f"{model_base_string}dataset/DIV2k_train_HR_x{scale}"),
+                         mode = "BGR_to_YCrCb")
+    
+    return HttpResponse("Hello, world. You're at the polls index.")
 

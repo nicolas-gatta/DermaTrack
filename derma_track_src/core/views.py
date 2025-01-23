@@ -17,20 +17,23 @@ def index(request):
 @login_required
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def patient_list(request):
-    patients = Patient.objects.all() 
-    return HttpResponse(render_to_string('partial/patient_list.html', {'patients': patients}, request = request))
+    if request.headers.get('HX-Request'):
+        patients = Patient.objects.all() 
+        return render(request, 'partial/patient_list.html', {'patients': patients})
 
 @login_required
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def visit_list(request):
-    visits = Visit.objects.select_related('doctor', 'patient').all()
-    return HttpResponse(render_to_string('partial/visit_list.html', {'visits': visits}, request=request))
+    if request.headers.get('HX-Request'):
+        visits = Visit.objects.select_related('doctor', 'patient').all()
+        return render(request, 'partial/visit_list.html', {'visits': visits})
 
 @login_required
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def doctor_list(request):
-    doctors = Doctor.objects.all()
-    return HttpResponse(render_to_string('partial/doctor_list.html', {'doctors': doctors}, request = request))
+    if request.headers.get('HX-Request'):
+        doctors = Doctor.objects.all()
+        return render(request, 'partial/doctor_list.html', {'doctors': doctors})
 
 @login_required
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")

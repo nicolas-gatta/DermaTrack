@@ -41,4 +41,4 @@ def create_h5_image_file(image_folder, scale, output_path, mode):
         
         h5_file.create_dataset('low_res_dataset', data = lr_patches)
         
-    print(f"File created sucessfully at the path: {output_path}")
+    print(f"File created sucessfully at the path: {output_path}_{scale}")
