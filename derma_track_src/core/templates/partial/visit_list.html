@@ -5,6 +5,8 @@
             <th>Time</th>
             <th>Doctor Name</th>
             <th>Patient Name</th>
+            <th>Status</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -14,12 +16,43 @@
             <td>{{ visit.date|time:"H:i" }}</td>
             <td>{{ visit.doctor.full_name }}</td>
             <td>{{ visit.patient.full_name }}</td>
+            <td> 
+                {% if visit.status == "scheduled" %}
+                <span class="badge text-bg-warning">
+
+                {% elif visit.status == "started" %}
+                <span class="badge text-bg-info">
+
+                {% elif visit.status == "canceled" %}
+                <span class="badge text-bg-danger">
+                    
+                {% else %}
+                <span class="badge text-bg-success">
+
+                {% endif %}
+                {{ visit.get_status_display  }}
+                </span>
+            </td>
             <td>       
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <form action='visit' method='POST' style="margin: 0; display: inline;">
+
+                    {% if visit.status == "canceled" or visit.status == "finished" or visit.status == "started" %}
+                    <form hx-post="visit_view" hx-target="#dynamic-body#pop-up" hx-swap="innerHTML" method='POST' style="margin: 0; display: inline;">
                         {% csrf_token %}
-                        <input type="hidden" name="id" class="form-control" value="{{ visit.pk }}" required=""> 
-                        <button type="submit" class="btn btn-success" data-mdb-ripple-color="dark">View</button>
+                        <input type="hidden" name="id" class="form-control" value="{{visit.pk}}" required=""> 
+                        <button type="submit" class="btn btn-success" data-mdb-ripple-color="dark"> View </button>
+                    </form>
+                    {% endif %}
+
+                    <form hx-post="visit_status" hx-target="#dynamic-body" hx-swap="innerHTML" method='POST' style="margin: 0; display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" class="form-control" value="{{visit.pk}}" required=""> 
+                        {% if visit.status == "scheduled" %}
+                            <button type="submit" class="btn btn-success" value = "Started" name = "status" data-mdb-ripple-color="dark"> Start </button>
+                            <button type="submit" class="btn btn-danger" value = "Canceled" name = "status" data-mdb-ripple-color="dark"> Cancel </button>
+                        {% elif visit.status == "started" %}
+                            <button type="submit" class="btn btn-danger" value =  "Finished" name = "status" data-mdb-ripple-color="dark"> Finish </button>
+                        {% endif %}
                     </form>
                 </div>
             </td>

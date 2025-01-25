@@ -2,6 +2,12 @@ from django.db import models
 from login.models import Doctor
 from django.contrib.auth.models import User
 
+class Status(models.TextChoices):
+    SCHEDULED = 'scheduled', 'Scheduled'
+    STARTED   = 'started',   'Started'
+    FINISHED  = 'finished',  'Finished'
+    CANCELED  = 'canceled',  'Canceled'
+
 # Create your models here.
 class Patient(models.Model):
     
@@ -24,8 +30,9 @@ class Patient(models.Model):
     
 class Visit(models.Model):
     date = models.DateTimeField()
-    note = models.TextField(blank=True)
-    is_patient_present = models.BooleanField()
+    note = models.TextField(blank = True)
+    is_patient_present = models.BooleanField(blank = True)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.SCHEDULED)
     patient = models.ForeignKey(Patient, verbose_name=("patient"), on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, verbose_name=("doctor"), on_delete=models.CASCADE)
     

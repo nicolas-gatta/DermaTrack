@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import Patient, Visit
+from .models import Patient, Visit, Status
 from login.models import Doctor
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from utils.checks import group_and_super_user_checks
@@ -25,8 +25,41 @@ def patient_list(request):
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def visit_list(request):
     if request.headers.get('HX-Request'):
-        visits = Visit.objects.select_related('doctor', 'patient').all()
+        if request.user.is_superuser:
+            visits = Visit.objects.select_related('doctor', 'patient').all()
+        elif request.user.groups.filter(name__in=["Doctor"]).exists():
+            visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
         return render(request, 'partial/visit_list.html', {'visits': visits})
+
+@login_required
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def visit_status_change(request):
+    if request.method == "POST":
+        
+        status = request.POST['status']
+
+        visit = Visit.objects.get(pk = request.POST['id'])
+        
+        if status == "Started":
+            visit.status = Status.STARTED
+        
+        elif status == "Finished":
+            visit.status = Status.FINISHED
+            
+        else:
+            visit.status = Status.CANCELED
+            
+        visit.save(update_fields = ['status'])
+        
+        visits = Visit.objects.select_related('doctor', 'patient').all()
+        
+        return render(request, 'partial/visit_list.html', {'visits': visits})
+
+@login_required
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def visit_view(request):
+    visit = Visit.objects.get(pk = request.POST['id'])
+    return render(request, 'partial/visit_view.html', {'visit': visit})
 
 @login_required
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -40,3 +73,5 @@ def doctor_list(request):
 def patient_profile(request):
     patient = Patient.objects.get(pk=request.POST["id"])
     return render(request, 'core/patient.html', {'patient': patient})
+
+

@@ -19,7 +19,7 @@ class Doctor(models.Model):
     is_retired = models.BooleanField()
     
     def __str__(self):
-        return str(self.INAMI) + " - " + self.name + " " + self.surname
+        return str(self.pk) + " - " + self.name + " " + self.surname + " (" + str(self.INAMI) + ")"
     
     def full_name(self):
         return self.name + " " + self.surname
