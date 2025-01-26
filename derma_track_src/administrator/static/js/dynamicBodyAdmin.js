@@ -25,12 +25,10 @@ async function loadBodyContentAdmin(button) {
     }else if (button.id === "test_model") {
         htmx.ajax("GET", "test_model", "#dynamic-body");
     
-    }
-    
-        
+    }    
 }
 
-function changingButtonState(button) {
+function changingAdminButtonState(button) {
     
     if(activeButton){
         activeButton.classList.remove("active");
@@ -38,21 +36,21 @@ function changingButtonState(button) {
 
     button.classList.add("active");
 
-    localStorage.setItem("Admin_activeButton", button.id);
+    localStorage.setItem("admin_activeButton", button.id);
 
     activeButton = button;
 }
 
 function initializeStateAdmin(){
-    button = document.getElementById(localStorage.getItem("Admin_activeButton"));
+    button = document.getElementById(localStorage.getItem("admin_activeButton"));
     if (button == null){
         button = document.getElementById("patient");
     }else{
         activeButton = button;
     }
 
-    changingButtonState(button);
-    loadBodyContentCore(button);
+    changingAdminButtonState(button);
+    loadBodyContentAdmin(button);
 } 
 
 // Initialize the state when the page loads
