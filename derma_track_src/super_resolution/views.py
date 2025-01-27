@@ -10,7 +10,8 @@ from django.contrib.auth.decorators import login_required
 from .modules.SRCNN import train
 from .modules.utils.preprocessing import create_h5_image_file
 from .forms.training_form import TrainingForm
-from .modules.utils.json_manager import JsonManager
+from .modules.utils.json_manager import JsonManager, ModelField
+from .modules.utils.image_converter import ImageColorConverter
 
 from utils.checks import group_and_super_user_checks
 from utils.path_finder import PathFinder
@@ -34,13 +35,13 @@ def training_srcnn(request):
     num_epochs = request.POST["num_epochs"]
     
     # Create Training file
-    create_h5_image_file(image_folder = PathFinder.get_complet_path(f"{base_string}dataset/{request.POST['training_dataset']}"),
+    create_h5_image_file(input_path = PathFinder.get_complet_path(f"{base_string}dataset/{request.POST['training_dataset']}"),
                          scale = scale,
                          output_path = train_file,
                          mode = "BGR_to_YCrCb")
     
     # Create Evaluation file
-    create_h5_image_file(image_folder = PathFinder.get_complet_path(f"{base_string}dataset/{request.POST['eval_dataset']}"),
+    create_h5_image_file(input_path = PathFinder.get_complet_path(f"{base_string}dataset/{request.POST['eval_dataset']}"),
                          scale = scale,
                          output_path = eval_file,
                          mode = "BGR_to_YCrCb")
@@ -83,31 +84,36 @@ def model_form(request):
 def training_model(request):
     pass
 
+def test_2(request):
+    JsonManager.training_results_to_json(architecture="SRCNN", model_name="Hello", train_file="blablabla", eval_file="blueblueblue", learning_rate=1e-10, seed=1, batch_size=16, num_epochs=100, num_workers=8)
+    JsonManager.training_results_to_json(architecture="SRGAN", model_name="Hello", train_file="blablabla", eval_file="blueblueblue", learning_rate=1e-10, seed=1, batch_size=16, num_epochs=100, num_workers=8)
+    JsonManager.training_results_to_json(architecture="ESRGAN", model_name="Hello", train_file="blablabla", eval_file="blueblueblue", learning_rate=1e-10, seed=1, batch_size=16, num_epochs=100, num_workers=8)
+    return redirect("/")
+
+def test_3(request):
+    updated_fields = {
+        ModelField.COMPLETION_STATUS:  " 10 %",
+        ModelField.TRAINING_LOSSES: [1, 0.8, 0.7, 0.6, 0.5, 0.5, 0.8, 0.7, 0.9, 0.4],
+        ModelField.VALIDATION_LOSSES: [2, 1, 0.9, 0.85, 0.75, 0.4, 0.8, 0.9, 0.4, 0.5]
+    }
+    
+    JsonManager.update_model_data("Hello", updated_fields=updated_fields)
+    
+    return redirect("/")
+
 def test(request):
     
-    model_base_string = "super_resolution/modules/srcnn/"
+    input_dataset = "super_resolution/base_dataset/"
     
-    dataset_base_string = "super_resolution/base_dataset/"
+    output_dataset = "super_resolution/dataset/"
     
     scale = 2 
     
     # Create Training file
-    create_h5_image_file(image_folder = PathFinder.get_complet_path(f"{dataset_base_string}training/DIV2k_train_HR"),
+    create_h5_image_file(input_path = PathFinder.get_complet_path(f"{input_dataset}evaluation/Set5"),
                          scale = scale,
-                         output_path = PathFinder.get_complet_path(f"{model_base_string}training/DIV2k_train_HR_x{scale}"),
-                         mode = "BGR_to_YCrCb")
-    
-    # Create Validation file
-    create_h5_image_file(image_folder = PathFinder.get_complet_path(f"{dataset_base_string}validation/DIV2k_valid_HR"),
-                         scale = scale,
-                         output_path = PathFinder.get_complet_path(f"{model_base_string}validation/DIV2k_valid_HR_x{scale}"),
-                         mode = "BGR_to_YCrCb")
-    
-    # Create Evaluation file
-    create_h5_image_file(image_folder = PathFinder.get_complet_path(f"{dataset_base_string}dataset/DIV2k_train_HR"),
-                         scale = scale,
-                         output_path = PathFinder.get_complet_path(f"{model_base_string}dataset/DIV2k_train_HR_x{scale}"),
-                         mode = "BGR_to_YCrCb")
+                         output_path = PathFinder.get_complet_path(f"{output_dataset}evaluation/Set5_x{scale}"),
+                         mode = ImageColorConverter.BGR2YCrCb)
     
     return HttpResponse("Hello, world. You're at the polls index.")
 

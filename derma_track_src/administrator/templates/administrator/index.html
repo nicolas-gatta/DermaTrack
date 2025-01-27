@@ -24,43 +24,43 @@
                     <ul class="nav nav-pills flex-column mb-auto">
 
                         <li class="nav-item">
-                            <a id = "model_form" class="nav-link text-white" hx-get = "{% url 'model_form' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingButtonState(this)">
+                            <a id = "model_form" class="nav-link text-white" hx-get = "{% url 'model_form' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Train Model
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a id = "show_models" class="nav-link text-white" hx-get = "{% url 'show_models' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingButtonState(this)">
+                            <a id = "show_models" class="nav-link text-white" hx-get = "{% url 'show_models' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             View Model
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a id = "test_model" class="nav-link text-white" hx-get = "{% url 'test_model' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingButtonState(this)">
+                            <a id = "test_model" class="nav-link text-white" hx-get = "{% url 'test_model' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Test Model
                             </a>
                         </li>
         
                         <li class="nav-item">
-                            <a id = "patient" class="nav-link text-white" hx-get = "{% url 'patient_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingButtonState(this)">
+                            <a id = "patient" class="nav-link text-white" hx-get = "{% url 'patient_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Patient
                             </a>
                         </li>
 
                         <li>
-                            <a id = "visit" class="nav-link text-white" hx-get = "{% url 'visit_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingButtonState(this)">
+                            <a id = "visit" class="nav-link text-white" hx-get = "{% url 'visit_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Visit
                             </a>
                         </li>
 
                         <li>
-                            <a id = "doctor" class="nav-link text-white" hx-get = "{% url 'doctor_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingButtonState(this)">
+                            <a id = "doctor" class="nav-link text-white" hx-get = "{% url 'doctor_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Doctor
                             </a>
                         </li>
 
                         <li>
-                            <a id = "body" class="nav-link text-white" href="#" onclick="loadBodyContentAdmin(7, this)">
+                            <a id = "body" class="nav-link text-white" href="#" onclick="changingAdminButtonState(this)">
                             Body Part
                             </a>
                         </li>
@@ -81,10 +81,6 @@
             <div id = "dynamic-body" class="col-auto col-md-10 col-lg-10 px-sm-10">
                 
             </div>
-            <div id = "pop-up">
-
-            </div>
-
         </div>
     </div>
 </body>

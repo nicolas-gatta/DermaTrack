@@ -7,5 +7,7 @@ urlpatterns = [
     path("show_models", views.show_models, name = "show_models"),
     path("model_form", views.model_form, name = "model_form"),
     path("training_model", views.training_model, name = "training_model"),
-    path("test", views.test, name = "test")
+    path("test", views.test, name = "test"),
+    path("test_2", views.test_2, name = "test_2"),
+    path("test_3", views.test_3, name = "test_3")
 ]

@@ -2,6 +2,24 @@ import json
 import os
 from datetime import datetime
 from utils.path_finder import PathFinder
+from enum import Enum
+
+class ModelField(str, Enum):
+    ARCHITECTURE = "architecture"
+    TRAIN_FILE = "train_file"
+    EVAL_FILE = "eval_file"
+    LEARNING_RATE = "learning_rate"
+    SEED = "seed"
+    BATCH_SIZE = "batch_size"
+    NUM_EPOCHS = "num_epochs"
+    NUM_WORKERS = "num_workers"
+    VALIDATION_LOSSES = "validation_losses"
+    TRAINING_LOSSES = "training_losses"
+    COMPLETION_TIME = "completion_time"
+    COMPLETION_STATUS = "completion_status"
+    TIMESTAMP = "timestamp"
+    EVAL_METRICS = "eval_metrics"
+
 
 class JsonManager:
     
@@ -9,24 +27,26 @@ class JsonManager:
 
     @staticmethod
     def training_results_to_json(architecture, model_name: str, train_file: str, eval_file: str, learning_rate: float, seed: int, batch_size: int, num_epochs: int, 
-                                num_workers: int, validation_losses: list, training_losses: list, time_needed: float):
+                                num_workers: int):
         """
         Save or update the training results in a JSON file using `model_name` 
         as the key.
         """
         model_data = {
-            "architecture": architecture,
-            "train_file": train_file,
-            "eval_file": eval_file,
-            "learning_rate": learning_rate,
-            "seed": seed,
-            "batch_size": batch_size,
-            "num_epochs": num_epochs,
-            "num_workers": num_workers,
-            "validation_losses": validation_losses,
-            "training_losses": training_losses,
-            "time_needed": time_needed,
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            ModelField.ARCHITECTURE: architecture,
+            ModelField.TRAIN_FILE: train_file,
+            ModelField.EVAL_FILE: eval_file,
+            ModelField.LEARNING_RATE: learning_rate,
+            ModelField.SEED: seed,
+            ModelField.BATCH_SIZE: batch_size,
+            ModelField.NUM_EPOCHS: num_epochs,
+            ModelField.NUM_WORKERS: num_workers,
+            ModelField.VALIDATION_LOSSES: [],
+            ModelField.TRAINING_LOSSES: [],
+            ModelField.COMPLETION_TIME: 0,
+            ModelField.COMPLETION_STATUS: "0 %",
+            ModelField.TIMESTAMP: datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            ModelField.EVAL_METRICS: {}
         }
         
         existing_data = {}
@@ -34,7 +54,6 @@ class JsonManager:
             try:
                 with open(JsonManager._output_file, "r") as f:
                     existing_data = json.load(f)
-                # Ensure it's a dictionary; otherwise reset.
                 if not isinstance(existing_data, dict):
                     existing_data = {}
             except (json.JSONDecodeError, FileNotFoundError):
@@ -49,10 +68,8 @@ class JsonManager:
             model_name = new_name
             
 
-        # Add or update the model entry in the data
         existing_data[model_name] = model_data
 
-        # Write the updated data to the JSON file
         with open(JsonManager._output_file, "w") as f:
             json.dump(existing_data, f, indent=4)
     
@@ -63,6 +80,38 @@ class JsonManager:
         
         If the file contains multiple models, they will all be returned in the dict.
         """
+        
         with open(JsonManager._output_file, 'r') as f:
             data = json.load(f)
         return data
+    
+    @staticmethod
+    def update_model_data(model_name: str, updated_fields: dict):
+        """
+        Update specific fields of a model in the JSON file.
+
+        Args:
+            model_name (str): The name of the model to update.
+            updated_fields (dict): A dictionary containing the fields to update and their new values.
+        """
+        
+        if not os.path.exists(JsonManager._output_file):
+            raise FileNotFoundError("The training results file does not exist.")
+        
+        try:
+            with open(JsonManager._output_file, "r") as f:
+                existing_data = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            raise ValueError("The training results file is invalid or cannot be read.")
+        
+        if model_name not in existing_data:
+            raise KeyError(f"Model '{model_name}' does not exist in the training results.")
+        
+        for key, value in updated_fields.items():
+            if key in existing_data[model_name]:
+                existing_data[model_name][key] = value
+            else:
+                raise KeyError(f"Field '{key}' does not exist in the model data.")
+        
+        with open(JsonManager._output_file, "w") as f:
+            json.dump(existing_data, f, indent=4)

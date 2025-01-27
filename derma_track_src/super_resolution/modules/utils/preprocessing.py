@@ -5,7 +5,7 @@ import h5py
 
 from super_resolution.modules.utils.image_converter import ImageConverter
 
-def prepare_images(image_folder, scale, mode):
+def prepare_images(image_folder: str, scale: int, mode: ImageConverter):
     lr_images = []
     hr_images = []
     
@@ -21,21 +21,24 @@ def prepare_images(image_folder, scale, mode):
             hr = ImageConverter.convert_image(hr, mode)
             
             # Downsize the high resolution image
-            lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation=cv2.INTER_CUBIC)
+            lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
             
             # Upscale the low resolution image to get the the right size
-            lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation=cv2.INTER_CUBIC)
+            lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation = cv2.INTER_CUBIC)
+            
+            print(lr.shape)
             
             lr_images.append(np.array(lr))
+            
             hr_images.append(np.array(hr))
     
-    return np.array(lr_images), np.array(hr_images)
+    return lr_images, hr_images
 
-def create_h5_image_file(image_folder, scale, output_path, mode):
+def create_h5_image_file(input_path, scale, output_path, mode):
     
-    with h5py.File(output_path, 'w') as h5_file:
+    with h5py.File(output_path+".hdf5", 'a') as h5_file:
         
-        lr_patches, hr_patches = prepare_images(image_folder, scale, mode)
+        lr_patches, hr_patches = prepare_images(input_path, scale, mode)
         
         h5_file.create_dataset('hi_res_dataset', data = hr_patches,)
         

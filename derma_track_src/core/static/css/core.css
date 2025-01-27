@@ -20,3 +20,17 @@ form{
     margin: 0; 
     display: inline;
 }
+
+div#note{
+    border-left: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+div#profile-info{
+    border-right: 2px solid black;
+    border-bottom: 2px solid black;
+}
+
+div#file-explorer{
+    border-top: 2px solid black;
+}

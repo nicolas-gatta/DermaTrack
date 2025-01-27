@@ -11,19 +11,31 @@
         "validation_losses": [
             2,
             1,
-            0.5,
-            0.3,
-            0.4
+            0.9,
+            0.85,
+            0.75,
+            0.4,
+            0.8,
+            0.9,
+            0.4,
+            0.5
         ],
         "training_losses": [
-            4,
-            5,
             1,
             0.8,
-            0.2
+            0.7,
+            0.6,
+            0.5,
+            0.5,
+            0.8,
+            0.7,
+            0.9,
+            0.4
         ],
-        "time_needed": 240,
-        "timestamp": "2025-01-20 18:57:32"
+        "completion_time": 0,
+        "completion_status": " 10 %",
+        "timestamp": "2025-01-27 17:48:43",
+        "eval_metrics": {}
     },
     "Hello_1": {
         "architecture": "SRGAN",
@@ -34,22 +46,12 @@
         "batch_size": 16,
         "num_epochs": 100,
         "num_workers": 8,
-        "validation_losses": [
-            2,
-            1,
-            0.5,
-            0.3,
-            0.4
-        ],
-        "training_losses": [
-            4,
-            5,
-            1,
-            0.8,
-            0.2
-        ],
-        "time_needed": 240,
-        "timestamp": "2025-01-20 18:57:32"
+        "validation_losses": [],
+        "training_losses": [],
+        "completion_time": 0,
+        "completion_status": "0 %",
+        "timestamp": "2025-01-27 17:48:43",
+        "eval_metrics": {}
     },
     "Hello_2": {
         "architecture": "ESRGAN",
@@ -60,21 +62,11 @@
         "batch_size": 16,
         "num_epochs": 100,
         "num_workers": 8,
-        "validation_losses": [
-            2,
-            1,
-            0.5,
-            0.3,
-            0.4
-        ],
-        "training_losses": [
-            4,
-            5,
-            1,
-            0.8,
-            0.2
-        ],
-        "time_needed": 240,
-        "timestamp": "2025-01-20 18:57:32"
+        "validation_losses": [],
+        "training_losses": [],
+        "completion_time": 0,
+        "completion_status": "0 %",
+        "timestamp": "2025-01-27 17:48:43",
+        "eval_metrics": {}
     }
 }

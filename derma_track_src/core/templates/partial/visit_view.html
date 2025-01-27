@@ -1,38 +1,52 @@
 <div class="modal fade modal-xl" id="visitModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered h-75">
+        <div class="modal-content h-100">
             <div class="modal-header">
-                <h5 class="modal-title" id="visitModalLabel">Visit Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="visitModalLabel">Appointment Details</h5>
             </div>
             <div class="modal-body">
-                <!-- Patient Information Section -->
-                <h6>Patient Information</h6>
-                <p><strong>Name:</strong> <span id="patientName">John Doe</span></p>
-                <p><strong>Surname:</strong> <span id="patientSurname">Doe</span></p>
-                <p><strong>Date of Birth:</strong> <span id="patientDOB">01/01/1980</span></p>
-                <!-- Add other patient information as needed -->
+                <!-- Row for Blue and Red Sections -->
+                <div  class="row h-50 p-3">
+                    <!-- Blue Section: Profile Information -->
+                    <div id = "profile-info" class="mh-50 col-md-2 col-lg-2 p-3">
+                        <div class="text-center">
+                            <img
+                                src="https://placehold.co/600x400"
+                                alt="Profile Picture"
+                                class="rounded-circle mb-3"
+                                style="width: 100px; height: 100px; object-fit: cover;"
+                            />
+                            <h5>John Doe</h5>
+                            <p><strong>Date of Birth:</strong> 01/01/1990</p>
+                            <p><strong>Address:</strong> 123 Main St, Cityville</p>
+                            <p><strong>Email:</strong> john.doe@example.com</p>
+                            <p><strong>Phone:</strong> +123 456 789</p>
+                        </div>
+                    </div>
 
-                <!-- Picture Preview Section -->
-                <h6>Visit Picture</h6>
-                <div id="picturePreview">
-                    <img id="visitPicture" src="default_picture.jpg" alt="Visit Picture" class="img-fluid" style="max-height: 300px;">
+                    <div id = "note" class="mh-50 col-md-10 col-lg-10 p-3">
+                        <h5>Take Notes</h5>
+                        <textarea
+                            id="notesArea"
+                            class="form-control"
+                            rows="8"
+                            placeholder="Write your notes here..."
+                            style="background-color: #ffd6d6; color: black;"
+                        ></textarea>
+                    </div>
                 </div>
 
-                <!-- Add Picture Section -->
-                <h6>Add New Picture</h6>
-                <form id="uploadPictureForm" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="newPicture">Choose a new picture</label>
-                        <input type="file" class="form-control-file" id="newPicture" name="newPicture">
+                <!-- Row for Green Section: Fake File Explorer -->
+                <div id = "file-explorer" class="row mh-50 h-50 p-3">
+                    <div class="col-md-12 col-lg-12 p-3" style="background-color:green; color:white;">
+                        <h5>File Explorer</h5>
+                        
                     </div>
-                    <button type="submit" class="btn btn-primary">Upload Picture</button>
-                </form>
+                </div>
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="clearModal()">Close</button>
             </div>
         </div>
     </div>

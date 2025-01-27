@@ -16,6 +16,10 @@
             <th>Batch Size</th>
             <th>Seed</th>
             <th>Epochs</th>
+            <th>Eval Metric</th>
+            <th>Status</th>
+            <th>Training Time</th>
+            <th>Starting Data</th>
             <th>Action</th>
         </tr>
     </thead>
@@ -30,6 +34,20 @@
             <td>{{ data.batch_size }}</td>
             <td>{{ data.seed }}</td>
             <td>{{ data.num_epochs }}</td>
+            <td>{{ data.eval_metrics }}</td>
+            <td>
+                {% if  data.completion_status != "Done"%}
+                    <span class = "badge text-bg-warning">
+                {% else %}
+                <span class = "badge text-bg-success">
+                {% endif %}
+
+                {{ data.completion_status }}
+                    </span>
+            </td>
+            <td>{{ data.completion_time }} sec</td>
+            <td>{{ data.timestamp }}</td>
+
             <td>       
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <input type="hidden" name="validation_losses" class="form-control" value="{{ data.validation_losses|safe }}" required=""> 
