@@ -9,5 +9,6 @@ urlpatterns = [
     path("training_model", views.training_model, name = "training_model"),
     path("test", views.test, name = "test"),
     path("test_2", views.test_2, name = "test_2"),
-    path("test_3", views.test_3, name = "test_3")
+    path("test_3", views.test_3, name = "test_3"),
+    path("test_4", views.test_4, name = "test_4")
 ]

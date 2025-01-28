@@ -1,4 +1,6 @@
 import numpy as np
+import cv2
+
 from PIL import Image
 
 from django.http import HttpResponse
@@ -11,7 +13,8 @@ from .modules.SRCNN import train
 from .modules.utils.preprocessing import create_h5_image_file
 from .forms.training_form import TrainingForm
 from .modules.utils.json_manager import JsonManager, ModelField
-from .modules.utils.image_converter import ImageColorConverter
+from .modules.utils.image_converter import ImageColorConverter, ImageConverter
+from .modules.utils.dataloader import H5Dataset
 
 from utils.checks import group_and_super_user_checks
 from utils.path_finder import PathFinder
@@ -101,6 +104,24 @@ def test_3(request):
     
     return redirect("/")
 
+def test_4(request):
+    with H5Dataset(PathFinder.get_complet_path(f"super_resolution/dataset/evaluation/Set5_{ImageColorConverter.BGR2YCrCb.name}_x2.hdf5")) as loader:
+        print(f"Total images in dataset: {len(loader)}")
+
+        # Example: Load and display the first image pair
+        low_res, high_res = loader.get_raw_data(0)
+        
+        print(f"Low Resolution Image Shape: {low_res.shape}")
+        print(f"High Resolution Image Shape: {high_res.shape}")
+        
+        # Channels X Height X Width -> Height X Width X Channels
+        cv2.imshow("Low Resolution", low_res)
+        cv2.imshow("High Resolution", high_res)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+        
+        return HttpResponse("Hello, world. You're at the polls index.")
+
 def test(request):
     
     input_dataset = "super_resolution/base_dataset/"
@@ -109,11 +130,15 @@ def test(request):
     
     scale = 2 
     
+    dataset = "Set5"
+    
+    mode = ImageColorConverter.BGR2YCrCb
+    
     # Create Training file
-    create_h5_image_file(input_path = PathFinder.get_complet_path(f"{input_dataset}evaluation/Set5"),
+    create_h5_image_file(input_path = PathFinder.get_complet_path(f"{input_dataset}evaluation/{dataset}"),
                          scale = scale,
-                         output_path = PathFinder.get_complet_path(f"{output_dataset}evaluation/Set5_x{scale}"),
-                         mode = ImageColorConverter.BGR2YCrCb)
+                         output_path = PathFinder.get_complet_path(f"{output_dataset}evaluation/{dataset}_{mode.name}_x{scale}.hdf5"),
+                         mode = mode)
     
     return HttpResponse("Hello, world. You're at the polls index.")
 
