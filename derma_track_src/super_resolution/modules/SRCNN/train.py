@@ -12,7 +12,7 @@ from super_resolution.modules.utils.dataloader import H5Dataset
 from super_resolution.modules.utils.running_average import RunningAverage
 from torch.utils.data.dataloader import DataLoader
 
-def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
     cudnn.benchmark = True
     
@@ -20,12 +20,9 @@ def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, 
 
     torch.manual_seed(seed)
     
-    dataset = H5Dataset(train_file)
+    train_dataset = H5Dataset(train_file)
+    val_dataset = H5Dataset(valid_file)
 
-    # Split into train/validation datasets
-    train_size = int(0.9 * len(dataset))
-    val_size = int(0.1 * len(dataset))
-    train_dataset, val_dataset = torch.utils.data.random_split(dataset, [train_size, val_size])
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
 
@@ -92,7 +89,8 @@ def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, 
     print("Model saved as 'srcnn_model.pth'")
 
     # Close dataset
-    dataset.close()
+    train_dataset.close()
+    val_dataset.close()
     
     evaluate_model(model = model, device = device, criterion = criterion, eval_file = eval_file)
     

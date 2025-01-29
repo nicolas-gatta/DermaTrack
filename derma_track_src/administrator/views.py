@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from utils.checks import group_and_super_user_checks
-from django.http import HttpResponse
 from django.template.loader import render_to_string
 
 # Create your views here.

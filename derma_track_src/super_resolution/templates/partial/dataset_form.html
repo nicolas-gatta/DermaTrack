@@ -1,0 +1,50 @@
+{% load static %}
+
+<script src="{% static 'js/fileLoader.js' %}" defer></script>
+
+<div class="container mt-5 bg-light p-3">
+
+    <h2>Super Resolution Form</h2>
+
+    <form id="super-resolution-form" method="POST" hx-post="{% url 'create_dataset' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="scale" class="form-label">Scale</label>
+            <select class="form-select" id="scale-select" name="scale" required>
+                <option value="">---Select Scale---</option>
+                <option value="2">x2</option>
+                <option value="4">x4</option>
+                <option value="8">x8</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select class="form-select" id="category-select" name="category" required>
+                <option value="">---Select Category---</option>
+                <option value="evaluation">Evaluation</option>
+                <option value="validation">Validation</option>
+                <option value="training">Training</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="dataset" class="form-label">Dataset</label>
+            <select class="form-select" id="dataset-select" name="dataset" required>
+                <option value="">---Select Dataset---</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="mode" class="form-label">Mode</label>
+            <select class="form-select" id="mode-select" name="mode" required>
+                <option value="">---Select Mode---</option>
+                <option value="BGR2YCrCb">Gray</option>
+                <option value="BGR2RGB">Color</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>

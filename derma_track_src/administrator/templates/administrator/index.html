@@ -40,13 +40,20 @@
                             Test Model
                             </a>
                         </li>
-        
+
+                        <li class="nav-item">
+                            <a id = "dataset" class="nav-link text-white" hx-get = "{% url 'dataset_form' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
+                            Create Dataset
+                            </a>
+                        </li>
+                        
+                        <hr>
                         <li class="nav-item">
                             <a id = "patient" class="nav-link text-white" hx-get = "{% url 'patient_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Patient
                             </a>
                         </li>
-
+                        
                         <li>
                             <a id = "visit" class="nav-link text-white" hx-get = "{% url 'visit_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Visit

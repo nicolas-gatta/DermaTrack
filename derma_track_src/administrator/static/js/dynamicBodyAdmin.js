@@ -24,8 +24,10 @@ async function loadBodyContentAdmin(button) {
     
     }else if (button.id === "test_model") {
         htmx.ajax("GET", "test_model", "#dynamic-body");
-    
-    }    
+        
+    }else if (button.id == "dataset"){
+        htmx.ajax("GET", "dataset_form", "#dynamic-body");
+    }
 }
 
 function changingAdminButtonState(button) {
@@ -53,5 +55,4 @@ function initializeStateAdmin(){
     loadBodyContentAdmin(button);
 } 
 
-// Initialize the state when the page loads
 window.addEventListener("DOMContentLoaded", initializeStateAdmin);
