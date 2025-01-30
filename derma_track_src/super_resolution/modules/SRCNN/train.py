@@ -46,7 +46,7 @@ def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: fl
         train_loss.reset()
         val_loss.reset()
         
-        with tqdm(total=len(train_loader) + len(val_loader), desc=f"Epoch {epoch+1}/{num_epochs}", leave=True) as pbar:
+        with tqdm(total = len(train_loader) + len(val_loader), desc=f"Epoch {epoch+1}/{num_epochs}", leave=True) as pbar:
             
             for loop_type, dataloader in [("Training", train_loader), ("Validation", val_loader)]:
                 
@@ -86,13 +86,13 @@ def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: fl
 
     # Save the model
     torch.save(model.state_dict(), output_dir)
-    print("Model saved as 'srcnn_model.pth'")
+    print(f"Model saved as '{output_dir}'")
 
     # Close dataset
     train_dataset.close()
     val_dataset.close()
     
-    evaluate_model(model = model, device = device, criterion = criterion, eval_file = eval_file)
+    # evaluate_model(model = model, device = device, criterion = criterion, eval_file = eval_file)
     
 def evaluate_model(model, device, criterion, eval_file):
     
