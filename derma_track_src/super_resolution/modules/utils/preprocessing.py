@@ -10,7 +10,6 @@ def _prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConve
 
     invert_mode = re.sub(r"^(.*)2(.*)$", r"\2here\1", mode.name).replace("here","2")
     
-    print(image_folder, scale, mode)
     for count, file in enumerate(os.listdir(image_folder), start = 1):
         if file.endswith(('.png', '.jpg', '.jpeg')):
             
@@ -22,7 +21,7 @@ def _prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConve
             
             lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
             lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation = cv2.INTER_CUBIC)
-        
+            
             low_image = low_res_images.create_dataset(f"image_{count:03}", data = np.array(lr), dtype= np.uint8)
             
             hi_image = hi_res_images.create_dataset(f"image_{count:03}", data = np.array(hr), dtype= np.uint8)
