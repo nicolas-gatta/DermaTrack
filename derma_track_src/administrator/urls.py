@@ -6,19 +6,5 @@ import core.views as cv
 import super_resolution.views as srv
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("show_models", srv.show_models, name = "show_models"),
-    path("model_form", srv.model_form, name = "model_form"),
-    path("training_model", srv.training_model, name = "training_model"),
-    path("test_model", srv.show_models, name = "test_model"),
-    path("dataset_form", srv.dataset_form, name = "dataset_form"),
-    path("get_datasets/<str:category>", srv.get_datasets,  name = "get_datasets"),
-    path("create_dataset", srv.create_dataset,  name = "create_dataset"),
-    
-    path("patient", cv.patient_profile, name="patient"),
-    path("patient_list", cv.patient_list, name="patient_list"),
-    path('visit_list', cv.visit_list, name='visit_list'),
-    path('visit_status', cv.visit_status_change, name = 'visit_status'),
-    path('visit_view', cv.visit_view, name = "visit_view"),
-    path('doctor_list', cv.doctor_list, name='doctor_list'),
+    path("", views.index, name="index")
 ]
