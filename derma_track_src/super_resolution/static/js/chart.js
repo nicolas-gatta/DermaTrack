@@ -7,7 +7,7 @@ function deleteCanvas(){
 document.querySelectorAll(".view-chart-btn").forEach((button) => {
   const currentRow = button.closest("tr");
   button.addEventListener("click", function () {
-    if(!currentRow.nextElementSibling.className.includes("chart-row")){
+    if(currentRow.nextElementSibling == null || !currentRow.nextElementSibling.className.includes("chart-row")){
 
       deleteCanvas();
 
