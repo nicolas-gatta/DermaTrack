@@ -1,48 +1,104 @@
+{% load static %}
+
+<script src="{% static 'js/loadAllSelectDataset.js' %}" defer></script>
 
 <div class="container mt-5 bg-light p-3">
   <h2 class="text-center mb-4">Model Configuration Form</h2>
-  <form>
+  <form id="model-form" method="POST" hx-post="{% url 'training_model' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML">
     {% csrf_token %}
-    <div class="mb-3">
-      <label for="trainFile" class="form-label">Train File</label>
-      <input type="text" class="form-control" id="trainFile" placeholder="Enter path to train file" required>
-    </div>
 
-    <div class="mb-3">
-      <label for="evalFile" class="form-label">Eval File</label>
-      <input type="text" class="form-control" id="evalFile" placeholder="Enter path to eval file" required>
-    </div>
+    <!-- Dataset Selection Section -->
+    <fieldset class="border p-3 mb-4">
+      <legend class="w-auto text-primary">Dataset Selection</legend>
 
-    <div class="mb-3">
-      <label for="outputDir" class="form-label">Output Directory</label>
-      <input type="text" class="form-control" id="outputDir" placeholder="Enter output directory" required>
-    </div>
+      <div class="row">
+        <div class="col-md-4">
+          <label for="train-dataset" class="form-label">Training Dataset</label>
+          <select class="form-select" id="train-dataset-select" name="train-dataset" required>
+              <option value="">---Select Training Dataset---</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="valid-dataset" class="form-label">Validation Dataset</label>
+          <select class="form-select" id="valid-dataset-select" name="valid-dataset" required>
+              <option value="">---Select Validation Dataset---</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label for="eval-dataset" class="form-label">Evaluation Dataset</label>
+          <select class="form-select" id="eval-dataset-select" name="eval-dataset" required>
+              <option value="">---Select Evaluation Dataset---</option>
+          </select>
+        </div>
+      </div>
 
-    <div class="mb-3">
-      <label for="learningRate" class="form-label">Learning Rate</label>
-      <input type="number" step="0.0001" class="form-control" id="learningRate" placeholder="1e-4" value="0.0001" required>
-    </div>
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <label for="scale" class="form-label">Scale</label>
+          <select class="form-select" id="scale-select" name="scale" required>
+              <option value="">---Select Scale---</option>
+              <option value="2">x2</option>
+              <option value="4">x4</option>
+              <option value="8">x8</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="mode" class="form-label">Mode</label>
+          <select class="form-select" id="mode-select" name="mode" required>
+              <option value="">---Select Mode---</option>
+              <option value="BGR2YCrCb">Gray</option>
+              <option value="BGR2RGB">Color</option>
+          </select>
+        </div>
+      </div>
+    </fieldset>
 
-    <div class="mb-3">
-      <label for="seed" class="form-label">Seed</label>
-      <input type="number" class="form-control" id="seed" placeholder="1" value="1" required>
-    </div>
+    <!-- Model Training Configuration Section -->
+    <fieldset class="border p-3">
+      <legend class="w-auto text-primary">Model Training Configuration</legend>
 
-    <div class="mb-3">
-      <label for="batchSize" class="form-label">Batch Size</label>
-      <input type="number" class="form-control" id="batchSize" placeholder="16" value="16" required>
-    </div>
+      <div class="mb-3">
+        <label for="architecture" class="form-label">Architecture</label>
+        <select class="form-select" id="architecture-select" name="architecture" required>
+            <option value="">---Select Architecture---</option>
+            <option value="SRCNN">SRCNN</option>
+            <option value="SRGAN">SRGAN</option>
+            <option value="ESRGAN">ESRGAN</option>
+        </select>
+      </div>
 
-    <div class="mb-3">
-      <label for="numEpochs" class="form-label">Number of Epochs</label>
-      <input type="number" class="form-control" id="numEpochs" placeholder="100" value="100" required>
-    </div>
+      
+      <div class="mb-3">
+        <label for="name" class="form-label">Model Name</label>
+        <input type="text" name = "name" class="form-control" id="name" placeholder="Write your Model Name" required>
+      </div>
 
-    <div class="mb-3">
-      <label for="numWorkers" class="form-label">Number of Workers</label>
-      <input type="number" class="form-control" id="numWorkers" placeholder="8" value="8"required>
-    </div>
+      <div class="mb-3">
+        <label for="learning-rate" class="form-label">Learning Rate</label>
+        <input type="number" step="0.0001" name = "learning-rate" class="form-control" id="learning-rate" placeholder="1e-4" value="0.0001" required>
+      </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
+      <div class="mb-3">
+        <label for="seed" class="form-label">Seed</label>
+        <input type="number" name = "seed" class="form-control" id="seed" placeholder="1" value="1" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="batch-size" class="form-label">Batch Size</label>
+        <input type="number" name = "batch-size" class="form-control" id="batch-size" placeholder="16" value="16" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="num-epochs" class="form-label">Number of Epochs</label>
+        <input type="number" name = "num-epochs" class="form-control" id="num-epochs" placeholder="100" value="100" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="num-workers" class="form-label">Number of Workers</label>
+        <input type="number" name = "num-workers" class="form-control" id="num-workers" placeholder="8" value="8" required>
+      </div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary mt-3">Submit</button>
   </form>
 </div>

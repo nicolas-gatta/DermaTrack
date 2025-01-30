@@ -11,7 +11,7 @@ selectElement.addEventListener("change", (event) => {
   emptyDropdown(datasetDropdown);
   datasetDropdown.append('<option value="">Loading...</option>');
   if (event.target.value) {
-    fetch("get_datasets/0".replace(0,event.target.value))
+    fetch("/super_resolution/get_datasets/0".replace(0,event.target.value))
         .then(response => response.json())
         .then(data => {
             emptyDropdown(datasetDropdown);

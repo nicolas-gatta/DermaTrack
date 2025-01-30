@@ -1,12 +1,12 @@
 {% load static %}
 
-<script src="{% static 'js/fileLoader.js' %}" defer></script>
+<script src="{% static 'js/loadSelectDatasetOnChange.js' %}" defer></script>
 
 <div class="container mt-5 bg-light p-3">
 
-    <h2>Super Resolution Form</h2>
+    <h2>Dataset Creation Form</h2>
 
-    <form id="super-resolution-form" method="POST" hx-post="{% url 'create_dataset' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML">
+    <form id="dataset-form" method="POST" hx-post="{% url 'create_dataset' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML">
         {% csrf_token %}
         <div class="mb-3">
             <label for="scale" class="form-label">Scale</label>
