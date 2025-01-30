@@ -1,6 +1,7 @@
 import os
 import cv2
 import numpy as np
+import h5py
 
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -9,7 +10,9 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 
 
-from .modules.SRCNN import train
+from .modules.SRCNN import train as srcnn_train
+from .modules.ESRGAN import train as esrgan_train
+from .modules.SRGAN import train as srgan_train
 from .modules.utils.preprocessing import create_h5_image_file
 from .forms.training_form import TrainingForm
 from .modules.utils.json_manager import JsonManager, ModelField
@@ -20,58 +23,91 @@ from utils.checks import group_and_super_user_checks
 from utils.path_finder import PathFinder
 # Create your views here.
 
-
-def training_srcnn(request):
+@login_required
+@group_and_super_user_checks(group_names=[""], redirect_url="/")
+def training_model(request):
     
-    base_string = "super_resolution/dataset/"
+    architecture = request.POST["architecture"]
     
-    train_file = PathFinder.get_complet_path(f"{base_string}training/{request.POST['training_dataset']}")
-    
-    eval_file = PathFinder.get_complet_path(f"{base_string}/evaluation/{request.POST['validation_dataset']}")
-    
-    eval_file = PathFinder.get_complet_path(f"{base_string}/evaluation/{request.POST['evaluation_dataset']}")
-    
-    learning_rate = request.POST["learning_rate"]
-    
-    batch_size = request.POST["batch_size"]
-    
-    num_epochs = request.POST["num_epochs"]
-    
-    scale = request.POST["scale"]
+    scale = int(request.POST["scale"])
     
     mode = request.POST["mode"]
     
-    # Create Training file
-    create_h5_image_file(input_path = PathFinder.get_complet_path(f"{base_string}dataset/{request.POST['training_dataset']}"),
-                         scale = scale,
-                         output_path = train_file,
-                         mode = mode)
+    validation_dataset = request.POST["valid-dataset"]
     
-    # Create Evaluation file
-    create_h5_image_file(input_path = PathFinder.get_complet_path(f"{base_string}dataset/{request.POST['eval_dataset']}"),
-                         scale = scale,
-                         output_path = eval_file,
-                         mode = mode)
+    training_dataset = request.POST["train-dataset"]
     
-    train.train_model(train_file = train_file, 
+    evaluation_dataset = request.POST["eval-dataset"]
+    
+    learning_rate = float(request.POST["learning-rate"])
+    
+    batch_size = int(request.POST["batch-size"])
+    
+    num_epochs = int(request.POST["num-epochs"])
+    
+    seed = int(request.POST["seed"])
+    
+    num_workers = int(request.POST["num-workers"])
+    
+    output_dir = PathFinder.get_complet_path(f"super_resolution/modules/{architecture}/output/{request.POST['name']}_{learning_rate}_{batch_size}_{num_epochs}_x{scale}")
+    
+    train_file, valid_file, eval_file = [dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category) 
+                                         for dataset, category in [(training_dataset, "training"), (validation_dataset, "validation"), (evaluation_dataset, "evaluation")] ]
+    
+    match(architecture):
+        
+        case "SRCNN":
+            srcnn_train.train_model(
+                train_file = train_file, 
+                valid_file = valid_file,
                 eval_file = eval_file, 
-                output_dir = PathFinder.get_complet_path(f"{base_string}output/{request.POST['output_file']}_{learning_rate}_{batch_size}_{num_epochs}_x{scale}"),
+                output_dir = output_dir,
                 learning_rate = learning_rate, 
-                seed = request.POST["seed"], 
+                seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
-                num_workers = request.POST["num_workers"])
+                num_workers = num_workers)
+                
+        case "SRGAN":
+            srgan_train.train_model(
+                train_file = train_file, 
+                valid_file = valid_file,
+                eval_file = eval_file, 
+                output_dir = output_dir,
+                learning_rate = learning_rate, 
+                seed = seed, 
+                batch_size = batch_size,
+                num_epochs = num_epochs,
+                num_workers = num_workers)
+                        
+        case "ESRGAN":
+            esrgan_train.train_model(
+                train_file = train_file, 
+                valid_file = valid_file,
+                eval_file = eval_file, 
+                output_dir = output_dir,
+                learning_rate = learning_rate, 
+                seed = seed, 
+                batch_size = batch_size,
+                num_epochs = num_epochs,
+                num_workers = num_workers)
+        case _:
+            pass
+        
+    return render(request, 'partial/model_form.html', {"form": None})
     
-    return HttpResponse("Hello, world. You're at the polls index.")
 
-def training_srgan(request):
+def dataset_exist_or_create(dataset, mode, scale, category):
     
-    return HttpResponse("Hello, world. You're at the polls index.")
-
-def training_esrgan(request):
+    output_path = PathFinder.get_complet_path(f"super_resolution/dataset/{category}/{dataset}_{mode}_x{scale}.hdf5")
     
-    return HttpResponse("Hello, world. You're at the polls index.")
-
+    if not os.path.exists(output_path):
+        create_h5_image_file(input_path = PathFinder.get_complet_path(f"super_resolution/base_dataset/{category}/{dataset}"),
+                            scale = scale,
+                            output_path = output_path,
+                            mode = ImageColorConverter[mode])
+    return output_path
+    
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def show_models(request):
@@ -85,11 +121,6 @@ def model_form(request):
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/model_form.html', {"form": None})
-
-@login_required
-@group_and_super_user_checks(group_names=[""], redirect_url="/")
-def training_model(request):
-    pass
 
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
@@ -170,6 +201,14 @@ def test_4(request):
         return HttpResponse("Hello, world. You're at the polls index.")
 
 def test(request):
+    
+    h5dataset = h5py.File(PathFinder.get_complet_path(f"super_resolution/dataset/evaluation/Set5_{ImageColorConverter.BGR2YCrCb.name}_x2.hdf5"))
+    
+    low_res = h5dataset["low_res"]
+    
+    h5dataset.close()
+    
+    print(low_res["image_001"])
     
     return HttpResponse("Hello, world. You're at the polls index.")
 
