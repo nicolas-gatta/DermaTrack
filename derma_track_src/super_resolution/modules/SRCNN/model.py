@@ -8,13 +8,13 @@ class SRCNN(nn.Module):
         super(SRCNN, self).__init__()
         
         # Feature Extraction Layer (9 x 9 x 1 x 64)
-        self.conv1 = nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = kernels_size[1], padding = kernels_size[1] // 2)
+        self.conv1 = nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = kernels_size[0], padding = kernels_size[0] // 2)
         
         # Non Linear Mapping Layer (5 x 5 x 64 x 32)
-        self.conv2 = nn.Conv2d(in_channels = out_channels, out_channels = out_channels/2, kernel_size = kernels_size[2], padding = kernels_size[2] // 2)
+        self.conv2 = nn.Conv2d(in_channels = out_channels, out_channels = out_channels // 2, kernel_size = kernels_size[1], padding = kernels_size[1] // 2)
         
         # Reconstruction Layer (5 x 5 x 32 x 1)
-        self.conv3 = nn.Conv2d(in_channels = out_channels/2, out_channels = in_channels, kernel_size = kernels_size[3], padding = kernels_size[3] // 2)
+        self.conv3 = nn.Conv2d(in_channels = out_channels // 2, out_channels = in_channels, kernel_size = kernels_size[2], padding = kernels_size[2] // 2)
         
         self.relu = nn.ReLU(inplace=True)
         
