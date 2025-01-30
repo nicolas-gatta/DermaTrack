@@ -8,25 +8,25 @@ let activeButton = null;
 async function loadBodyContentAdmin(button) {
 
     if (button.id === "patient") {
-        htmx.ajax("GET", "patient_list", "#dynamic-body");
+        htmx.ajax("GET", "/core/patient_list", "#dynamic-body");
 
     } else if (button.id === "visit") {
-        htmx.ajax("GET", "visit_list", "#dynamic-body");
+        htmx.ajax("GET", "/core/visit_list", "#dynamic-body");
     
     } else if (button.id === "doctor") {
-        htmx.ajax("GET", "doctor_list", "#dynamic-body");
+        htmx.ajax("GET", "/core/doctor_list", "#dynamic-body");
 
     } else if (button.id === "model_form") {
-        htmx.ajax("GET", "model_form", "#dynamic-body");
+        htmx.ajax("GET", "/super_resolution/model_form", "#dynamic-body");
     
     }else if (button.id === "show_models") {
-        htmx.ajax("GET", "show_models", "#dynamic-body");
+        htmx.ajax("GET", "/super_resolution/show_models", "#dynamic-body");
     
     }else if (button.id === "test_model") {
-        htmx.ajax("GET", "test_model", "#dynamic-body");
+        htmx.ajax("GET", "/super_resolution/show_models", "#dynamic-body");
         
     }else if (button.id == "dataset"){
-        htmx.ajax("GET", "dataset_form", "#dynamic-body");
+        htmx.ajax("GET", "/super_resolution/dataset_form", "#dynamic-body");
     }
 }
 
