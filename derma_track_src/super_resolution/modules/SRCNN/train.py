@@ -1,15 +1,13 @@
 import torch
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
-import os
-import copy
-
 
 from torch import nn
 from tqdm import tqdm
 from super_resolution.modules.SRCNN.model import SRCNN
-from super_resolution.modules.utils.dataloader import H5Dataset
+from super_resolution.modules.utils.dataloader import H5ImagesDataset
 from super_resolution.modules.utils.running_average import RunningAverage
+from super_resolution.modules.utils.batch_sampler import SizeBasedImageBatch
 from torch.utils.data.dataloader import DataLoader
 
 def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
@@ -20,16 +18,20 @@ def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: fl
 
     torch.manual_seed(seed)
     
-    train_dataset = H5Dataset(train_file)
-    val_dataset = H5Dataset(valid_file)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+    
+    train_dataset = H5ImagesDataset(train_file)
+    val_dataset = H5ImagesDataset(valid_file)
+    
+    train_batch = SizeBasedImageBatch(dataset = train_dataset, batch_size = batch_size)
+    val_batch = SizeBasedImageBatch(dataset = val_dataset, batch_size = batch_size, shuffle = False)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)
+    train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory=True)
+    val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory=True)
 
-    # Initialize model, loss, optimizer
     model = SRCNN().to(device)
     
-    # Mean Squared Error for SR tasks
     criterion = nn.MSELoss()  
     
     optimizer = optim.Adam([
@@ -40,7 +42,6 @@ def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: fl
     
     train_loss, val_loss = RunningAverage(), RunningAverage()
             
-    # Trainign and Validation loop
     for epoch in range(num_epochs):
         
         train_loss.reset()
@@ -52,9 +53,9 @@ def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: fl
                 
                 torch.set_grad_enabled(loop_type == "Training")
                 
-                for low_res, high_res in tqdm(dataloader, desc = loop_type, leave=False):
+                for low_res, high_res in dataloader:
                     
-                    low_res, high_res = low_res.to(device), high_res.to(device)
+                    low_res, high_res = low_res.to(device, non_blocking=True), high_res.to(device, non_blocking=True)
 
                     # Forward
                     output = model(low_res)
@@ -80,15 +81,14 @@ def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: fl
                     
                     pbar.set_postfix({
                         "Mode": loop_type,
-                        "Train Loss": f"{train_loss:.4f}" if train_loss > 0 else "N/A",
-                        "Val Loss": f"{val_loss:.4f}" if val_loss > 0 else "N/A",
+                        "Train Loss": f"{train_loss.average:.4f}" if train_loss.average > 0 else "N/A",
+                        "Val Loss": f"{val_loss.average:.4f}" if val_loss.average > 0 else "N/A",
                     })
-
-    # Save the model
+                    
     torch.save(model.state_dict(), output_dir)
+    
     print(f"Model saved as '{output_dir}'")
 
-    # Close dataset
     train_dataset.close()
     val_dataset.close()
     
@@ -99,7 +99,7 @@ def evaluate_model(model, device, criterion, eval_file):
     model.eval()
     total_loss = 0.0
     total_psnr = 0.0
-    dataset = H5Dataset(eval_file)
+    dataset = H5ImagesDataset(eval_file)
     eval_loader = DataLoader(dataset, batch_size=1, shuffle=True)
     num_batches = len(eval_loader)
     result = {}
