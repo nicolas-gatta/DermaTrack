@@ -16,19 +16,18 @@ class RunningAverage:
         """
         Reset all the value of the running average.
         """
-        self.total = 0
+        self.total = 0.0
         self.count = 0.0
 
     @property
-    def average(self):
+    def average(self) -> float:
         """
         Returns the current average.
         """
-        if self.count == 0:
+        if self.count == 0.0:
             return 0.0 
         return self.total / self.count
     
     @property
-    def all_values(self):
-        
+    def all_values(self) -> list:
         return self.values
