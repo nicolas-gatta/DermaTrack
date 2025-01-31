@@ -22,9 +22,9 @@ def _prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConve
             lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
             lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation = cv2.INTER_CUBIC)
             
-            low_image = low_res_images.create_dataset(f"image_{count:03}", data = np.array(lr), dtype= np.uint8)
+            low_image = low_res_images.create_dataset(f"image_{count}", data = np.array(lr), dtype= np.uint8)
             
-            hi_image = hi_res_images.create_dataset(f"image_{count:03}", data = np.array(hr), dtype= np.uint8)
+            hi_image = hi_res_images.create_dataset(f"image_{count}", data = np.array(hr), dtype= np.uint8)
             
             low_image.attrs["file"], hi_image.attrs["file"] = file, file
             
