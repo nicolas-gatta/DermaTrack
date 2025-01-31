@@ -9,7 +9,7 @@ from super_resolution.modules.SRGAN.generator_model import SRGANGenerator
 from super_resolution.modules.SRGAN.loss import VGGLoss
 from super_resolution.modules.utils.running_average import RunningAverage
 from torch.utils.data.dataloader import DataLoader
-from super_resolution.modules.utils.dataloader import H5Dataset
+from super_resolution.modules.utils.dataloader import H5ImagesDataset
 
 def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
@@ -19,7 +19,7 @@ def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, 
 
     torch.manual_seed(seed)
     
-    dataset = H5Dataset(train_file)
+    dataset = H5ImagesDataset(train_file)
 
     # Split into train/validation datasets
     train_size = int(0.9 * len(dataset))

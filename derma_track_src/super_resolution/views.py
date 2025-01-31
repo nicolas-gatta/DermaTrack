@@ -1,7 +1,7 @@
 import os
 import cv2
 import numpy as np
-import h5py
+import torch
 
 from django.http import HttpResponse
 from django.template.loader import render_to_string
@@ -17,7 +17,7 @@ from .modules.utils.preprocessing import create_h5_image_file
 from .forms.training_form import TrainingForm
 from .modules.utils.json_manager import JsonManager, ModelField
 from .modules.utils.image_converter import ImageColorConverter, ImageConverter
-from .modules.utils.dataloader import H5Dataset
+from .modules.utils.dataloader import H5ImagesDataset
 
 from utils.checks import group_and_super_user_checks
 from utils.path_finder import PathFinder
@@ -33,12 +33,6 @@ def training_model(request):
     
     mode = request.POST["mode"]
     
-    validation_dataset = request.POST["valid-dataset"]
-    
-    training_dataset = request.POST["train-dataset"]
-    
-    evaluation_dataset = request.POST["eval-dataset"]
-    
     learning_rate = float(request.POST["learning-rate"])
     
     batch_size = int(request.POST["batch-size"])
@@ -52,7 +46,10 @@ def training_model(request):
     output_dir = PathFinder.get_complet_path(f"super_resolution/modules/{architecture}/output/{request.POST['name']}_{learning_rate}_{batch_size}_{num_epochs}_x{scale}")
     
     train_file, valid_file, eval_file = [dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category) 
-                                         for dataset, category in [(training_dataset, "training"), (validation_dataset, "validation"), (evaluation_dataset, "evaluation")] ]
+                                         for dataset, category in [(request.POST["train-dataset"], "training"), 
+                                                                   (request.POST["valid-dataset"], "validation"), 
+                                                                   (request.POST["eval-dataset"], "evaluation")] 
+                                         ]
     
     match(architecture):
         
@@ -178,7 +175,7 @@ def test_3(request):
     return redirect("/")
 
 def test_4(request):
-    with H5Dataset(PathFinder.get_complet_path(f"super_resolution/dataset/evaluation/Set5_{ImageColorConverter.BGR2YCrCb.name}_x2.hdf5")) as loader:
+    with H5ImagesDataset(PathFinder.get_complet_path(f"super_resolution/dataset/evaluation/Set5_{ImageColorConverter.BGR2YCrCb.name}_x2.hdf5")) as loader:
         print(f"Total images in dataset: {len(loader)}")
 
         # Example: Load and display the first image pair
@@ -201,14 +198,11 @@ def test_4(request):
         return HttpResponse("Hello, world. You're at the polls index.")
 
 def test(request):
-    
-    h5dataset = h5py.File(PathFinder.get_complet_path(f"super_resolution/dataset/evaluation/Set5_{ImageColorConverter.BGR2YCrCb.name}_x2.hdf5"))
-    
-    low_res = h5dataset["low_res"]
-    
-    h5dataset.close()
-    
-    print(low_res["image_001"])
-    
+
+
+    print("CUDA Available: ", torch.cuda.is_available())  # Should print True if GPU is detected
+    print("CUDA Device Count: ", torch.cuda.device_count())  # Number of GPUs available
+    print("Current CUDA Device: ", torch.cuda.current_device())  # Index of the active GPU
+    print("CUDA Device Name: ", torch.cuda.get_device_name(0))  # Name of the GPU
     return HttpResponse("Hello, world. You're at the polls index.")
 
