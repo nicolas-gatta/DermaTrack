@@ -30,8 +30,7 @@ def visit_list(request):
             visits = Visit.objects.select_related('doctor', 'patient').all()
         elif request.user.groups.filter(name__in=["Doctor"]).exists():
             visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
-        
-        print(visits[0])
+
         return render(request, 'partial/visit_list.html', {'visits': visits})
 
 @login_required
