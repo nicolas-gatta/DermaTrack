@@ -7,6 +7,7 @@ function emptyDropdown(dropdown){
     }
 }
 
+
 selectElement.addEventListener("change", (event) => {
   emptyDropdown(datasetDropdown);
   datasetDropdown.append('<option value="">Loading...</option>');
