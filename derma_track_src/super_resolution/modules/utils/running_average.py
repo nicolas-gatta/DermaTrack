@@ -10,7 +10,7 @@ class RunningAverage:
         """
         self.total += value
         self.count += 1
-        self.values.append(value)
+        self.values.append(round(value, 4))
         
     def reset(self):
         """
