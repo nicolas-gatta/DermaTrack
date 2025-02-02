@@ -1,6 +1,7 @@
 import torch
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
+import time
 
 from torch import nn
 from tqdm import tqdm
@@ -8,9 +9,12 @@ from super_resolution.modules.SRCNN.model import SRCNN
 from super_resolution.modules.utils.dataloader import H5ImagesDataset
 from super_resolution.modules.utils.running_average import RunningAverage
 from super_resolution.modules.utils.batch_sampler import SizeBasedImageBatch
+from super_resolution.modules.utils.json_manager import JsonManager, ModelField
 from torch.utils.data.dataloader import DataLoader
 
-def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+def train_model(model_name, train_file, valid_file, eval_file, output_dir, mode, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+    
+    starting_time = time.time()
     
     cudnn.benchmark = True
     
@@ -41,6 +45,8 @@ def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: fl
     ], lr=learning_rate)
     
     train_loss, val_loss = RunningAverage(), RunningAverage()
+    
+    epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
             
     for epoch in range(num_epochs):
         
@@ -63,7 +69,6 @@ def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: fl
                     loss = criterion(output, high_res)
                     
                     if loop_type == "Training":
-                        # Backward
                         optimizer.zero_grad()
                         
                         loss.backward()
@@ -85,43 +90,57 @@ def train_model(train_file, valid_file, eval_file, output_dir, learning_rate: fl
                         "Val Loss": f"{val_loss.average:.4f}" if val_loss.average > 0 else "N/A",
                     })
                     
-    torch.save(model.state_dict(), output_dir)
+        epoch_train_loss.update(train_loss.average)
+        epoch_val_loss.update(val_loss.average)
+        
+        JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
+                    
+    torch.save({"architecture": "SRCNN", "color_mode": mode, "model_state_dict": model.state_dict()}, output_dir)
     
     print(f"Model saved as '{output_dir}'")
 
     train_dataset.close()
+    
     val_dataset.close()
     
-    # evaluate_model(model = model, device = device, criterion = criterion, eval_file = eval_file)
+    JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: "Completed", 
+                                                                             ModelField.COMPLETION_TIME: int(time.time() - starting_time),
+                                                                             ModelField.TRAINING_LOSSES: epoch_train_loss.all_values, 
+                                                                             ModelField.VALIDATION_LOSSES: epoch_val_loss.all_values})
     
-def evaluate_model(model, device, criterion, eval_file):
+    evaluate_model(model_name = model_name, model = model, device = device, criterion = criterion, eval_file = eval_file)
+    
+def evaluate_model(model_name, model, device, criterion, eval_file):
     
     model.eval()
-    total_loss = 0.0
-    total_psnr = 0.0
-    dataset = H5ImagesDataset(eval_file)
-    eval_loader = DataLoader(dataset, batch_size=1, shuffle=True)
+    total_loss, total_psnr = 0.0, 0.0
+    
+    eval_dataset = H5ImagesDataset(eval_file)
+    
+    eval_batch = SizeBasedImageBatch(dataset = eval_dataset, batch_size = 1, shuffle = False)
+
+    eval_loader = DataLoader(eval_dataset, batch_sampler = eval_batch, pin_memory=True)
+    
     num_batches = len(eval_loader)
+    
     result = {}
     
-    with torch.no_grad():  # Disable gradient calculations
-        for lr, hr in tqdm(eval_loader, desc="Evaluating", leave=False):
+    with torch.no_grad():
+        for lr, hr in tqdm(eval_loader, desc="Evaluation", leave=False):
             lr, hr = lr.to(device), hr.to(device)
             
-            # Forward
             output = model(lr)
             loss = criterion(output, hr)
             
             total_loss += loss.item()
             
-            # Compute PSNR if required
             mse = torch.mean((output - hr) ** 2)
-            psnr = 20 * torch.log10(1.0 / torch.sqrt(mse))  # Assuming normalized images
+            psnr = 20 * torch.log10(1.0 / torch.sqrt(mse))
             total_psnr += psnr.item()
     
-    result["loss"] = (total_loss / num_batches)
-    result["psnr"] = (total_psnr / num_batches)
+    result["MSE"] = (total_loss / num_batches)
+    result["PSNR"] = (total_psnr / num_batches)
         
-    dataset.close()
+    eval_dataset.close()
     
-    return result
+    JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.EVAL_METRICS: result})
