@@ -23,7 +23,7 @@ async function loadBodyContentAdmin(button) {
         htmx.ajax("GET", "/super_resolution/show_models", "#dynamic-body");
     
     }else if (button.id === "test_model") {
-        htmx.ajax("GET", "/super_resolution/show_models", "#dynamic-body");
+        htmx.ajax("GET", "/super_resolution/test_model", "#dynamic-body");
         
     }else if (button.id == "dataset"){
         htmx.ajax("GET", "/super_resolution/dataset_form", "#dynamic-body");
