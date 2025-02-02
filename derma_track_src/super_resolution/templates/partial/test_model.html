@@ -1,0 +1,51 @@
+{% load static %}
+
+<script src="{% static 'js/loadAllSelectModel.js' %}" defer></script>
+<script src="{% static 'js/loadAllSelectTestImage.js' %}" defer></script>
+<script src="{% static 'js/loadImage.js' %}" defer></script>
+
+
+<div class="container mt-5 bg-light p-3 h-75">
+    <form class = "h-100" >
+        <div class="row">
+            <div class="col-md-4">
+                <label for="image-test" class="form-label">Test Image</label>
+                <select class="form-select" id="image-select" name="image-test" required>
+                    <option value="">---Select Test Image---</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="scale-test" class="form-label">Degradation Factor</label>
+                <select class="form-select" id="scale-select" name="scale-test" required>
+                    <option value="">---Select degradation factor---</option>
+                    <option value="2">x2</option>
+                    <option value="4">x4</option>
+                    <option value="8">x8</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="model-test" class="form-label">Model to Test</label>
+                <select class="form-select" id="model-select" name="model-test" required>
+                    <option value="">---Select Model---</option>
+                </select>
+            </div>
+
+        </div>
+        <div class="row h-75 align-items-center">
+            <div class="col border m-3 text-center h-75">
+                <canvas id="hr-canvas" class="rounded img-fluid h-100" ></canvas>
+            </div>
+            <div class="col border m-3 text-center h-75">
+                <canvas id="lr-canvas" class="rounded img-fluid h-100" ></canvas>
+            </div>
+            <div class="col border m-3 text-center h-75">
+                <canvas id="reconstructed-canvas" class="rounded img-fluid h-100" ></canvas>
+            </div>
+        </div>
+        <div class = "row justify-content-center">
+            <div class="d-grid col-md-4 mx-auto">
+                <button class="btn btn-primary mt-3" hx-post="/apply-model"  hx-trigger="click"  hx-target="#canvas"> Test Model</button>
+            </div>
+        </div>
+    </form>
+</div>
