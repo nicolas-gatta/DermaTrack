@@ -19,7 +19,7 @@ class SizeBasedImageBatch(Sampler):
 
         for h, w, index in image_sizes:
             
-            if(height != 0 and width != 0 and (height != h or width != w)):
+            if(batch and height != 0 and width != 0 and (height != h or width != w)):
                 
                 self.batches.append(batch)
                 batch = []
@@ -38,6 +38,7 @@ class SizeBasedImageBatch(Sampler):
         
         if shuffle:
             random.shuffle(self.batches)
+            
     def __iter__(self):
         return iter(self.batches)
 
