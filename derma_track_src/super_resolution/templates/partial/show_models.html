@@ -3,14 +3,15 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <script src="{% static 'js/chart.js' %}" defer></script>
-<table class="table align-middle mb-0 bg-white">
 
+<table class="table align-middle mb-0 bg-white">
 
     <thead class="bg-light">
         <tr>
             <th>Name</th>
             <th>Architecture</th>
             <th>Training Dataset</th>
+            <th>Validation Dataset</th>
             <th>Eval Dataset</th>
             <th>Learning Rate</th>
             <th>Batch Size</th>
@@ -29,14 +30,19 @@
             <td>{{ model_name }}</td>
             <td>{{ data.architecture }}</td>
             <td>{{ data.train_file }}</td>
+            <td>{{ data.valid_file }}</td>
             <td>{{ data.eval_file }}</td>
             <td>{{ data.learning_rate }}</td>
             <td>{{ data.batch_size }}</td>
             <td>{{ data.seed }}</td>
             <td>{{ data.num_epochs }}</td>
-            <td>{{ data.eval_metrics }}</td>
             <td>
-                {% if  data.completion_status != "Done"%}
+                {% for key, value in  data.eval_metrics.items %}
+                    <span><strong>{{key}}</strong>: {{value}}</span></br>
+                {% endfor %}
+            </td>
+            <td>
+                {% if  data.completion_status != "Completed"%}
                     <span class = "badge text-bg-warning">
                 {% else %}
                 <span class = "badge text-bg-success">
