@@ -1,13 +1,18 @@
 import json
 import os
+
 from datetime import datetime
-from utils.path_finder import PathFinder
 from enum import Enum
+
+from django.conf import settings
 
 class ModelField(str, Enum):
     ARCHITECTURE = "architecture"
     TRAIN_FILE = "train_file"
+    VALID_FILE = "valid_file"
     EVAL_FILE = "eval_file"
+    SCALE = "scale"
+    MODE = "mode"
     LEARNING_RATE = "learning_rate"
     SEED = "seed"
     BATCH_SIZE = "batch_size"
@@ -23,11 +28,12 @@ class ModelField(str, Enum):
 
 class JsonManager:
     
-    _output_file = PathFinder.get_complet_path(f"super_resolution/static/data/training_results.json")
+    _output_file = os.path.join(settings.BASE_DIR, "super_resolution", "static", "data", "training_results.json")
 
     @staticmethod
-    def training_results_to_json(architecture, model_name: str, train_file: str, eval_file: str, learning_rate: float, seed: int, batch_size: int, num_epochs: int, 
-                                num_workers: int):
+    def training_results_to_json(architecture: str, model_name: str, train_file: str, valid_file: str, eval_file: str, 
+                                mode: str, scale: int, learning_rate: float, seed: int, batch_size: int, 
+                                num_epochs: int, num_workers: int):
         """
         Save or update the training results in a JSON file using `model_name` 
         as the key.
@@ -35,7 +41,10 @@ class JsonManager:
         model_data = {
             ModelField.ARCHITECTURE: architecture,
             ModelField.TRAIN_FILE: train_file,
+            ModelField.VALID_FILE: valid_file,
             ModelField.EVAL_FILE: eval_file,
+            ModelField.SCALE: scale,
+            ModelField.MODE: mode, 
             ModelField.LEARNING_RATE: learning_rate,
             ModelField.SEED: seed,
             ModelField.BATCH_SIZE: batch_size,
@@ -50,6 +59,7 @@ class JsonManager:
         }
         
         existing_data = {}
+        
         if os.path.exists(JsonManager._output_file):
             try:
                 with open(JsonManager._output_file, "r") as f:
@@ -71,7 +81,9 @@ class JsonManager:
         existing_data[model_name] = model_data
 
         with open(JsonManager._output_file, "w") as f:
-            json.dump(existing_data, f, indent=4)
+            json.dump(existing_data, f, indent = 4)
+        
+        return model_name
     
     @staticmethod
     def load_training_results():
