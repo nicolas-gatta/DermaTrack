@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 
 """
 URL configuration for app project.
@@ -27,3 +29,6 @@ urlpatterns = [
     path("super_resolution/", include("super_resolution.urls")),
     path("administrator/", include("administrator.urls"))
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
