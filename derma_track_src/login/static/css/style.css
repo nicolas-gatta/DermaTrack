@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins');
 
-/* BASIC */
-
 body {
   font-family: "Poppins", sans-serif;
   height: 100vh;
@@ -75,10 +73,6 @@ h2.active {
   border-bottom: 2px solid #5fbae9;
 }
 
-
-
-/* FORM TYPOGRAPHY*/
-
 input[type=button], input[type=submit], input[type=reset]  {
   background-color: #56baed;
   border: none;
@@ -142,12 +136,6 @@ input[type=text]:focus, [type=password]:focus {
 input[type=text]:placeholder, input[type=password]:placeholder  {
   color: #cccccc;
 }
-
-
-
-/* ANIMATIONS */
-
-/* Simple CSS3 Fade-in-down Animation */
 .fadeInDown {
   -webkit-animation-name: fadeInDown;
   animation-name: fadeInDown;
@@ -234,7 +222,7 @@ input[type=text]:placeholder, input[type=password]:placeholder  {
   bottom: -10px;
   width: 0;
   height: 2px;
-  background-color: #56baed;
+  background-color: #6CB4EE;
   content: "";
   transition: width 0.2s;
 }
@@ -246,10 +234,6 @@ input[type=text]:placeholder, input[type=password]:placeholder  {
 .underlineHover:hover:after{
   width: 100%;
 }
-
-
-
-/* OTHERS */
 
 *:focus {
     outline: none;
