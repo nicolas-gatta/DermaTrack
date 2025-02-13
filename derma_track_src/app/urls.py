@@ -27,7 +27,8 @@ urlpatterns = [
     path("", include("login.urls")),
     path("core/", include("core.urls")),
     path("super_resolution/", include("super_resolution.urls")),
-    path("administrator/", include("administrator.urls"))
+    path("administrator/", include("administrator.urls")),
+    path('landmark/', include('landmark_detection.urls'))
 ]
 
 if settings.DEBUG:

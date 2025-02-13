@@ -5,11 +5,11 @@ import time
 
 from torch import nn
 from tqdm import tqdm
-from super_resolution.modules.SRCNN.model import SRCNN
-from super_resolution.modules.utils.dataloader import H5ImagesDataset
-from super_resolution.modules.utils.running_average import RunningAverage
-from super_resolution.modules.utils.batch_sampler import SizeBasedImageBatch
-from super_resolution.modules.utils.json_manager import JsonManager, ModelField
+from super_resolution.services.SRCNN.model import SRCNN
+from super_resolution.services.utils.dataloader import H5ImagesDataset
+from super_resolution.services.utils.running_average import RunningAverage
+from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
+from super_resolution.services.utils.json_manager import JsonManager, ModelField
 from torch.utils.data.dataloader import DataLoader
 
 def train_model(model_name, train_file, valid_file, eval_file, output_dir, mode, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):

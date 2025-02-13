@@ -4,7 +4,7 @@ import numpy as np
 import h5py
 import re
 
-from super_resolution.modules.utils.image_converter import ImageConverter, ImageColorConverter
+from super_resolution.services.utils.image_converter import ImageConverter, ImageColorConverter
 
 def _prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConverter, hi_res_images: h5py.Group, low_res_images: h5py.Group):
 

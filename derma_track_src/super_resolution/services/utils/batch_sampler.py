@@ -3,7 +3,7 @@ import random
 
 from torch.utils.data import Sampler
 
-from super_resolution.modules.utils.dataloader import H5ImagesDataset
+from super_resolution.services.utils.dataloader import H5ImagesDataset
 
 class SizeBasedImageBatch(Sampler):
     def __init__(self, dataset: H5ImagesDataset, batch_size: int, shuffle: bool = True):

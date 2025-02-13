@@ -25,8 +25,11 @@ async function loadBodyContentAdmin(button) {
     }else if (button.id === "test_model") {
         htmx.ajax("GET", "/super_resolution/test_model", "#dynamic-body");
         
-    }else if (button.id == "dataset"){
+    }else if (button.id === "dataset"){
         htmx.ajax("GET", "/super_resolution/dataset_form", "#dynamic-body");
+    }
+    else if (button.id === "video"){
+        htmx.ajax("GET", "/landmark/video_stream", "#dynamic-body");
     }
 }
 

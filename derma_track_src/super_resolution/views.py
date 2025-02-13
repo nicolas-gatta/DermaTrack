@@ -11,14 +11,14 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 
-from .modules.SRCNN import train as srcnn_train
-from .modules.ESRGAN import train as esrgan_train
-from .modules.SRGAN import train as srgan_train
-from .modules.utils.preprocessing import create_h5_image_file
+from .services.SRCNN import train as srcnn_train
+from .services.ESRGAN import train as esrgan_train
+from .services.SRGAN import train as srgan_train
+from .services.utils.preprocessing import create_h5_image_file
 from .forms.training_form import TrainingForm
-from .modules.utils.json_manager import JsonManager, ModelField
-from .modules.utils.image_converter import ImageColorConverter, ImageConverter
-from .modules.utils.dataloader import H5ImagesDataset
+from .services.utils.json_manager import JsonManager, ModelField
+from .services.utils.image_converter import ImageColorConverter, ImageConverter
+from .services.utils.dataloader import H5ImagesDataset
 
 from utils.checks import group_and_super_user_checks
 # Create your views here.

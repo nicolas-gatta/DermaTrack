@@ -4,9 +4,9 @@ import numpy as np
 import requests
 import torch
 
-from super_resolution.modules.SRCNN.model import SRCNN
-from super_resolution.modules.SRGAN.generator_model import SRGANGenerator
-from super_resolution.modules.ESRGAN.generator_model import ESRGANGenerator
+from super_resolution.services.SRCNN.model import SRCNN
+from super_resolution.services.SRGAN.generator_model import SRGANGenerator
+from super_resolution.services.ESRGAN.generator_model import ESRGANGenerator
 
 class SuperResolution:
     def __init__(self, model_path):

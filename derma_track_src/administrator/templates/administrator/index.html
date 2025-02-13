@@ -49,6 +49,12 @@
                         
                         <hr>
                         <li class="nav-item">
+                            <a id = "video" class="nav-link text-white" hx-get = "{% url 'video_stream' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
+                            Test Video
+                            </a>
+                        </li>
+                        <hr>
+                        <li class="nav-item">
                             <a id = "patient" class="nav-link text-white" hx-get = "{% url 'patient_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Patient
                             </a>

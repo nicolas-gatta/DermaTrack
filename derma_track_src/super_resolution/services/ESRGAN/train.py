@@ -4,12 +4,12 @@ import torch.backends.cudnn as cudnn
 
 from torch import nn
 from tqdm import tqdm
-from super_resolution.modules.ESRGAN.discriminator_model import ESRGANDiscriminator
-from super_resolution.modules.ESRGAN.generator_model import ESRGANGenerator
-from super_resolution.modules.ESRGAN.loss import VGGLoss
-from super_resolution.modules.utils.running_average import RunningAverage
+from super_resolution.services.ESRGAN.discriminator_model import ESRGANDiscriminator
+from super_resolution.services.ESRGAN.generator_model import ESRGANGenerator
+from super_resolution.services.ESRGAN.loss import VGGLoss
+from super_resolution.services.utils.running_average import RunningAverage
 from torch.utils.data.dataloader import DataLoader
-from super_resolution.modules.utils.dataloader import H5ImagesDataset
+from super_resolution.services.utils.dataloader import H5ImagesDataset
 
 def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
