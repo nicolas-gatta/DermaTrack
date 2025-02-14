@@ -6,9 +6,7 @@ import cv2
 # Create your views here.
 
 def video_stream(request):
-
-    if request.headers.get('HX-Request'):
-        return render(request, 'partial/video_stream.html')
+    return render(request, 'partial/video_stream.html')
     
 
     

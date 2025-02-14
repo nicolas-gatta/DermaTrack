@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "super_resolution.apps.SuperResolutionConfig",
     "core.apps.CoreConfig",
     "administrator.apps.AdministratorConfig",
+    "landmark_detection.apps.LandmarkDetectionConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
