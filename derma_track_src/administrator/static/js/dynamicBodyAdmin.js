@@ -7,28 +7,28 @@ let activeButton = null;
 
 async function loadBodyContentAdmin(button) {
 
-    if (button.id === "patient") {
+    if (button.id === "patient_button") {
         htmx.ajax("GET", "/core/patient_list", "#dynamic-body");
 
-    } else if (button.id === "visit") {
+    } else if (button.id === "visit_button") {
         htmx.ajax("GET", "/core/visit_list", "#dynamic-body");
     
-    } else if (button.id === "doctor") {
+    } else if (button.id === "doctor_button") {
         htmx.ajax("GET", "/core/doctor_list", "#dynamic-body");
 
-    } else if (button.id === "model_form") {
+    } else if (button.id === "model_form_button") {
         htmx.ajax("GET", "/super_resolution/model_form", "#dynamic-body");
     
-    }else if (button.id === "show_models") {
+    }else if (button.id === "show_models_button") {
         htmx.ajax("GET", "/super_resolution/show_models", "#dynamic-body");
     
-    }else if (button.id === "test_model") {
+    }else if (button.id === "test_model_button") {
         htmx.ajax("GET", "/super_resolution/test_model", "#dynamic-body");
         
-    }else if (button.id === "dataset"){
+    }else if (button.id === "dataset_button"){
         htmx.ajax("GET", "/super_resolution/dataset_form", "#dynamic-body");
     }
-    else if (button.id === "video"){
+    else if (button.id === "stream_button"){
         htmx.ajax("GET", "/landmark/video_stream", "#dynamic-body");
     }
 }

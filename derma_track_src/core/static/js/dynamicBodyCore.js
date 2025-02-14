@@ -7,13 +7,13 @@ let activeButton = null;
 
 async function loadBodyContentCore(button) {
 
-    if (button.id === "patient") {
+    if (button.id === "patient_button") {
         htmx.ajax("GET", "patient_list", "#dynamic-body");
 
-    } else if (button.id === "visit") {
+    } else if (button.id === "visit_button") {
         htmx.ajax("GET", "visit_list", "#dynamic-body");
     
-    } else if (button.id === "doctor") {
+    } else if (button.id === "doctor_button") {
         htmx.ajax("GET", "doctor_list", "#dynamic-body");
     }
         

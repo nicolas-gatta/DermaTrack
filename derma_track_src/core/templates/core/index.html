@@ -26,13 +26,13 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="nav navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a id="patient" class="nav-link" hx-get="{% url 'patient_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#">Patient</a>
+                            <a id="patient_button" class="nav-link" hx-get="{% url 'patient_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#">Patient</a>
                         </li>
                         <li class="nav-item">
-                            <a id="visit" class="nav-link" hx-get="{% url 'visit_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#">Visit</a>
+                            <a id="visit_button" class="nav-link" hx-get="{% url 'visit_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#">Visit</a>
                         </li>
                         <li class="nav-item">
-                            <a id="doctor" class="nav-link" hx-get="{% url 'doctor_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#">Doctor</a>
+                            <a id="doctor_button" class="nav-link" hx-get="{% url 'doctor_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#">Doctor</a>
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
