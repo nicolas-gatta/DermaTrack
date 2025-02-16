@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "core.apps.CoreConfig",
     "administrator.apps.AdministratorConfig",
     "landmark_detection.apps.LandmarkDetectionConfig",
+    "image_encryption.apps.ImageEncryptionConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
