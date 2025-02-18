@@ -2,33 +2,22 @@ name: Generate .env file
 
 on:
   workflow_dispatch:  # Allows manual triggering
-  pull_request:       # Runs when a PR is opened
-  push:               # Runs on every push
-    branches:
-      - main
 
 jobs:
   generate-env:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Create .env file
         run: |
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> derma_track_src/.env
-          echo "AES_SECRET_KEY=${{ secrets.AES_SECRET_KEY }}" >> derma_track_src/.env
-          echo "DEBUG=${{ vars.DEBUG }}" >> derma_track_src/.env
-
-      - name: Ensure .env file exists
-        run: |
-          if [ ! -f derma_track_src/.env ]; then
-            echo "No secrets found, creating empty .env file."
-            touch derma_track_src/.env
-          fi
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "AES_SECRET_KEY=${{ secrets.AES_SECRET_KEY }}" >> .env
+          echo "DEBUG=${{ vars.DEBUG }}" >> .env
 
       - name: Upload .env as artifact
         uses: actions/upload-artifact@v4
         with:
           name: env-file
-          path: derma_track_src/.env
+          path: .env
