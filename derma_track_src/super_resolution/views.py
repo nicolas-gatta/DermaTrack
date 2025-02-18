@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import torch
 
-from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse

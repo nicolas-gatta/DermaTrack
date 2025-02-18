@@ -11,8 +11,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 
 import os
+import base64
+
+#Load environnement
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,13 +27,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-6!zm+!-x!e-q6d%@wmy3n3j)0_$j7q%0^io%1!q^u(^nbd26rd"
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG')
+
+# SECURITY WARNING: NEVER WRITE THE KEY OF THE AES IN CLEAR IN THE SETTINGS FILE
+AES_SECRET_KEY = base64.b64decode(os.getenv('AES_SECRET_KEY'))
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -111,7 +118,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "fr-be"
 
 TIME_ZONE = "UTC"
 
@@ -132,7 +139,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/"
 
-# files from user
+# Default Path for the Media files
 
 MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Secret Key for the Advanced Encrypted Standard (256)
