@@ -12,9 +12,9 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          echo "AES_SECRET_KEY=${{ secrets.AES_SECRET_KEY }}" >> .env
-          echo "DEBUG=${{ vars.DEBUG }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> ${{ github.workspace }}.env
+          echo "AES_SECRET_KEY=${{ secrets.AES_SECRET_KEY }}" >> ${{ github.workspace }}.env
+          echo "DEBUG=${{ vars.DEBUG }}" >> ${{ github.workspace }}.env
 
       - name: Upload .env as artifact
         uses: actions/upload-artifact@v4
