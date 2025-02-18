@@ -7,24 +7,15 @@ jobs:
   generate-env:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
       - name: Create .env file
         run: |
-          touch .env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
           echo "AES_SECRET_KEY=${{ secrets.AES_SECRET_KEY }}" >> .env
           echo "DEBUG=${{ vars.DEBUG }}" >> .env
-
-          echo "cat .env"
-          cat .env
-
-          echo "ls -a ."
-          ls -a .
 
       - name: Upload .env as artifact
         uses: actions/upload-artifact@v4
         with:
           name: env-file
-          path: .env
+          path: ${{ github.workspace }}.env
