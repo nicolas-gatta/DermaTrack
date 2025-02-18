@@ -16,19 +16,19 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-          echo "AES_SECRET_KEY=${{ secrets.AES_SECRET_KEY }}" >> .env
-          echo "DEBUG=${{ vars.DEBUG }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> derma_track_src/.env
+          echo "AES_SECRET_KEY=${{ secrets.AES_SECRET_KEY }}" >> derma_track_src/.env
+          echo "DEBUG=${{ vars.DEBUG }}" >> derma_track_src/.env
 
       - name: Ensure .env file exists
         run: |
-          if [ ! -f .env ]; then
+          if [ ! -f derma_track_src/.env ]; then
             echo "No secrets found, creating empty .env file."
-            touch .env
+            touch derma_track_src/.env
           fi
 
       - name: Upload .env as artifact
         uses: actions/upload-artifact@v4
         with:
           name: env-file
-          path: .env
+          path: derma_track_src/.env
