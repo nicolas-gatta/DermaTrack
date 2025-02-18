@@ -56,19 +56,12 @@
 
                         <hr>
                         <li class="nav-item">
-                            <a id = "stream_button" class="nav-link text-white" hx-get = "{% url 'video_stream' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
-                            Test Streaming
-                            </a>
-                        </li>
-
-                        <hr>
-                        <li class="nav-item">
-                            <a id = "encrypt_button" class="nav-link text-white" hx-get = "{% url 'encrypt_image' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
+                            <a id = "basic_encrypt_button" class="nav-link text-white" hx-get = "{% url 'basic_encrypt' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Test Encrypt Image
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a id = "encrypt_dwt_button" class="nav-link text-white" hx-get = "{% url 'encrypt_dwt_image' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
+                            <a id = "dwt_encrypt_button" class="nav-link text-white" hx-get = "{% url 'dwt_encrypt' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
                             Test Encrypt Image + DWT
                             </a>
                         </li>

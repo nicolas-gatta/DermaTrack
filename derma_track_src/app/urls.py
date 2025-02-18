@@ -28,7 +28,8 @@ urlpatterns = [
     path("core/", include("core.urls")),
     path("super_resolution/", include("super_resolution.urls")),
     path("administrator/", include("administrator.urls")),
-    path("landmark/", include('landmark_detection.urls'))
+    path("landmark/", include('landmark_detection.urls')),
+    path("encrypt/", include('image_encryption.urls'))
 ]
 
 if settings.DEBUG:

@@ -31,6 +31,12 @@ async function loadBodyContentAdmin(button) {
     else if (button.id === "stream_button"){
         htmx.ajax("GET", "/landmark/video_stream", "#dynamic-body");
     }
+    else if (button.id === "basic_encrypt_button"){
+        htmx.ajax("GET", "/encrypt/basic_encrypt", "#dynamic-body");
+    }
+    else if (button.id === "dwt_encrypt_button"){
+        htmx.ajax("GET", "/encrypt/dwt_encrypt", "#dynamic-body");
+    }
 }
 
 function changingAdminButtonState(button) {
