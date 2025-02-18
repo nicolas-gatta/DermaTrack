@@ -1,0 +1,34 @@
+name: Generate .env file
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+  pull_request:       # Runs when a PR is opened
+  push:               # Runs on every push
+    branches:
+      - main
+
+jobs:
+  generate-env:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create .env file
+        run: |
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+          echo "AES_SECRET_KEY=${{ secrets.AES_SECRET_KEY }}" >> .env
+          echo "DEBUG=${{ vars.DEBUG }}" >> .env
+
+      - name: Ensure .env file exists
+        run: |
+          if [ ! -f .env ]; then
+            echo "No secrets found, creating empty .env file."
+            touch .env
+          fi
+
+      - name: Upload .env as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: env-file
+          path: .env
