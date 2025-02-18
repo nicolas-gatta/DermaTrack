@@ -20,4 +20,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: env-file
-          path: ${{ github.workspace }}.env
+          path: ${{ github.workspace }}/.env
