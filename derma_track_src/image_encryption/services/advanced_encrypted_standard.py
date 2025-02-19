@@ -15,32 +15,33 @@ class AES():
         pass
     
     @staticmethod
-    def encrypt_message(message):
-        iv = os.urandom(16)   # 128-bits IV -> Add randomness to your encryption
+    def encrypt_message(data: bytes) -> bytes:
+        
+        iv = os.urandom(16)  # 128-bits IV -> Add randomness to your encryption
     
         padder = padding.PKCS7(algorithms.AES.block_size).padder()
-        padded_message = padder.update(message) + padder.finalize()
+        padded_data = padder.update(data) + padder.finalize()
         
         cipher = Cipher(algorithms.AES(AES._key), modes.CBC(iv), backend=default_backend())
         encryptor = cipher.encryptor()
-        encrypted_message = encryptor.update(padded_message) + encryptor.finalize()
+        encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
         
-        return iv + encrypted_message
+        return iv + encrypted_data
         
     
     @staticmethod 
-    def decrypt_message(message):
-        iv = message[:16]
+    def decrypt_message(data: bytes) -> bytes:
+        iv = data[:16]
     
-        encrypted_text = message[16:]
+        encrypted_text = data[16:]
         
-        # Decrypt the message
+        # Decrypt the data
         cipher = Cipher(algorithms.AES(AES._key), modes.CBC(iv), backend=default_backend())
         decryptor = cipher.decryptor()
-        decrypted_padded_message = decryptor.update(encrypted_text) + decryptor.finalize()
+        decrypted_padded_data = decryptor.update(encrypted_text) + decryptor.finalize()
 
         # Remove padding
         unpadder = padding.PKCS7(algorithms.AES.block_size).unpadder()
-        return unpadder.update(decrypted_padded_message) + unpadder.finalize()
+        return unpadder.update(decrypted_padded_data) + unpadder.finalize()
     
     
