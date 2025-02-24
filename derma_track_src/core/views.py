@@ -20,6 +20,12 @@ def patient_list(request):
     if request.headers.get('HX-Request'):
         patients = Patient.objects.all() 
         return render(request, 'partial/patient_list.html', {'patients': patients})
+    
+@login_required
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def image_capture(request):
+    if request.headers.get('HX-Request'):
+        return render(request, 'partial/image_capture.html')
 
 @login_required
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")

@@ -1,18 +1,19 @@
 document.body.addEventListener('htmx:afterSwap', function (event) {
+    console.log(event);
     if (event.detail.target.id === 'pop-up') {
-        const modalElement = document.querySelector('#visitModal');
 
-        if (modalElement) {
-            if (!modalElement.dataset.modalInitialized) {
-                modalElement.dataset.modalInitialized = true;
+        modalElement = document.querySelector("#mainModal");
 
-                const modalInstance = new bootstrap.Modal(modalElement);
-                modalInstance.show();
+        let modalInstance = new bootstrap.Modal(modalElement, {
+            keyboard: false,
+            backdrop: "static"
+        });
 
-                modalElement.addEventListener('hidden.bs.modal', () => {
-                    modalElement.dataset.modalInitialized = false;
-                });
-            }
-        }
+        modalInstance.show();
     }
 });
+
+
+function clearPopUp() {
+    document.getElementById('pop-up').innerHTML = "";
+}
