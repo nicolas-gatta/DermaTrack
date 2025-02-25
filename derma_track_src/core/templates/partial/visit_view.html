@@ -1,5 +1,7 @@
 {% load static %}
 
+<script src="{% static 'js/video_capture.js' %}" defer></script>
+
 <div class="modal fade modal-xl" id="mainModal" tabindex="-1" role="dialog" >
     <div class="modal-dialog modal-dialog-centered h-75">
         <div class="modal-content h-100">
@@ -47,7 +49,7 @@
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-bs-target="#secondaryModal" data-bs-toggle="modal">Adding Picture(s)</button>
+                <button type="button" class="btn btn-success" data-bs-target="#secondaryModal" data-bs-toggle="modal" onclick="stream()">Adding Picture(s)</button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clearPopUp()">Close</button>
             </div>
         </div>
@@ -61,14 +63,49 @@
                 <h5 class="modal-title">Capture Image</h5>
             </div>
             <div class="modal-body text-center">
-                <video id="video" autoplay style="width: 100%; height: auto;"></video>
-                <canvas id="canvas" style="display: none;"></canvas>
-                <img id="captured-image" class="rounded mt-2" style="width: 100%; display: none;">
-                <button id="capture-btn" class="btn btn-primary mt-3">Capture</button>
+                <div class = "row h-75">
+                    <video id="stream" autoplay></video>
+        
+                    <button id="capture-btn" class="btn btn-primary mt-3">Capture</button>
+                </div>
+                <div class = "row h-25 carousel slide p-3" id ="medicalCarousel"> 
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="container-fluid" style="background-color: beige;">
+                                <div class="row justify-content-center">
+                                  <img class="col-sm-2" src="https://cdn.pixabay.com/photo/2022/10/07/09/06/bridge-7504605__340.jpg" alt="...">
+                                  <img class="col-sm-2" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt="">
+                                  <img class="col-sm-2" src="https://cdn.pixabay.com/photo/2021/03/04/11/37/coast-6067736__340.jpg" alt="">
+                                  <img class="col-sm-2" src="https://cdn.pixabay.com/photo/2022/10/15/06/45/danube-river-7522608__340.jpg" alt="">
+                                </div>
+                              </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="container-fluid" style="background-color: beige;">
+                                <div class="row justify-content-center">
+                                  <img class="col-sm-3" src="https://cdn.pixabay.com/photo/2022/10/07/09/06/bridge-7504605__340.jpg" alt="...">
+                                  <img class="col-sm-3" src="https://cdn.pixabay.com/photo/2022/10/15/21/23/cat-7523894__340.jpg" alt="">
+                                  <img class="col-sm-3" src="https://cdn.pixabay.com/photo/2021/03/04/11/37/coast-6067736__340.jpg" alt="">
+                                  <img class="col-sm-3" src="https://cdn.pixabay.com/photo/2022/10/15/06/45/danube-river-7522608__340.jpg" alt="">
+                                </div>
+                              </div>
+                        </div>
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#medicalCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#medicalCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                      </button>
+                </div>
+                
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" id="save-picture" style="display: none;" >Save</button>
-                <button type="button" class="btn btn-secondary" onclick="" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
+                <button type="button" class="btn btn-secondary" onclick="stopStream()" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
             </div>
         </div>
     </div>

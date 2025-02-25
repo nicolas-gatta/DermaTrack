@@ -1,5 +1,4 @@
 document.body.addEventListener('htmx:afterSwap', function (event) {
-    console.log(event);
     if (event.detail.target.id === 'pop-up') {
 
         modalElement = document.querySelector("#mainModal");
