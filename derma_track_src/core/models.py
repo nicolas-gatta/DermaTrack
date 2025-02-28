@@ -1,6 +1,5 @@
 from django.db import models
 from login.models import Doctor
-from django.contrib.auth.models import User
 
 class Status(models.TextChoices):
     SCHEDULED = 'scheduled', 'Scheduled'
