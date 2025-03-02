@@ -1,13 +1,27 @@
-function stream() {
-    const video = document.getElementById("stream");
-    video.muted = true;
-    navigator.mediaDevices.getUserMedia({video: true})
-        .then((stream) => {
-            video.srcObject = stream;
-        })
-        .catch((error) => {
-            console.log("Error accessing the camera: ", error);
-        })
+async function isCameraConnected(deviceId) {
+
+    let devices = await navigator.mediaDevices.enumerateDevices();
+
+    let cameras = devices.filter(device => device.kind === 'videoinput');
+
+    return cameras.some(camera => camera.deviceId === deviceId);
+}
+
+async function stream() {
+    let deviceId = "5D9dGdRalU765KCrHr3EhQx0W6LlRWVCzBTGmHTxR/w="
+    if (await isCameraConnected(deviceId)){
+        let video = document.getElementById("stream");
+        video.muted = true;
+        navigator.mediaDevices.getUserMedia({video: { deviceId: { exact: deviceId} }})
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((error) => {
+                console.log("Error accessing the camera: ", error);
+            })
+    }else{
+        console.error("The camera of the special device is not connected, please connect it or contact the IT if it's connected but not detected.");
+    }
 }
 
 function stopStream() {

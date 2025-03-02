@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpRequest
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 
-from models import Patient, Visit, Status
+from .models import Patient, Visit, Status
 from utils.checks import group_and_super_user_checks
 
 
