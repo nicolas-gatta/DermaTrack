@@ -72,6 +72,7 @@ def training_model(request):
                 eval_file = eval_file, 
                 output_dir = output_dir,
                 learning_rate = learning_rate, 
+                mode = mode,
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,

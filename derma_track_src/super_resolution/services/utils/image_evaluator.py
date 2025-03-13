@@ -1,40 +1,116 @@
-import numpy as np
+import lpips
 import torch
-import torch.nn.functional as F
-from skimage.metrics import peak_signal_noise_ratio as psnr, structural_similarity as ssim
-from piq import information_fidelity_criterion as ifc, normalized_quality_measure as nqm
+from pytorch_msssim import ssim, ms_ssim
 
 class ImageEvaluator:
+    
     def __init__(self):
-        self.metrics = {'PSNR': [], 'SSIM': [], 'IFC': [], 'NQM': [], 'WPSNR': [], 'MSSIM': []}
-    
-    def evaluate(self, hr, ouput):
         
-        """Evaluates the HR vs. Output images (expects PyTorch tensors)."""
-        hr = hr.squeeze(0).cpu()
-        output = output.squeeze(0).cpu().clamp(0, 1)
+        self.metrics = {'MSE': [], 'PSNR': [], 'SSIM': [], 'MSSIM': [],'LPIPS': []}
+        self.lpips_loss = lpips.LPIPS(net='alex')
         
-        self.metrics['PSNR'].append(psnr(hr.numpy(), output.numpy()))
-        self.metrics['SSIM'].append(ssim(hr.numpy(), output.numpy(), multichannel=True))
-        self.metrics['IFC'].append(ifc(hr.unsqueeze(0), output.unsqueeze(0)).item())
-        self.metrics['NQM'].append(nqm(hr.unsqueeze(0), output.unsqueeze(0)).item())
-        self.metrics['WPSNR'].append(ImageEvaluator.wpsnr(hr, output))
-        self.metrics['MSSIM'].append(ImageEvaluator.mssim(hr, output))
-        self.metrics['MSE'].append(F.mse_loss(output, hr).item())
-    
-    def compute_averages(self):
-        return {metric: np.mean(values) for metric, values in self.metrics.items()}
-    
-    @staticmethod
-    def wpsnr(original, reconstructed):
-        """Weighted Peak Signal-to-Noise Ratio (WPSNR)."""
-        weight = torch.ones_like(original)  # For simplicity, uniform weight
-        mse = torch.mean(((original - reconstructed) ** 2) * weight)
-        return 10 * torch.log10(1 / mse) if mse > 0 else float('inf')
+    def evaluate(self, hr: torch.Tensor, output: torch.Tensor) -> None:
+        """
+        Evaluation between original and generate image on multiple metrics
 
-    @staticmethod
-    def mssim(original, reconstructed):
-        """Mean Structural Similarity Index (MSSIM)."""
-        original_np = original.permute(1, 2, 0).cpu().numpy()
-        reconstructed_np = reconstructed.permute(1, 2, 0).cpu().numpy()
-        return ssim(original_np, reconstructed_np, multichannel=True, gaussian_weights=True)
+        Args:
+            hr (torch.Tensor): The original image
+            output (torch.Tensor): The generate image
+        """
+        
+        self.metrics['MSE'].append(self.__mse(hr = hr, output = output))
+        
+        self.metrics['PSNR'].append(self.__psnr())
+        
+        self.metrics['SSIM'].append(self.__ssim(hr = hr, output = output))
+        
+        self.metrics['MSSIM'].append(self.__mssim(hr = hr, output = output))
+        
+        self.metrics['LPIPS'].append(self.__lpips(hr = hr, output = output))
+    
+    def get_average_metrics(self) -> dict:
+        """
+        Returns the mean of all stored metric values.
+
+        Returns:
+            dict: Dictionary with average values of each metric.
+        """
+        return {metric: torch.tensor(values).mean().item() for metric, values in self.metrics.items()}
+    
+    def __mse(self, hr: torch.Tensor, output: torch.Tensor) -> float:
+        """
+        Computes the Mean Squared Error between two images.
+
+        Args:
+            hr (torch.Tensor): The original image
+            output (torch.Tensor): The generate image
+
+        Returns:
+            float: MSE value (from [0, inf) -> low better)
+        """
+        
+        return torch.mean((hr - output) ** 2).item()
+    
+    def __psnr(self) -> float:
+        """
+        Computes the Peak Signal-to-Noise Ratio between two images.
+
+        Returns:
+            float: PSNR value (from [0, 100] -> higher better)
+        
+        More Informations:
+            In the original formula, the numerator is suppose to be the max value of a pixel,
+            but we normalize the value so the max value is 1 instead of 255.
+        """
+        
+        mse = self.metrics['MSE'][-1]
+        
+        if (mse == 0):
+            return 100
+        
+        return (10 * torch.log10(torch.tensor(1.0) / mse)).item()
+    
+    def __ssim(self, hr: torch.Tensor, output: torch.Tensor) -> float:
+        """
+        Computes the Structural Similarity Index between two images.
+
+        Args:
+            hr (torch.Tensor): The original image
+            output (torch.Tensor): The generate image
+
+        Returns:
+            float: SSIM value (from [-1, 1] -> where 1 = identical)
+        """
+
+        return ssim(X = hr, Y = output, data_range = 1.0).item()
+        
+    
+    def __mssim(self, hr: torch.Tensor, output: torch.Tensor) -> float:
+        """
+        Computes the Mean Structural Similarity Index between two images.
+
+        Args:
+            hr (torch.Tensor): The original image
+            output (torch.Tensor): The generate image
+
+        Returns:
+            float: MSSIM value (from [-1, 1] -> higher better)
+        """
+        return ms_ssim(X = hr, Y = output, data_range = 1.0).item()
+    
+    def __lpips(self, hr: torch.Tensor, output: torch.Tensor) -> float:
+        """
+        Computes the Learned Perceptual Image Patch Similarity between two images.
+
+        Args:
+            hr (torch.Tensor): The original image
+            output (torch.Tensor): The generate image
+
+        Returns:
+            float: LPIPS value (from [0,1] -> lower better)
+            
+        More Informations:
+            We need to tell the function that we normalize our image because we have value [0,1] and lpips need value [-1,1]
+        """
+
+        return self.lpips_loss.forward(in0 = hr.cpu(), in1 = output.cpu(), normalize=True).item()

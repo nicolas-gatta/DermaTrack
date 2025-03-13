@@ -10,6 +10,7 @@ from super_resolution.services.utils.dataloader import H5ImagesDataset
 from super_resolution.services.utils.running_average import RunningAverage
 from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
+from super_resolution.services.utils.image_evaluator import ImageEvaluator
 from torch.utils.data.dataloader import DataLoader
 
 def train_model(model_name, train_file, valid_file, eval_file, output_dir, mode, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
@@ -51,6 +52,7 @@ def train_model(model_name, train_file, valid_file, eval_file, output_dir, mode,
     for epoch in range(num_epochs):
         
         train_loss.reset()
+        
         val_loss.reset()
         
         with tqdm(total = len(train_loader) + len(val_loader), desc=f"Epoch {epoch+1}/{num_epochs}", leave=True) as pbar:
@@ -91,6 +93,7 @@ def train_model(model_name, train_file, valid_file, eval_file, output_dir, mode,
                     })
                     
         epoch_train_loss.update(train_loss.average)
+        
         epoch_val_loss.update(val_loss.average)
         
         JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
@@ -108,12 +111,11 @@ def train_model(model_name, train_file, valid_file, eval_file, output_dir, mode,
                                                                              ModelField.TRAINING_LOSSES: epoch_train_loss.all_values, 
                                                                              ModelField.VALIDATION_LOSSES: epoch_val_loss.all_values})
     
-    evaluate_model(model_name = model_name, model = model, device = device, criterion = criterion, eval_file = eval_file)
+    evaluate_model(model_name = model_name, model = model, device = device, eval_file = eval_file)
     
-def evaluate_model(model_name, model, device, criterion, eval_file):
+def evaluate_model(model_name, model, device, eval_file):
     
     model.eval()
-    total_loss, total_psnr = 0.0, 0.0
     
     eval_dataset = H5ImagesDataset(eval_file)
     
@@ -121,26 +123,21 @@ def evaluate_model(model_name, model, device, criterion, eval_file):
 
     eval_loader = DataLoader(eval_dataset, batch_sampler = eval_batch, pin_memory=True)
     
-    num_batches = len(eval_loader)
-    
-    result = {}
+    evaluator = ImageEvaluator()
     
     with torch.no_grad():
-        for lr, hr in tqdm(eval_loader, desc="Evaluation", leave=False):
-            lr, hr = lr.to(device), hr.to(device)
+        with tqdm(total = len(eval_loader), desc="Evaluation", leave=True) as pbar:
+            for lr, hr in eval_loader:
+                
+                lr, hr = lr.to(device), hr.to(device)
+                
+                output = model(lr)
+                
+                evaluator.evaluate(hr = hr, output = output)
             
-            output = model(lr)
-            loss = criterion(output, hr)
+                pbar.update(1)
             
-            total_loss += loss.item()
-            
-            mse = torch.mean((output - hr) ** 2)
-            psnr = 20 * torch.log10(1.0 / torch.sqrt(mse))
-            total_psnr += psnr.item()
-    
-    result["MSE"] = (total_loss / num_batches)
-    result["PSNR"] = (total_psnr / num_batches)
         
     eval_dataset.close()
     
-    JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.EVAL_METRICS: result})
+    JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.EVAL_METRICS: evaluator.get_average_metrics()})

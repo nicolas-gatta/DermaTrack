@@ -1,5 +1,5 @@
 {
-    "Medical": {
+    "fafa": {
         "architecture": "SRCNN",
         "train_file": "BSD100_train_HR",
         "valid_file": "BSD100_val_HR",
@@ -9,38 +9,81 @@
         "learning_rate": 0.0001,
         "seed": 1,
         "batch_size": 16,
-        "num_epochs": 10,
+        "num_epochs": 1,
         "num_workers": 8,
         "validation_losses": [
-            0.1686,
-            0.0986,
-            0.0442,
-            0.0171,
-            0.0221,
-            0.0174,
-            0.012,
-            0.0107,
-            0.0091,
-            0.008
+            0.1691
         ],
         "training_losses": [
-            0.2218,
-            0.1379,
-            0.0784,
-            0.034,
-            0.0213,
-            0.0225,
-            0.017,
-            0.0149,
-            0.013,
-            0.0108
+            0.2218
         ],
-        "completion_time": 111,
+        "completion_time": 29,
         "completion_status": "Completed",
-        "timestamp": "2025-02-02 13:14:14",
+        "timestamp": "2025-03-13 16:58:05",
         "eval_metrics": {
-            "MSE": 0.011344975592302424,
-            "PSNR": 19.74351637704032
+            "MSE": 0.19423700869083405,
+            "PSNR": 7.175746440887451,
+            "SSIM": 0.2660388648509979,
+            "MSSIM": 0.46725448966026306,
+            "LPIPS": 0.8194018006324768
+        }
+    },
+    "fafa_1": {
+        "architecture": "SRCNN",
+        "train_file": "BSD100_train_HR",
+        "valid_file": "BSD100_val_HR",
+        "eval_file": "Set14",
+        "scale": 2,
+        "mode": "BGR2YCrCb",
+        "learning_rate": 0.0001,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 1,
+        "num_workers": 8,
+        "validation_losses": [
+            0.1691
+        ],
+        "training_losses": [
+            0.222
+        ],
+        "completion_time": 29,
+        "completion_status": "Completed",
+        "timestamp": "2025-03-13 16:59:21",
+        "eval_metrics": {
+            "MSE": 0.1942526251077652,
+            "PSNR": 7.175567626953125,
+            "SSIM": 0.26627060770988464,
+            "MSSIM": 0.4668867886066437,
+            "LPIPS": 0.8206117749214172
+        }
+    },
+    "fafa_2": {
+        "architecture": "SRCNN",
+        "train_file": "BSD100_train_HR",
+        "valid_file": "BSD100_val_HR",
+        "eval_file": "Set14",
+        "scale": 2,
+        "mode": "BGR2YCrCb",
+        "learning_rate": 0.0001,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 1,
+        "num_workers": 8,
+        "validation_losses": [
+            0.1692
+        ],
+        "training_losses": [
+            0.2217
+        ],
+        "completion_time": 29,
+        "completion_status": "Completed",
+        "timestamp": "2025-03-13 17:04:32",
+        "eval_metrics": {
+            "MSE": 0.19461402297019958,
+            "PSNR": 7.166767120361328,
+            "SSIM": 0.26467767357826233,
+            "MSSIM": 0.45875120162963867,
+            "LPIPS": 0.8228906393051147
         }
     }
 }
