@@ -1,5 +1,6 @@
 var imageSelector = document.getElementById("image-select");
 var scaleSelector = document.getElementById("scale-select");
+var modelSelector = document.getElementById("model-select");
 var hrCanvas = document.getElementById("hr-canvas");
 var lrCanvas = document.getElementById("lr-canvas");
 var reconstructedCanvas = document.getElementById("reconstructed-canvas");
@@ -13,7 +14,6 @@ function drawImageOnCanvas(canvas, imageUrl) {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     };
     img.src = `${imageUrl}?t=${cacheBuster}`;
-    console.log(img.src);
 }
 
 imageSelector.addEventListener("change", (event) => {
@@ -36,4 +36,29 @@ scaleSelector.addEventListener("change", (event) => {
         })
     }
 })
+
+
+modelSelector.addEventListener("change", (event) => {
+
+    if(modelSelector.value != ""){
+        fetch("/super_resolution/load_test_model/0".replace(0, event.target.value), {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            }
+        })
+    }
+})
+
+function test_model() {
+    if(modelSelector.value != ""){
+        fetch("/super_resolution/apply_test_sr/0".replace(0, imageSelector.value))
+        .then(response => response.json())
+        .then(data => {
+            drawImageOnCanvas(reconstructedCanvas, data.url);
+        })
+    }
+}
+
 
