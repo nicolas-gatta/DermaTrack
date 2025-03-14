@@ -93,8 +93,11 @@ class JsonManager:
         If the file contains multiple models, they will all be returned in the dict.
         """
         
-        with open(JsonManager._output_file, 'r') as f:
-            data = json.load(f)
+        try:
+            with open(JsonManager._output_file, 'r') as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            return None
         return data
     
     @staticmethod
