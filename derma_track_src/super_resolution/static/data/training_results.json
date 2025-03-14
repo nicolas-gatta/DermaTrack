@@ -1,5 +1,81 @@
 {
-    "fafa": {
+    "f": {
+        "architecture": "SRCNN",
+        "train_file": "BSD100_train_HR",
+        "valid_file": "BSD100_val_HR",
+        "eval_file": "Set14",
+        "scale": 2,
+        "mode": "BGR2YCrCb",
+        "learning_rate": 0.0001,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 1,
+        "num_workers": 8,
+        "validation_losses": [],
+        "training_losses": [],
+        "completion_time": 0,
+        "completion_status": "0 %",
+        "timestamp": "2025-03-14 18:14:02",
+        "eval_metrics": {}
+    },
+    "f_1": {
+        "architecture": "SRCNN",
+        "train_file": "BSD100_train_HR",
+        "valid_file": "BSD100_val_HR",
+        "eval_file": "Set14",
+        "scale": 2,
+        "mode": "BGR2YCrCb",
+        "learning_rate": 0.0001,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 1,
+        "num_workers": 8,
+        "validation_losses": [],
+        "training_losses": [],
+        "completion_time": 0,
+        "completion_status": "0 %",
+        "timestamp": "2025-03-14 18:15:11",
+        "eval_metrics": {}
+    },
+    "f_2": {
+        "architecture": "SRCNN",
+        "train_file": "BSD100_train_HR",
+        "valid_file": "BSD100_val_HR",
+        "eval_file": "Set14",
+        "scale": 2,
+        "mode": "BGR2YCrCb",
+        "learning_rate": 0.0001,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 1,
+        "num_workers": 8,
+        "validation_losses": [],
+        "training_losses": [],
+        "completion_time": 0,
+        "completion_status": "0 %",
+        "timestamp": "2025-03-14 18:16:46",
+        "eval_metrics": {}
+    },
+    "f_3": {
+        "architecture": "SRCNN",
+        "train_file": "BSD100_train_HR",
+        "valid_file": "BSD100_val_HR",
+        "eval_file": "Set14",
+        "scale": 2,
+        "mode": "BGR2YCrCb",
+        "learning_rate": 0.0001,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 1,
+        "num_workers": 8,
+        "validation_losses": [],
+        "training_losses": [],
+        "completion_time": 0,
+        "completion_status": "0 %",
+        "timestamp": "2025-03-14 18:17:27",
+        "eval_metrics": {}
+    },
+    "f_4": {
         "architecture": "SRCNN",
         "train_file": "BSD100_train_HR",
         "valid_file": "BSD100_val_HR",
@@ -12,23 +88,63 @@
         "num_epochs": 1,
         "num_workers": 8,
         "validation_losses": [
-            0.1691
+            0.1692
         ],
         "training_losses": [
-            0.2218
+            0.2214
         ],
-        "completion_time": 29,
+        "completion_time": 31,
         "completion_status": "Completed",
-        "timestamp": "2025-03-13 16:58:05",
-        "eval_metrics": {
-            "MSE": 0.19423700869083405,
-            "PSNR": 7.175746440887451,
-            "SSIM": 0.2660388648509979,
-            "MSSIM": 0.46725448966026306,
-            "LPIPS": 0.8194018006324768
-        }
+        "timestamp": "2025-03-14 19:01:12",
+        "eval_metrics": {}
     },
-    "fafa_1": {
+    "f_5": {
+        "architecture": "SRCNN",
+        "train_file": "BSD100_train_HR",
+        "valid_file": "BSD100_val_HR",
+        "eval_file": "Set14",
+        "scale": 2,
+        "mode": "BGR2YCrCb",
+        "learning_rate": 0.0001,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 1,
+        "num_workers": 8,
+        "validation_losses": [
+            0.169
+        ],
+        "training_losses": [
+            0.222
+        ],
+        "completion_time": 31,
+        "completion_status": "Completed",
+        "timestamp": "2025-03-14 19:02:25",
+        "eval_metrics": {}
+    },
+    "f_6": {
+        "architecture": "SRCNN",
+        "train_file": "BSD100_train_HR",
+        "valid_file": "BSD100_val_HR",
+        "eval_file": "Set14",
+        "scale": 2,
+        "mode": "BGR2YCrCb",
+        "learning_rate": 0.0001,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 1,
+        "num_workers": 8,
+        "validation_losses": [
+            0.1692
+        ],
+        "training_losses": [
+            0.2219
+        ],
+        "completion_time": 31,
+        "completion_status": "Completed",
+        "timestamp": "2025-03-14 19:03:27",
+        "eval_metrics": {}
+    },
+    "f_7": {
         "architecture": "SRCNN",
         "train_file": "BSD100_train_HR",
         "valid_file": "BSD100_val_HR",
@@ -46,23 +162,23 @@
         "training_losses": [
             0.222
         ],
-        "completion_time": 29,
+        "completion_time": 32,
         "completion_status": "Completed",
-        "timestamp": "2025-03-13 16:59:21",
+        "timestamp": "2025-03-14 19:07:00",
         "eval_metrics": {
-            "MSE": 0.1942526251077652,
-            "PSNR": 7.175567626953125,
-            "SSIM": 0.26627060770988464,
-            "MSSIM": 0.4668867886066437,
-            "LPIPS": 0.8206117749214172
+            "MSE": 0.1943,
+            "PSNR": 7.1737,
+            "SSIM": 0.2657,
+            "MSSIM": 0.4658,
+            "LPIPS": 0.8187
         }
     },
-    "fafa_2": {
+    "f.": {
         "architecture": "SRCNN",
         "train_file": "BSD100_train_HR",
         "valid_file": "BSD100_val_HR",
         "eval_file": "Set14",
-        "scale": 2,
+        "scale": 8,
         "mode": "BGR2YCrCb",
         "learning_rate": 0.0001,
         "seed": 1,
@@ -73,17 +189,17 @@
             0.1692
         ],
         "training_losses": [
-            0.2217
+            0.2212
         ],
-        "completion_time": 29,
+        "completion_time": 38,
         "completion_status": "Completed",
-        "timestamp": "2025-03-13 17:04:32",
+        "timestamp": "2025-03-14 21:16:00",
         "eval_metrics": {
-            "MSE": 0.19461402297019958,
-            "PSNR": 7.166767120361328,
-            "SSIM": 0.26467767357826233,
-            "MSSIM": 0.45875120162963867,
-            "LPIPS": 0.8228906393051147
+            "MSE": 0.1945,
+            "PSNR": 7.1696,
+            "SSIM": 0.2681,
+            "MSSIM": 0.4654,
+            "LPIPS": 0.8932
         }
     }
 }

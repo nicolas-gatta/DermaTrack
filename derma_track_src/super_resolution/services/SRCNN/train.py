@@ -2,6 +2,7 @@ import torch
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
 import time
+import os
 
 from torch import nn
 from tqdm import tqdm
@@ -13,7 +14,7 @@ from super_resolution.services.utils.json_manager import JsonManager, ModelField
 from super_resolution.services.utils.image_evaluator import ImageEvaluator
 from torch.utils.data.dataloader import DataLoader
 
-def train_model(model_name, train_file, valid_file, eval_file, output_dir, mode, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+def train_model(model_name, train_file, valid_file, eval_file, output_path, mode, invert_mode, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
     starting_time = time.time()
     
@@ -64,7 +65,7 @@ def train_model(model_name, train_file, valid_file, eval_file, output_dir, mode,
                 for low_res, high_res in dataloader:
                     
                     low_res, high_res = low_res.to(device, non_blocking=True), high_res.to(device, non_blocking=True)
-
+                    
                     # Forward
                     output = model(low_res)
                     
@@ -97,10 +98,10 @@ def train_model(model_name, train_file, valid_file, eval_file, output_dir, mode,
         epoch_val_loss.update(val_loss.average)
         
         JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
-                    
-    torch.save({"architecture": "SRCNN", "color_mode": mode, "model_state_dict": model.state_dict()}, output_dir)
     
-    print(f"Model saved as '{output_dir}'")
+    torch.save({"architecture": "SRCNN", "color_mode": mode, "invert_color_mode": invert_mode, "model_state_dict": model.state_dict()}, os.path.join(output_path, f"{model_name}.pth"))
+    
+    print(f"Model saved as '{output_path}'")
 
     train_dataset.close()
     

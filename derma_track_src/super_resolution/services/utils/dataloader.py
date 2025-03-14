@@ -38,7 +38,7 @@ class H5ImagesDataset(Dataset):
     def _init_h5_file(self):
         """Each worker opens its own file handle when first accessed."""
         if self.h5_file is None:
-            self.h5_file = h5py.File(self.h5_path, "r")  # Read-only mode
+            self.h5_file = h5py.File(self.h5_path, "r")
             self.lr_images = self.h5_file["low_res"]
             self.hr_images = self.h5_file["hi_res"]
 

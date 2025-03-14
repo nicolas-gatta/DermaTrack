@@ -1,7 +1,6 @@
 import os
 import cv2
-import numpy as np
-import torch
+import re
 
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
@@ -15,24 +14,31 @@ from .services.ESRGAN import train as esrgan_train
 from .services.SRGAN import train as srgan_train
 from .services.utils.preprocessing import create_h5_image_file
 from .forms.training_form import TrainingForm
-from .services.utils.json_manager import JsonManager, ModelField
-from .services.utils.image_converter import ImageColorConverter, ImageConverter
-from .services.utils.dataloader import H5ImagesDataset
+from .services.utils.json_manager import JsonManager
+from .services.utils.image_converter import ImageColorConverter
+from .services.utils.super_resolution import SuperResolution
+from utils.unique_filename import get_unique_filename
 
 from utils.checks import group_and_super_user_checks
-# Create your views here.
+
+_model = None
+__test_model = None
 
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def training_model(request):
     
-    model_name = request.POST['name']
+    output_path = os.path.join(settings.BASE_DIR, "super_resolution","models")
+    
+    model_name = get_unique_filename(model_name = request.POST['name'], output_path = output_path)
     
     architecture = request.POST["architecture"]
     
     scale = int(request.POST["scale"])
     
     mode = request.POST["mode"]
+    
+    invert_mode = re.sub(r"^(.*)2(.*)$", r"\2here\1", mode).replace("here","2")
     
     learning_rate = float(request.POST["learning-rate"])
     
@@ -50,7 +56,7 @@ def training_model(request):
     
     eval_dataset = request.POST["eval-dataset"]
     
-    output_dir = os.path.join(settings.BASE_DIR, "super_resolution","models", f"{model_name}_{learning_rate}_{batch_size}_{num_epochs}_x{scale}.pth")
+
     
     train_file, valid_file, eval_file = [_dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category) 
                                          for dataset, category in [(train_dataset, "training"), 
@@ -70,9 +76,10 @@ def training_model(request):
                 train_file = train_file, 
                 valid_file = valid_file,
                 eval_file = eval_file, 
-                output_dir = output_dir,
+                output_path = output_path,
                 learning_rate = learning_rate, 
                 mode = mode,
+                invert_mode = invert_mode,
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
@@ -83,7 +90,7 @@ def training_model(request):
                 train_file = train_file, 
                 valid_file = valid_file,
                 eval_file = eval_file, 
-                output_dir = output_dir,
+                output_path = output_path,
                 learning_rate = learning_rate, 
                 seed = seed, 
                 batch_size = batch_size,
@@ -95,7 +102,7 @@ def training_model(request):
                 train_file = train_file, 
                 valid_file = valid_file,
                 eval_file = eval_file, 
-                output_dir = output_dir,
+                output_path = output_path,
                 learning_rate = learning_rate, 
                 seed = seed, 
                 batch_size = batch_size,
@@ -131,6 +138,28 @@ def model_form(request):
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/model_form.html', {"form": None})
+    
+@login_required
+@group_and_super_user_checks(group_names=[""], redirect_url="/")
+def load_test_model(request, model_name):
+    global __test_model
+    if model_name != "":
+        model_path = os.path.join(settings.BASE_DIR, "super_resolution", "models", f"{model_name}")
+        __test_model = SuperResolution(model_path = model_path)
+        
+        return HttpResponse("Model Loaded")
+
+@login_required
+@group_and_super_user_checks(group_names=[""], redirect_url="/")
+def apply_test_sr(request, image_name):
+    global __test_model
+    if (__test_model != None and image_name != ""):
+        output_path = os.path.join(settings.MEDIA_ROOT, "output_test")
+        image_path = os.path.join(settings.MEDIA_ROOT, "test", image_name)
+        filename = "super_resolution_image.png"
+        __test_model.apply_super_resolution(image_path = image_path, output_path = output_path, filename = filename)
+    
+        return JsonResponse({'url': os.path.join(settings.MEDIA_URL, "output_test", filename)})
 
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
@@ -170,7 +199,7 @@ def get_datasets(request, category):
 
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
-def get_test_images(request):
+def get_all_test_images(request):
     
     base_path = os.path.join(settings.MEDIA_ROOT, "test")
     
@@ -180,6 +209,15 @@ def get_test_images(request):
         images = []
     
     return JsonResponse({'images': images})
+
+
+@login_required
+@group_and_super_user_checks(group_names=[""], redirect_url="/")
+def get_test_image(request, name):
+    
+    base_path = os.path.join(settings.MEDIA_URL, "test", name)
+    
+    return JsonResponse({'url': base_path})
 
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
@@ -201,14 +239,6 @@ def degrade_and_save_image(request, name, scale):
 
 @login_required
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
-def get_test_image(request, name):
-    
-    base_path = os.path.join(settings.MEDIA_URL, "test", name)
-    
-    return JsonResponse({'url': base_path})
-
-@login_required
-@group_and_super_user_checks(group_names=[""], redirect_url="/")
 def get_models(request):
     base_path = os.path.join(settings.BASE_DIR, "super_resolution", "models")
     try:
@@ -217,23 +247,3 @@ def get_models(request):
         models = []
     
     return JsonResponse({'models': models})
-
-
-def test_2(request):
-    JsonManager.training_results_to_json(architecture="SRCNN", model_name="Hello", train_file="blablabla", eval_file="blueblueblue", learning_rate=1e-10, seed=1, batch_size=16, num_epochs=100, num_workers=8)
-    JsonManager.training_results_to_json(architecture="SRGAN", model_name="Hello", train_file="blablabla", eval_file="blueblueblue", learning_rate=1e-10, seed=1, batch_size=16, num_epochs=100, num_workers=8)
-    JsonManager.training_results_to_json(architecture="ESRGAN", model_name="Hello", train_file="blablabla", eval_file="blueblueblue", learning_rate=1e-10, seed=1, batch_size=16, num_epochs=100, num_workers=8)
-    return redirect("/")
-
-def test_3(request):
-    
-    return redirect("/")
-
-def test_4(request):
-        
-    return redirect("/")
-
-def test(request):
-
-    return redirect("/")
-
