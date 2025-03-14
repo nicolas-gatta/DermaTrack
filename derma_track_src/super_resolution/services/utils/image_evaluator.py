@@ -1,12 +1,14 @@
 import lpips
 import torch
+
 from pytorch_msssim import ssim, ms_ssim
+from super_resolution.services.utils.running_average import RunningAverage
 
 class ImageEvaluator:
     
     def __init__(self):
         
-        self.metrics = {'MSE': [], 'PSNR': [], 'SSIM': [], 'MSSIM': [],'LPIPS': []}
+        self.metrics = {'MSE': RunningAverage(), 'PSNR': RunningAverage(), 'SSIM': RunningAverage(), 'MSSIM': RunningAverage(),'LPIPS': RunningAverage()}
         self.lpips_loss = lpips.LPIPS(net='alex')
         
     def evaluate(self, hr: torch.Tensor, output: torch.Tensor) -> None:
@@ -18,24 +20,25 @@ class ImageEvaluator:
             output (torch.Tensor): The generate image
         """
         
-        self.metrics['MSE'].append(self.__mse(hr = hr, output = output))
+        self.metrics['MSE'].update(value = self.__mse(hr = hr, output = output))
         
-        self.metrics['PSNR'].append(self.__psnr())
+        self.metrics['PSNR'].update(value = self.__psnr())
         
-        self.metrics['SSIM'].append(self.__ssim(hr = hr, output = output))
+        self.metrics['SSIM'].update(value = self.__ssim(hr = hr, output = output))
         
-        self.metrics['MSSIM'].append(self.__mssim(hr = hr, output = output))
+        self.metrics['MSSIM'].update(value = self.__mssim(hr = hr, output = output))
         
-        self.metrics['LPIPS'].append(self.__lpips(hr = hr, output = output))
+        self.metrics['LPIPS'].update(value = self.__lpips(hr = hr, output = output))
     
     def get_average_metrics(self) -> dict:
+        
         """
         Returns the mean of all stored metric values.
 
         Returns:
             dict: Dictionary with average values of each metric.
         """
-        return {metric: torch.tensor(values).mean().item() for metric, values in self.metrics.items()}
+        return {metric: values.average for metric, values in self.metrics.items()}
     
     def __mse(self, hr: torch.Tensor, output: torch.Tensor) -> float:
         """
@@ -63,7 +66,7 @@ class ImageEvaluator:
             but we normalize the value so the max value is 1 instead of 255.
         """
         
-        mse = self.metrics['MSE'][-1]
+        mse = self.metrics['MSE'].all_values[-1]
         
         if (mse == 0):
             return 100
