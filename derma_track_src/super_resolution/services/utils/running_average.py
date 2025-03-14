@@ -10,7 +10,7 @@ class RunningAverage:
         """
         self.total += value
         self.count += 1
-        self.values.append(round(value, 4))
+        self.values.append(value)
         
     def reset(self):
         """
@@ -26,7 +26,7 @@ class RunningAverage:
         """
         if self.count == 0.0:
             return 0.0 
-        return self.total / self.count
+        return round((self.total / self.count), 4)
     
     @property
     def all_values(self) -> list:
