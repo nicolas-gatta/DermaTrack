@@ -116,7 +116,7 @@ def training_model(request):
 
 def _dataset_exist_or_create(dataset, mode, scale, category):
     
-    output_path = os.path.join(settings.BASE_DIR, "super_resolution", "datasets", f"{category}/{dataset}_{mode}_x{scale}.hdf5")
+    output_path = os.path.join(settings.BASE_DIR, "super_resolution", "datasets", category, f"{dataset}_{mode}_x{scale}.hdf5")
     
     if not os.path.exists(output_path):
         create_h5_image_file(input_path = os.path.join(settings.BASE_DIR, "super_resolution", "base_datasets", category, dataset),
