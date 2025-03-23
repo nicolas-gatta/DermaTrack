@@ -144,5 +144,3 @@ LOGIN_URL = "/"
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Secret Key for the Advanced Encrypted Standard (256)
