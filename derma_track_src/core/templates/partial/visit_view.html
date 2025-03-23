@@ -9,18 +9,18 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="visitModalLabel">Appointment Details</h5>
             </div>
-            <div class="modal-body">
+            <div class="modal-body h-75">
                 <div class="row p-3 border rounded">
                     <div id="profile-info" class="col-md-3 col-lg-3 p-3">
                         <div class="text-center">
                             <img src="https://placehold.co/600x400" alt="Profile Picture"
                                 class="rounded-circle mb-3"
                                 style="width: 6rem; height: 6rem; object-fit: cover;">
-                            <h5>John Doe</h5>
-                            <p><strong>Date of Birth:</strong> 01/01/1990</p>
-                            <p><strong>Address:</strong> 123 Main St, Cityville</p>
-                            <p><strong>Email:</strong> john.doe@example.com</p>
-                            <p><strong>Phone:</strong> +123 456 789</p>
+                            <h5>{{ visit.patient.full_name }}</h5>
+                            <p><strong>National Number: </strong> {{ visit.patient.national_number }}</p>
+                            <p><strong>Date of Birth:</strong> {{ visit.patient.date_of_birth }}</p>
+                            <p><strong>Address:</strong> {{ visit.patient.full_adress }}</p>
+                            <p><strong>Phone:</strong> {{ visit.patient.phone_number }}</p>
                         </div>
                     </div>
 
@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <div class="modal-footer">
+            <div class="modal-footer ">
                 <button type="button" class="btn btn-success" data-bs-target="#secondaryModal" data-bs-toggle="modal" onclick="stream()">Adding Picture(s)</button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clearPopUp()">Close</button>
             </div>
@@ -85,8 +85,8 @@
                 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" id="save-picture" style="display: none;" >Save</button>
-                <button type="button" class="btn btn-secondary" onclick="stopStream()" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
+                <button type="button" class="btn btn-success" id="save-picture" onclick = "saveImagesToServer({{ visit.id }})">Save all pictures</button>
+                <button type="button" class="btn btn-danger" onclick="stopStream()" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
             </div>
         </div>
     </div>

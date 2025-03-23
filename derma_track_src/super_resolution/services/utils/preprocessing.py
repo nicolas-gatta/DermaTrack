@@ -20,6 +20,7 @@ def _prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConve
             hr = ImageConverter.convert_image(hr, mode)
             
             lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
+            
             lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation = cv2.INTER_CUBIC)
             
             low_image = low_res_images.create_dataset(f"image_{count}", data = np.array(lr), dtype= np.uint8)

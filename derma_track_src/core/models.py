@@ -27,6 +27,9 @@ class Patient(models.Model):
     def full_name(self):
         return self.name + " " + self.surname
     
+    def full_adress(self):
+        return self.street + " " + str(self.number) + ", " + self.city + " (" + str(self.zip_code) + ")"
+    
 class Visit(models.Model):
     date = models.DateTimeField()
     note = models.TextField(blank = True)

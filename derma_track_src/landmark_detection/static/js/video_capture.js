@@ -102,6 +102,38 @@ function saveImageToCache(imageUrl) {
     updateCarousel(storedImages);
 }
 
+function saveImagesToServer(visitId) {
+    const storedImages = JSON.parse(localStorage.getItem("capturedImages"));
+
+    if (!storedImages || storedImages.length === 0) {
+        alert("No images to save!");
+        return;
+    }
+
+    storedImages.forEach(async (imageUrl, index) => {
+        try {
+            fetch(`/landmark/save_images/${visitId}/`, {
+                method: "POST",
+                headers: { 
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ image: imageUrl })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'error') {
+                    console.error(`Failed to save image ${index + 1}: ${data.message}`);
+                }
+            })
+
+        } catch (error) {
+            console.error(`Error saving image ${index + 1}:`, error);
+        }
+    });
+
+    alert('Image saving process initiated. Check console for details.');
+}
+
 function updateCarousel(images) {
     let carouselInner = document.querySelector("#medicalCarousel .carousel-inner");
     carouselInner.innerHTML = ""; 

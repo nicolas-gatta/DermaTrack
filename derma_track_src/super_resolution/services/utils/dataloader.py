@@ -8,7 +8,7 @@ class H5ImagesDataset(Dataset):
         self.h5_path = h5_path
         self.h5_file, self.lr_images, self.hr_images = None, None, None
         with h5py.File(self.h5_path, "r") as f:
-            self.keys = list(f["low_res"].keys())  # Store keys safely
+            self.keys = list(f["low_res"].keys())
             
     def __len__(self):
         return len(self.keys)
