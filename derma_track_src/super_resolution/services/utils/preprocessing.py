@@ -7,8 +7,6 @@ import re
 from super_resolution.services.utils.image_converter import ImageConverter, ImageColorConverter
 
 def _prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConverter, hi_res_images: h5py.Group, low_res_images: h5py.Group):
-
-    invert_mode = re.sub(r"^(.*)2(.*)$", r"\2here\1", mode.name).replace("here","2")
     
     for count, file in enumerate(os.listdir(image_folder), start = 1):
         if file.endswith(('.png', '.jpg', '.jpeg')):
@@ -29,13 +27,10 @@ def _prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConve
             
             low_image.attrs["file"], hi_image.attrs["file"] = file, file
             
-            low_image.attrs["mode"], hi_image.attrs["mode"] = mode.name, mode.name
-            
-            low_image.attrs["invert_mode"], hi_image.attrs["invert_mode"] = invert_mode, invert_mode
-            
             
 def create_h5_image_file(input_path, scale, output_path, mode):
     
+    print(f"Creating H5 file for the {input_path} dataset")
     with h5py.File(output_path, 'w') as h5_file:
         
         hi_res_images = h5_file.create_group('hi_res')
