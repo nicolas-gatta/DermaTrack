@@ -12,9 +12,13 @@ from super_resolution.services.utils.running_average import RunningAverage
 from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
 from super_resolution.services.utils.image_evaluator import ImageEvaluator
+from super_resolution.services.utils.early_stopping import EarlyStopping
+
 from torch.utils.data.dataloader import DataLoader
 
 def train_model(model_name, train_file, valid_file, eval_file, output_path, mode, invert_mode, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+    
+    early_stopping = EarlyStopping(patience = 10, delta = 1e-4, verbose = False)
     
     starting_time = time.time()
     
@@ -30,8 +34,8 @@ def train_model(model_name, train_file, valid_file, eval_file, output_path, mode
     train_dataset = H5ImagesDataset(train_file)
     val_dataset = H5ImagesDataset(valid_file)
     
-    train_batch = SizeBasedImageBatch(dataset = train_dataset, batch_size = batch_size)
-    val_batch = SizeBasedImageBatch(dataset = val_dataset, batch_size = batch_size, shuffle = False)
+    train_batch = SizeBasedImageBatch(image_sizes = train_dataset.image_sizes, batch_size = batch_size)
+    val_batch = SizeBasedImageBatch(image_sizes = val_dataset.image_sizes, batch_size = batch_size, shuffle = False)
 
     train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory=True)
     val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory=True)
@@ -92,13 +96,21 @@ def train_model(model_name, train_file, valid_file, eval_file, output_path, mode
                         "Train Loss": f"{train_loss.average:.4f}" if train_loss.average > 0 else "N/A",
                         "Val Loss": f"{val_loss.average:.4f}" if val_loss.average > 0 else "N/A",
                     })
+        
+        early_stopping(val_loss = val_loss.average)
                     
         epoch_train_loss.update(train_loss.average)
         
         epoch_val_loss.update(val_loss.average)
         
-        JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
-    
+        if early_stopping.early_stop:
+            print(f"Early stopping triggered: No improvement observed for {early_stopping.patience} consecutive epochs.")
+            JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.NUM_EPOCHS: epoch + 1})
+            break
+        else:
+            JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
+
+        
     torch.save({"architecture": "SRCNN", "color_mode": mode, "invert_color_mode": invert_mode, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
     
     print(f"Model saved as '{output_path}'")
@@ -120,7 +132,7 @@ def evaluate_model(model_name, model, device, eval_file):
     
     eval_dataset = H5ImagesDataset(eval_file)
     
-    eval_batch = SizeBasedImageBatch(dataset = eval_dataset, batch_size = 1, shuffle = False)
+    eval_batch = SizeBasedImageBatch(image_sizes = eval_dataset.image_sizes, batch_size = 1, shuffle = False)
 
     eval_loader = DataLoader(eval_dataset, batch_sampler = eval_batch, pin_memory=True)
     
@@ -138,7 +150,6 @@ def evaluate_model(model_name, model, device, eval_file):
             
                 pbar.update(1)
             
-        
     eval_dataset.close()
     
     JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.EVAL_METRICS: evaluator.get_average_metrics()})
