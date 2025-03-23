@@ -26,5 +26,5 @@ def get_unique_filename(model_name, output_path):
         
         base_name = new_name
 
-    return f"{base_name}.{ext}"
+    return f"{base_name}{ext}"
     
