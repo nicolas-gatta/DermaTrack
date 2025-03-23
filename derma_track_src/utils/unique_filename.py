@@ -6,7 +6,7 @@ def get_unique_filename(model_name, output_path):
 
     Args:
         model_name (str): The original filename.
-        output_path (set): The patht to the folder we want to save our file.
+        output_path (str): The patht to the folder we want to save our file.
 
     Returns:
         str: A unique filename without an extension.

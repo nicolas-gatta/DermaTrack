@@ -30,7 +30,7 @@ def training_model(request):
     
     output_path = os.path.join(settings.BASE_DIR, "super_resolution","models")
     
-    model_name = get_unique_filename(model_name = request.POST['name'], output_path = output_path)
+    model_name = get_unique_filename(model_name = f"{request.POST['name']}.pth", output_path = output_path)
     
     architecture = request.POST["architecture"]
     

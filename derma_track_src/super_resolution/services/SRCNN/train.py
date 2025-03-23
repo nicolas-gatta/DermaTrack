@@ -99,7 +99,7 @@ def train_model(model_name, train_file, valid_file, eval_file, output_path, mode
         
         JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
     
-    torch.save({"architecture": "SRCNN", "color_mode": mode, "invert_color_mode": invert_mode, "model_state_dict": model.state_dict()}, os.path.join(output_path, f"{model_name}.pth"))
+    torch.save({"architecture": "SRCNN", "color_mode": mode, "invert_color_mode": invert_mode, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
     
     print(f"Model saved as '{output_path}'")
 
