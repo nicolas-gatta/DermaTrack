@@ -14,20 +14,14 @@ class SuperResolution:
         if not os.path.exists(model_path):
             raise FileNotFoundError(f"Model file not found: {model_path}")
         
-        self.mode, self.invert_mode = None, None
-        
-        self.model = self.__load_model(model_path)
+        self.model, self.mode, self.invert_mode = self.__load_model(model_path)
         
         self.model.eval()
         
     
     def __load_model(self, model_path):
 
-        model_info = torch.load(model_path)
-        
-        self.mode = model_info["color_mode"]
-        
-        self.invert_mode = model_info["invert_color_mode"]
+        model_info = torch.load(model_path, weights_only=True)
         
         model = None
         
@@ -47,7 +41,7 @@ class SuperResolution:
 
         model.load_state_dict(model_info['model_state_dict'])
         
-        return model 
+        return model, model_info["color_mode"], model_info["invert_color_mode"]
 
     
     def apply_super_resolution(self, image_path, output_path, filename):
@@ -95,14 +89,14 @@ class SuperResolution:
         
         return image
     
-    def __preprocess_image(self, image) -> torch.Tensor:
+    def __preprocess_image(self, image: np.ndarray) -> torch.Tensor:
         convert_image = ImageConverter.convert_image(image, ImageColorConverter[self.mode])
         tensor_image = torch.from_numpy(convert_image).permute(2, 0, 1).float() / 255
         return tensor_image.unsqueeze(0)
     
     def __postprocess_image(self, sr_image: torch.Tensor) -> np.ndarray:
         tensor_image = sr_image.squeeze(0).permute(1, 2, 0) * 255
-        numpy_image = tensor_image.cpu().numpy()
+        numpy_image = tensor_image.cpu().detach().numpy().astype(np.uint8)
         convert_image = ImageConverter.convert_image(numpy_image, ImageColorConverter[self.invert_mode])
         return convert_image
     
