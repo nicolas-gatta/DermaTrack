@@ -9,7 +9,7 @@ class ImageEvaluator:
     def __init__(self):
         
         self.metrics = {'MSE': RunningAverage(), 'PSNR': RunningAverage(), 'SSIM': RunningAverage(), 'MSSIM': RunningAverage(),'LPIPS': RunningAverage()}
-        self.lpips_loss = lpips.LPIPS(net='alex')
+        self.lpips_loss = lpips.LPIPS(net = 'alex', verbose = False)
         
     def evaluate(self, hr: torch.Tensor, output: torch.Tensor) -> None:
         """
