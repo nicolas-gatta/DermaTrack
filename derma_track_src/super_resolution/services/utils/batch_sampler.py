@@ -1,4 +1,5 @@
 import random
+from tqdm import tqdm
 
 from torch.utils.data import Sampler
 
@@ -15,7 +16,7 @@ class SizeBasedImageBatch(Sampler):
         batches = []
         current_batch = []
         current_size = None
-        for h, w, index in image_sizes:
+        for h, w, index in tqdm(image_sizes, desc="Creating Batch"):
             
             image_size = (h, w)
             
