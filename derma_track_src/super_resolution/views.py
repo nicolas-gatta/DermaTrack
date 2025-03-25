@@ -155,7 +155,7 @@ def apply_test_sr(request, image_name):
     global __test_model
     if (__test_model != None and image_name != ""):
         output_path = os.path.join(settings.MEDIA_ROOT, "output_test")
-        image_path = os.path.join(settings.MEDIA_ROOT, "test", image_name)
+        image_path = os.path.join(output_path, "degraded_image.png")
         filename = "super_resolution_image.png"
         __test_model.apply_super_resolution(image_path = image_path, output_path = output_path, filename = filename)
     
