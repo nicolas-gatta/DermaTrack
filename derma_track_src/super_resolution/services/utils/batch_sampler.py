@@ -4,6 +4,7 @@ from tqdm import tqdm
 from torch.utils.data import Sampler
 
 class SizeBasedImageBatch(Sampler):
+    
     def __init__(self, image_sizes: list, batch_size: int, shuffle: bool = True):
         
         self.batch_size = batch_size

@@ -15,8 +15,8 @@ class H5ImagesDataset(Dataset):
         sizes = []
         for i in range(len(self.__hr_images)):
             shape = self.__hr_images[f'image_{i+1}'].shape
-            sizes.append((shape[0], shape[1], i))
-        sizes.sort(key=lambda x: (x[0], x[1]))
+            sizes.append((shape[1], shape[2], i))
+        sizes.sort(key=lambda x: (x[1], x[2]))
         return sizes
 
     @property
@@ -39,13 +39,12 @@ class H5ImagesDataset(Dataset):
         self.__init_h5_file()
         return len(self.__hr_images)
     
-    # Here we permute because the Pytorch convolutionnal layer accept only Channels X Height X Width and Open CV return it as
-    # Height X Width X Channels
+
     def __getitem__(self, index):
         self.__init_h5_file()
         try:
-            lr = torch.from_numpy(self.__lr_images[f"image_{index + 1}"][:]).permute(2, 0, 1).float() / 255
-            hr = torch.from_numpy(self.__hr_images[f"image_{index + 1}"][:]).permute(2, 0, 1).float() / 255
+            lr = torch.from_numpy(self.__lr_images[f"image_{index + 1}"][:])
+            hr = torch.from_numpy(self.__hr_images[f"image_{index + 1}"][:])
             return lr, hr
         
         except KeyError:

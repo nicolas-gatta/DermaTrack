@@ -22,9 +22,15 @@ def _prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConve
         
         lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation = cv2.INTER_CUBIC)
         
-        low_image = low_res_images.create_dataset(f"image_{count}", data = np.array(lr), dtype= np.uint8)
+        # Here we permute because the Pytorch convolutionnal layer accept only Channels X Height X Width and Open CV return it as
+        # Height X Width X Channels
+        lr = np.transpose(lr, (2, 0, 1)).astype(np.float32) / 255.0
+
+        hr = np.transpose(hr, (2, 0, 1)).astype(np.float32) / 255.0
         
-        hi_image = hi_res_images.create_dataset(f"image_{count}", data = np.array(hr), dtype= np.uint8)
+        low_image = low_res_images.create_dataset(f"image_{count}", data = np.array(lr), dtype = np.float32)
+        
+        hi_image = hi_res_images.create_dataset(f"image_{count}", data = np.array(hr), dtype = np.float32)
         
         low_image.attrs["file"], hi_image.attrs["file"] = file, file
             
