@@ -1,6 +1,8 @@
 {% load static %}
 
 <script src="{% static 'js/loadAllSelectDataset.js' %}" defer></script>
+<script src="{% static 'js/imageOption.js' %}" defer></script>
+<link href="{% static 'css/model_form.css' %}" rel="stylesheet" type="text/css">
 
 <div class="container mt-5 bg-light p-3">
   <h2 class="text-center mb-4">Model Configuration Form</h2>
@@ -49,6 +51,59 @@
               <option value="BGR2YCrCb">Gray</option>
               <option value="BGR2RGB">Color</option>
           </select>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-6 ">
+          <label class="form-label">Feeling Fancy and want to use some options ? <a href="#" onclick="resetOption()">(reset)</a></label>
+          <div class="radio-inputs d-flex justify-content-center align-items-center user-select-none">
+              <label class = "m-3">
+                <input class="radio-input" type="radio" name="image-option" id="resize-radio" value="resize">
+                  <span class="radio-tile d-flex flex-column justify-content-center align-items-center text-center">
+                    <span class="radio-icon">
+                      <img src="{%static 'images/resize.svg' %}" alt="">
+                    </span>
+                    <span class="radio-label">Same Size</span>
+                  </span>
+              </label>
+              <label class = "m-3">
+                <input class="radio-input d-flex justify-content-center align-items-center" type="radio" name="image-option" id="subdivise-radio" value="subdivise">
+                <span class="radio-tile d-flex flex-column justify-content-center align-items-center text-center">
+                  <span class="radio-icon">
+                    <img src="{%static 'images/divided.svg' %}" alt="">
+                  </span>
+                  <span class="radio-label">Subdivise</span>
+                </span>
+              </label>
+          </div>
+        </div>
+        <div class="col-md-6 d-flex flex-column justify-content-start align-items-center" id="optionContainer">
+        
+          <div id="subdiviseOptions" class="d-none w-100 px-3">
+            <label for="patch-size" class="form-label">Select Patch size</label>
+            <select class="form-select" id="patch-size-select" name = "patch-size">
+              <option value="32">32x32</option>
+              <option value="64">64x64</option>
+              <option value="128">128x128</option>
+              <option value="256">256x256</option>
+              <option value="512">512x512</option>
+              <option value="1024">1024x1024</option>
+            </select>
+            <label for="overlaying" class="form-label">Select Overlaying pourcentage</label>
+            <div class="input-group">
+              <input type="number" min="0" max="100" class="form-control" id="overlaying-select" name = "overlaying" placeholder="Pourcentage here">
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+        
+          <div id="resizeOptions" class="d-none w-100 px-3">
+            <label for="resize-rule" class="form-label">Resize Strategy</label>
+            <input type="range" class="form-range" min="0" max="1" step="1" id="resize-rule-input" name = "resize-rule">
+            <div class="d-flex justify-content-between">
+              <span>Crop to Smallest</span>
+              <span>Pad to Largest</span>
+            </div>
+          </div>
         </div>
       </div>
     </fieldset>
