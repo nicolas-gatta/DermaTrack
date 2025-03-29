@@ -3,6 +3,7 @@ import os
 
 from datetime import datetime
 from enum import Enum
+from super_resolution.services.utils.preprocessing import ResizeRule
 
 from django.conf import settings
 
@@ -24,6 +25,10 @@ class ModelField(str, Enum):
     COMPLETION_STATUS = "completion_status"
     TIMESTAMP = "timestamp"
     EVAL_METRICS = "eval_metrics"
+    STRIDE = "stride"
+    PATCH_SIZE = "patch_size"
+    RESIZE_RULE = "resize_rule"
+    
 
 
 class JsonManager:
@@ -31,7 +36,7 @@ class JsonManager:
     _output_file = os.path.join(settings.BASE_DIR, "super_resolution", "static", "data", "training_results.json")
 
     @staticmethod
-    def training_results_to_json(architecture: str, model_name: str, train_file: str, valid_file: str, eval_file: str, 
+    def training_results_to_json(architecture: str, stride: int, patch_size: int, resize_rule: ResizeRule, model_name: str, train_file: str, valid_file: str, eval_file: str, 
                                 mode: str, scale: int, learning_rate: float, seed: int, batch_size: int, 
                                 num_epochs: int, num_workers: int):
         """
@@ -40,6 +45,9 @@ class JsonManager:
         """
         model_data = {
             ModelField.ARCHITECTURE: architecture,
+            ModelField.STRIDE: stride, 
+            ModelField.PATCH_SIZE: patch_size,
+            ModelField.RESIZE_RULE: resize_rule,
             ModelField.TRAIN_FILE: train_file,
             ModelField.VALID_FILE: valid_file,
             ModelField.EVAL_FILE: eval_file,

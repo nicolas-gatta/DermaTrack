@@ -9,14 +9,13 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 
-from .services.SRCNN import train as srcnn_train
-from .services.ESRGAN import train as esrgan_train
-from .services.SRGAN import train as srgan_train
-from .services.utils.preprocessing import create_h5_image_file
-from .forms.training_form import TrainingForm
-from .services.utils.json_manager import JsonManager
-from .services.utils.image_converter import ImageColorConverter
-from .services.utils.super_resolution import SuperResolution
+from super_resolution.services.SRCNN import train as srcnn_train
+from super_resolution.services.ESRGAN import train as esrgan_train
+from super_resolution.services.SRGAN import train as srgan_train
+from super_resolution.services.utils.preprocessing import create_h5_image_file, ResizeRule
+from super_resolution.services.utils.json_manager import JsonManager
+from super_resolution.services.utils.image_converter import ImageColorConverter
+from super_resolution.services.utils.super_resolution import SuperResolution
 from utils.unique_filename import get_unique_filename
 
 from utils.checks import group_and_super_user_checks
@@ -56,17 +55,32 @@ def training_model(request):
     
     eval_dataset = request.POST["eval-dataset"]
     
+    resize_rule = None
+    
+    patch_size = None
+    
+    stride = None
+    
+    if(request.POST["image-option"] == "resize"):
+        resize_rule = ResizeRule.BIGGEST if int(request.POST["resize-rule"]) == 1 else ResizeRule.SMALLEST 
+        
+    elif(request.POST["image-option"] == "subdivise"):
+        patch_size = int(request.POST["patch-size"])
+        stride = int(patch_size * (float(request.POST["overlaying"]) / 100.0))
+    
 
     
-    train_file, valid_file, eval_file = [_dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category) 
+    train_file, valid_file, eval_file = [_dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
+                                                                  patch_size = patch_size, stride = stride, resize_rule = resize_rule) 
                                          for dataset, category in [(train_dataset, "training"), 
                                                                    (valid_dataset, "validation"), 
                                                                    (eval_dataset, "evaluation")] 
                                          ]
     
-    model_name = JsonManager.training_results_to_json(architecture = architecture, model_name = model_name, train_file = train_dataset, valid_file = valid_dataset, 
-                                         eval_file = eval_dataset, mode = mode, scale = scale, learning_rate = learning_rate, seed = seed, 
-                                         batch_size = batch_size, num_epochs = num_epochs, num_workers = num_workers)
+    model_name = JsonManager.training_results_to_json(architecture = architecture, stride = stride, patch_size = patch_size, resize_rule = resize_rule, 
+                                                    model_name = model_name, train_file = train_dataset, valid_file = valid_dataset, 
+                                                    eval_file = eval_dataset, mode = mode, scale = scale, learning_rate = learning_rate, seed = seed, 
+                                                    batch_size = batch_size, num_epochs = num_epochs, num_workers = num_workers)
     
     match(architecture):
         
@@ -114,15 +128,14 @@ def training_model(request):
     return render(request, 'partial/model_form.html', {"form": None})
     
 
-def _dataset_exist_or_create(dataset, mode, scale, category):
+def _dataset_exist_or_create(dataset, mode, scale, category, patch_size, stride, resize_rule):
     
     output_path = os.path.join(settings.BASE_DIR, "super_resolution", "datasets", category, f"{dataset}_{mode}_x{scale}.hdf5")
     
     if not os.path.exists(output_path):
         create_h5_image_file(input_path = os.path.join(settings.BASE_DIR, "super_resolution", "base_datasets", category, dataset),
-                            scale = scale,
-                            output_path = output_path,
-                            mode = ImageColorConverter[mode])
+                            scale = scale, output_path = output_path, mode = ImageColorConverter[mode], patch_size = patch_size,
+                            stride = stride, resize_rule = resize_rule)
     return output_path
     
 @login_required
