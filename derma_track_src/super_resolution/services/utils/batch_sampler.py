@@ -9,9 +9,7 @@ class SizeBasedImageBatch(Sampler):
         
         self.batch_size = batch_size
         self.batches = self.__create_batches(image_sizes = image_sizes)
-        
-        if shuffle:
-            random.shuffle(self.batches)
+        self.shuffle = shuffle
                 
     def __create_batches(self, image_sizes): 
         batches = []
@@ -35,7 +33,9 @@ class SizeBasedImageBatch(Sampler):
         
         return batches
         
-    def __iter__(self):
+    def __iter__(self):     
+        if self.shuffle:
+            random.shuffle(self.batches)
         return iter(self.batches)
 
     def __len__(self):
