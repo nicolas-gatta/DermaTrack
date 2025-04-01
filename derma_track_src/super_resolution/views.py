@@ -68,8 +68,6 @@ def training_model(request):
         patch_size = int(request.POST["patch-size"])
         stride = int(patch_size * (float(request.POST["overlaying"]) / 100.0))
     
-
-    
     train_file, valid_file, eval_file = [_dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
                                                                   patch_size = patch_size, stride = stride, resize_rule = resize_rule) 
                                          for dataset, category in [(train_dataset, "training"), 
@@ -128,21 +126,28 @@ def training_model(request):
     return render(request, 'partial/model_form.html', {"form": None})
     
 
-def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: ResizeRule):
-    
+def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: str):
+
     file_name = f"{dataset}_{mode}_x{scale}"
     
-    if patch_size != None and stride != None:
-        file_name += f"{file_name}_{patch_size}_s{stride}"
-    elif resize_rule != None:
-        file_name += f"{file_name}_{resize_rule}"
+    c_resize_rule = None
+            
+    preprocessing_required = (category != "evaluation")
+    
+    if preprocessing_required:
+        if patch_size != None and stride != None:
+            file_name += f"_{patch_size}_s{stride}"
+            
+        elif resize_rule != None:
+            file_name += f"_{resize_rule}"
+            c_resize_rule = ResizeRule[resize_rule]
     
     output_path = os.path.join(settings.BASE_DIR, "super_resolution", "datasets", category, f"{file_name}.hdf5")
     
     if not os.path.exists(output_path):
         create_h5_image_file(input_path = os.path.join(settings.BASE_DIR, "super_resolution", "base_datasets", category, dataset),
                             scale = scale, output_path = output_path, mode = ImageColorConverter[mode], patch_size = patch_size,
-                            stride = stride, resize_rule = ResizeRule[resize_rule], preprocessing_required = (category != "evaluation"))
+                            stride = stride, resize_rule = c_resize_rule, preprocessing_required = preprocessing_required)
     return output_path
     
 @login_required
