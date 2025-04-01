@@ -3,7 +3,7 @@ import os
 
 from datetime import datetime
 from enum import Enum
-from super_resolution.services.utils.preprocessing import ResizeRule
+from derma_track_src.super_resolution.services.utils.prepare_dataset import ResizeRule
 
 from django.conf import settings
 
