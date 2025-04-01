@@ -12,7 +12,7 @@ from django.conf import settings
 from super_resolution.services.SRCNN import train as srcnn_train
 from super_resolution.services.ESRGAN import train as esrgan_train
 from super_resolution.services.SRGAN import train as srgan_train
-from super_resolution.services.utils.preprocessing import create_h5_image_file, ResizeRule
+from super_resolution.services.utils.prepare_dataset import create_h5_image_file, ResizeRule
 from super_resolution.services.utils.json_manager import JsonManager
 from super_resolution.services.utils.image_converter import ImageColorConverter
 from super_resolution.services.utils.super_resolution import SuperResolution
@@ -62,7 +62,7 @@ def training_model(request):
     stride = None
     
     if(request.POST["image-option"] == "resize"):
-        resize_rule = ResizeRule.BIGGEST if int(request.POST["resize-rule"]) == 1 else ResizeRule.SMALLEST 
+        resize_rule = "BIGGEST" if int(request.POST["resize-rule"]) == 1 else "SMALLEST"
         
     elif(request.POST["image-option"] == "subdivise"):
         patch_size = int(request.POST["patch-size"])
@@ -128,14 +128,21 @@ def training_model(request):
     return render(request, 'partial/model_form.html', {"form": None})
     
 
-def _dataset_exist_or_create(dataset, mode, scale, category, patch_size, stride, resize_rule):
+def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: ResizeRule):
     
-    output_path = os.path.join(settings.BASE_DIR, "super_resolution", "datasets", category, f"{dataset}_{mode}_x{scale}.hdf5")
+    file_name = f"{dataset}_{mode}_x{scale}"
+    
+    if patch_size != None and stride != None:
+        file_name += f"{file_name}_{patch_size}_s{stride}"
+    elif resize_rule != None:
+        file_name += f"{file_name}_{resize_rule}"
+    
+    output_path = os.path.join(settings.BASE_DIR, "super_resolution", "datasets", category, f"{file_name}.hdf5")
     
     if not os.path.exists(output_path):
         create_h5_image_file(input_path = os.path.join(settings.BASE_DIR, "super_resolution", "base_datasets", category, dataset),
                             scale = scale, output_path = output_path, mode = ImageColorConverter[mode], patch_size = patch_size,
-                            stride = stride, resize_rule = resize_rule)
+                            stride = stride, resize_rule = ResizeRule[resize_rule], preprocessing_required = (category != "evaluation"))
     return output_path
     
 @login_required

@@ -14,7 +14,7 @@ class ResizeRule(str, Enum):
     SMALLEST = "min"
 
 
-def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConverter, hi_res_images: h5py.Group, low_res_images: h5py.Group, patch_size: int, stride: int, resize_rule: ResizeRule):
+def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConverter, hi_res_images: h5py.Group, low_res_images: h5py.Group, patch_size: int, stride: int, resize_rule: ResizeRule, preprocessing_required: bool = True):
     
     images_file_name = [file for file in os.listdir(image_folder) if file.endswith(('.png', '.jpg', '.jpeg'))]
     
@@ -31,42 +31,43 @@ def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConv
         
         hr = cv2.imread(img_path)
             
-        hr = ImageConverter.convert_image(hr, mode)
+        hr = ImageConverter.convert_image(image = hr, mode = mode)
         
         lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
     
         lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation = cv2.INTER_CUBIC)
         
-        if patch_size != None:
-            height, width, _ = hr.shape
-            
-            if height < patch_size or width < patch_size:
-                hr = __resize_image(image = hr, height = patch_size, width = patch_size) 
-                lr = __resize_image(image = lr, height = patch_size, width = patch_size)
+        if preprocessing_required:
+            if patch_size != None:
+                height, width, _ = hr.shape
+                
+                if height < patch_size or width < patch_size:
+                    hr = __resize_image(image = hr, height = patch_size, width = patch_size) 
+                    lr = __resize_image(image = lr, height = patch_size, width = patch_size)
+                    __add_image(file = file, hr = hr, lr = lr, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count)
+                    count += 1
+                    
+                else:
+                    
+                    pad_height = (stride - (height - patch_size) % stride) % stride
+                    pad_width = (stride - (width - patch_size) % stride) % stride
+                    
+                    if (pad_width > 0 or pad_height > 0):
+                        hr = __resize_image(image = hr, target_height = height + pad_height, target_width = width + pad_width)
+                        lr = __resize_image(image = lr, target_height = height + pad_height, target_width = width + pad_width)
+                    
+                    for y in range(0, height - patch_size + 1, stride):
+                        for x in range(0, width - patch_size + 1, stride):
+                            hr_patch_image = hr[y : y + patch_size, x : x + patch_size]
+                            lr_patch_image = lr[y : y + patch_size, x : x + patch_size]
+                            __add_image(file = file, hr = hr_patch_image, lr = lr_patch_image, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count)
+                            count += 1
+                        
+            elif resize_rule != None:
+                hr = __resize_image(image = hr, target_height = target_size[0], target_width = target_size[1])
+                lr = __resize_image(image = lr, target_height = target_size[0], target_width = target_size[1])
                 __add_image(file = file, hr = hr, lr = lr, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count)
                 count += 1
-                
-            else:
-                
-                pad_height = (stride - (height - patch_size) % stride) % stride
-                pad_width = (stride - (width - patch_size) % stride) % stride
-                
-                if (pad_width > 0 or pad_height > 0):
-                    hr = __resize_image(image = hr, target_height = height + pad_height, target_width = width + pad_width)
-                    lr = __resize_image(image = lr, target_height = height + pad_height, target_width = width + pad_width)
-                
-                for y in range(0, height - patch_size + 1, stride):
-                    for x in range(0, width - patch_size + 1, stride):
-                        hr_patch_image = hr[y : y + patch_size, x : x + patch_size]
-                        lr_patch_image = lr[y : y + patch_size, x : x + patch_size]
-                        __add_image(file = file, hr = hr_patch_image, lr = lr_patch_image, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count)
-                        count += 1
-                    
-        elif resize_rule != None:
-            hr = __resize_image(image = hr, target_height = target_size[0], target_width = target_size[1])
-            lr = __resize_image(image = lr, target_height = target_size[0], target_width = target_size[1])
-            __add_image(file = file, hr = hr, lr = lr, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count)
-            count += 1
             
         else:
             __add_image(file = file, hr = hr, lr = lr, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count)
@@ -122,7 +123,7 @@ def __get_extreme_image_size(images_file_name: list, image_folder: str, resize_r
     
     return (extreme_height, extreme_width)
 
-def create_h5_image_file(input_path, scale, output_path, mode, patch_size: int = None, stride: int = None, resize_rule: ResizeRule = None):
+def create_h5_image_file(input_path: str, scale: int, output_path: str, mode: ImageColorConverter, patch_size: int = None, stride: int = None, resize_rule: ResizeRule = None, preprocessing_required: bool = True):
     
     with h5py.File(output_path, 'w') as h5_file:
         
@@ -131,4 +132,5 @@ def create_h5_image_file(input_path, scale, output_path, mode, patch_size: int =
         low_res_images = h5_file.create_group('low_res')
         
         __prepare_and_add_images(image_folder = input_path, scale = scale, mode = mode, hi_res_images = hi_res_images, 
-                                 low_res_images = low_res_images, patch_size=patch_size, stride = stride, resize_rule = resize_rule)
+                                 low_res_images = low_res_images, patch_size=patch_size, stride = stride, resize_rule = resize_rule,
+                                 preprocessing_required = preprocessing_required)
