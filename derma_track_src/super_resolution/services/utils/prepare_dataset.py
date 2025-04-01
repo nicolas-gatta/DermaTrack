@@ -42,8 +42,8 @@ def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConv
                 height, width, _ = hr.shape
                 
                 if height < patch_size or width < patch_size:
-                    hr = __resize_image(image = hr, height = patch_size, width = patch_size) 
-                    lr = __resize_image(image = lr, height = patch_size, width = patch_size)
+                    hr = __resize_image(image = hr, target_height = patch_size, target_width = patch_size) 
+                    lr = __resize_image(image = lr, target_height = patch_size, target_width = patch_size)
                     __add_image(file = file, hr = hr, lr = lr, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count)
                     count += 1
                     
