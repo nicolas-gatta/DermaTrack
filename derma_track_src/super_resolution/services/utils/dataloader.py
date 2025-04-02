@@ -9,12 +9,12 @@ class H5ImagesDataset(Dataset):
         
         self.__h5_path = h5_path
         
-        self.__h5_file, self.__lr_images, self.__hr_images = None, None, None
+        self.__h5_file = None
     
     def __compute_image_sizes(self):
         sizes = []
-        for i in range(len(self.__hr_images)):
-            shape = self.__hr_images[f'image_{i+1}'].shape
+        for i in range(len(self.__h5_file["low_res"])):
+            shape = self.__h5_file["low_res"][f'image_{i+1}'].shape
             sizes.append((shape[1], shape[2], i))
         sizes.sort(key=lambda x: (x[1], x[2]))
         return sizes
@@ -26,25 +26,17 @@ class H5ImagesDataset(Dataset):
         self.close()
         self.__reset_variables()
         return images_sizes
-    
-    @property
-    def hr_images(self):
-        return self.__hr_images
-    
-    @property
-    def lr_images(self):
-        return self.__lr_images
           
     def __len__(self):
         self.__init_h5_file()
-        return len(self.__hr_images)
+        return len(self.__h5_file["low_res"])
     
 
     def __getitem__(self, index):
         self.__init_h5_file()
         try:
-            lr = torch.from_numpy(self.__lr_images[f"image_{index + 1}"][:])
-            hr = torch.from_numpy(self.__hr_images[f"image_{index + 1}"][:])
+            lr = torch.from_numpy(self.__h5_file["low_res"][f"image_{index + 1}"][:])
+            hr = torch.from_numpy(self.__h5_file["hi_res"][f"image_{index + 1}"][:])
             return lr, hr
         
         except KeyError:
@@ -65,17 +57,15 @@ class H5ImagesDataset(Dataset):
             Initialize the h5 file, low resolution and high resolution image
         """
         if self.__h5_file is None:
-            self.__h5_file = h5py.File(self.__h5_path, "r")
-            self.__hr_images = self.__h5_file["hi_res"]
-            self.__lr_images = self.__h5_file["low_res"]
+            self.__h5_file = h5py.File(self.__h5_path, "r", libver = 'latest', swmr = True)
     
     def __reset_variables(self):
-        self.__h5_file, self.__lr_images, self.__hr_images = None, None, None
+        self.__h5_file = None
 
     def get_raw_data(self, index):
         try:
-            lr = self.__lr_images[f"image_{index + 1}"][:]
-            hr = self.__hr_images[f"image_{index + 1}"][:]
+            lr = self.__h5_file["low_res"][f"image_{index + 1}"][:]
+            hr = self.__h5_file["hi_res"][f"image_{index + 1}"][:]
             return lr, hr
         
         except KeyError:

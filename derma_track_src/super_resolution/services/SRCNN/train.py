@@ -37,8 +37,8 @@ def train_model(model_name, train_file, valid_file, eval_file, output_path, mode
     train_batch = SizeBasedImageBatch(image_sizes = train_dataset.image_sizes, batch_size = batch_size)
     val_batch = SizeBasedImageBatch(image_sizes = val_dataset.image_sizes, batch_size = batch_size, shuffle = False)
 
-    train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory=True)
-    val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory=True)
+    train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory=True, persistent_workers = True)
+    val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory=True, persistent_workers = True)
 
     model = SRCNN().to(device)
     
@@ -64,29 +64,35 @@ def train_model(model_name, train_file, valid_file, eval_file, output_path, mode
             
             for loop_type, dataloader in [("Training", train_loader), ("Validation", val_loader)]:
                 
-                torch.set_grad_enabled(loop_type == "Training")
+                model.train() if loop_type == "Training" else model.eval()
                 
-                for low_res, high_res in dataloader:
-                    
-                    low_res, high_res = low_res.to(device, non_blocking=True), high_res.to(device, non_blocking=True)
-                    
-                    # Forward
-                    output = model(low_res)
-                    
-                    loss = criterion(output, high_res)
-                    
-                    if loop_type == "Training":
-                        optimizer.zero_grad()
+                with torch.set_grad_enabled(loop_type == "Training"):
+                
+                    for low_res, high_res in dataloader:
                         
-                        loss.backward()
+                        low_res, high_res = low_res.to(device, non_blocking=True), high_res.to(device, non_blocking=True)
                         
-                        optimizer.step()
+                        if loop_type == "Training":
+                            
+                            optimizer.zero_grad()
+                            
+                            output = model(low_res)
                         
-                        train_loss.update(loss.item())
-                    
-                    else:
+                            loss = criterion(output, high_res)
                         
-                        val_loss.update(loss.item())
+                            loss.backward()
+                            
+                            optimizer.step()
+                            
+                            train_loss.update(loss.item())
+                        
+                        else:
+                            
+                            output = model(low_res)
+                        
+                            loss = criterion(output, high_res)
+                            
+                            val_loss.update(loss.item())
                         
                     
                     pbar.update(1)
@@ -134,7 +140,7 @@ def evaluate_model(model_name, model, device, eval_file):
     
     eval_batch = SizeBasedImageBatch(image_sizes = eval_dataset.image_sizes, batch_size = 1, shuffle = False)
 
-    eval_loader = DataLoader(eval_dataset, batch_sampler = eval_batch, pin_memory=True)
+    eval_loader = DataLoader(eval_dataset, batch_sampler = eval_batch, num_workers = 1, pin_memory = True, persistent_workers = True)
     
     evaluator = ImageEvaluator()
     
