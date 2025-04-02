@@ -1,6 +1,6 @@
-import lpips
 import torch
 
+from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 from pytorch_msssim import ssim, ms_ssim
 from super_resolution.services.utils.running_average import RunningAverage
 
@@ -9,7 +9,7 @@ class ImageEvaluator:
     def __init__(self):
         
         self.metrics = {'MSE': RunningAverage(), 'PSNR': RunningAverage(), 'SSIM': RunningAverage(), 'MSSIM': RunningAverage(),'LPIPS': RunningAverage()}
-        self.lpips_loss = lpips.LPIPS(net = 'alex', verbose = False)
+        self.lpips_loss = LearnedPerceptualImagePatchSimilarity(net_type = 'alex', normalize = True)
         
     def evaluate(self, hr: torch.Tensor, output: torch.Tensor) -> None:
         """
@@ -20,15 +20,19 @@ class ImageEvaluator:
             output (torch.Tensor): The generate image
         """
         
-        self.metrics['MSE'].update(value = self.__mse(hr = hr, output = output))
+        clamp_hr = torch.clamp(hr, 0.0, 1.0)
+        
+        clamp_output = torch.clamp(output, 0.0, 1.0)
+        
+        self.metrics['MSE'].update(value = self.__mse(hr = clamp_hr, output = clamp_output))
         
         self.metrics['PSNR'].update(value = self.__psnr())
         
-        self.metrics['SSIM'].update(value = self.__ssim(hr = hr, output = output))
+        self.metrics['SSIM'].update(value = self.__ssim(hr = clamp_hr, output = clamp_output))
         
-        self.metrics['MSSIM'].update(value = self.__mssim(hr = hr, output = output))
+        self.metrics['MSSIM'].update(value = self.__mssim(hr = clamp_hr, output = clamp_output))
         
-        self.metrics['LPIPS'].update(value = self.__lpips(hr = hr, output = output))
+        self.metrics['LPIPS'].update(value = self.__lpips(hr = clamp_hr, output = clamp_output))
     
     def get_average_metrics(self) -> dict:
         
@@ -111,9 +115,6 @@ class ImageEvaluator:
 
         Returns:
             float: LPIPS value (from [0,1] -> lower better)
-            
-        More Informations:
-            We need to tell the function that we normalize our image because we have value [0,1] and lpips need value [-1,1]
         """
 
-        return self.lpips_loss.forward(in0 = hr.cpu(), in1 = output.cpu(), normalize=True).item()
+        return self.lpips_loss(img1 = hr, img2 = output).item()

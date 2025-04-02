@@ -95,7 +95,8 @@ class SuperResolution:
         return tensor_image.unsqueeze(0)
     
     def __postprocess_image(self, sr_image: torch.Tensor) -> np.ndarray:
-        tensor_image = sr_image.squeeze(0).permute(1, 2, 0) * 255
+        clamp_sr_image = torch.clamp(sr_image, 0.0, 1.0)
+        tensor_image = clamp_sr_image.squeeze(0).permute(1, 2, 0) * 255
         numpy_image = tensor_image.cpu().detach().numpy().astype(np.uint8)
         convert_image = ImageConverter.convert_image(numpy_image, ImageColorConverter[self.invert_mode])
         return convert_image
