@@ -18,7 +18,7 @@ from torch.utils.data.dataloader import DataLoader
 
 def train_model(model_name, train_file, valid_file, eval_file, output_path, mode, invert_mode, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
-    early_stopping = EarlyStopping(patience = 10, delta = 1e-4, verbose = False)
+    early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
     
     starting_time = time.time()
     
@@ -95,13 +95,13 @@ def train_model(model_name, train_file, valid_file, eval_file, output_path, mode
                             val_loss.update(loss.item())
                         
                     
-                    pbar.update(1)
-                    
-                    pbar.set_postfix({
-                        "Mode": loop_type,
-                        "Train Loss": f"{train_loss.average:.4f}" if train_loss.average > 0 else "N/A",
-                        "Val Loss": f"{val_loss.average:.4f}" if val_loss.average > 0 else "N/A",
-                    })
+                        pbar.update(1)
+                        
+                        pbar.set_postfix({
+                            "Mode": loop_type,
+                            "Train Loss": f"{train_loss.average:.4f}" if train_loss.average > 0 else "N/A",
+                            "Val Loss": f"{val_loss.average:.4f}" if val_loss.average > 0 else "N/A",
+                        })
         
         early_stopping(val_loss = val_loss.average)
                     

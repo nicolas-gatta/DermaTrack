@@ -61,12 +61,14 @@ def training_model(request):
     
     stride = None
     
-    if(request.POST["image-option"] == "resize"):
-        resize_rule = "BIGGEST" if int(request.POST["resize-rule"]) == 1 else "SMALLEST"
+    if ("image-option" in request.POST):
         
-    elif(request.POST["image-option"] == "subdivise"):
-        patch_size = int(request.POST["patch-size"])
-        stride = int(patch_size * (float(request.POST["overlaying"]) / 100.0))
+        if(request.POST["image-option"] == "resize"):
+            resize_rule = "BIGGEST" if int(request.POST["resize-rule"]) == 1 else "SMALLEST"
+            
+        elif(request.POST["image-option"] == "subdivise"):
+            patch_size = int(request.POST["patch-size"])
+            stride = int(patch_size * (float(request.POST["overlaying"]) / 100.0))
     
     train_file, valid_file, eval_file = [_dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
                                                                   patch_size = patch_size, stride = stride, resize_rule = resize_rule) 
@@ -132,7 +134,7 @@ def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str,
     
     c_resize_rule = None
             
-    preprocessing_required = (category != "evaluation")
+    preprocessing_required = (category != "evaluation") and (patch_size != None and stride != None) or resize_rule != None
     
     if preprocessing_required:
         if patch_size != None and stride != None:
