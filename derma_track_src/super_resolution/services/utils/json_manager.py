@@ -77,15 +77,6 @@ class JsonManager:
             except (json.JSONDecodeError, FileNotFoundError):
                 existing_data = {}
 
-        if model_name in existing_data:
-            suffix = 1
-            new_name = f"{model_name}_{suffix}"
-            while new_name in existing_data:
-                suffix += 1
-                new_name = f"{model_name}_{suffix}"
-            model_name = new_name
-            
-
         existing_data[model_name] = model_data
 
         with open(JsonManager._output_file, "w") as f:

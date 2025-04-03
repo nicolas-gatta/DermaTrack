@@ -14,7 +14,7 @@ def get_unique_filename(model_name, output_path):
 
     base_name, ext = os.path.splitext(model_name)
     
-    existing_names = {os.path.splitext(f)[0] for f in os.listdir(output_path)}
+    existing_names = {os.path.splitext(file)[0] for file in os.listdir(output_path)}
     
     if base_name in existing_names:
         suffix = 1
@@ -25,6 +25,6 @@ def get_unique_filename(model_name, output_path):
             new_name = f"{base_name}_{suffix}"
         
         base_name = new_name
-
+    
     return f"{base_name}{ext}"
     

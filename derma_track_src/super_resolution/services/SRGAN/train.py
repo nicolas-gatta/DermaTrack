@@ -107,8 +107,8 @@ def train_model(train_file, eval_file, output_dir, learning_rate: float = 1e-4, 
                     
                     pbar.set_postfix({
                         "Mode": loop_type,
-                        "Train Loss": f"{train_loss.average:.4f}" if train_loss.average > 0 else "N/A",
-                        "Val Loss": f"{val_loss.average:.4f}" if val_loss.average > 0 else "N/A",
+                        "Train Loss": f"{train_loss.rounded_average:.4f}" if train_loss.rounded_average > 0 else "N/A",
+                        "Val Loss": f"{val_loss.rounded_average:.4f}" if val_loss.rounded_average > 0 else "N/A",
                     })
 
     # Save the model

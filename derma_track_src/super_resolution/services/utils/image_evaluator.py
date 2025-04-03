@@ -42,7 +42,7 @@ class ImageEvaluator:
         Returns:
             dict: Dictionary with average values of each metric.
         """
-        return {metric: values.average for metric, values in self.metrics.items()}
+        return {metric: values.rounded_average for metric, values in self.metrics.items()}
     
     def __mse(self, hr: torch.Tensor, output: torch.Tensor) -> float:
         """
@@ -117,4 +117,4 @@ class ImageEvaluator:
             float: LPIPS value (from [0,1] -> lower better)
         """
 
-        return self.lpips_loss(img1 = hr, img2 = output).item()
+        return self.lpips_loss(img1 = hr.cpu(), img2 = output.cpu()).item()

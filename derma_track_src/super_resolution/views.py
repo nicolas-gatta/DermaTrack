@@ -77,7 +77,7 @@ def training_model(request):
                                                                    (eval_dataset, "evaluation")] 
                                          ]
     
-    model_name = JsonManager.training_results_to_json(architecture = architecture, stride = stride, patch_size = patch_size, resize_rule = resize_rule, 
+    JsonManager.training_results_to_json(architecture = architecture, stride = stride, patch_size = patch_size, resize_rule = resize_rule, 
                                                     model_name = model_name, train_file = train_dataset, valid_file = valid_dataset, 
                                                     eval_file = eval_dataset, mode = mode, scale = scale, learning_rate = learning_rate, seed = seed, 
                                                     batch_size = batch_size, num_epochs = num_epochs, num_workers = num_workers)
@@ -93,6 +93,7 @@ def training_model(request):
                 output_path = output_path,
                 learning_rate = learning_rate, 
                 mode = mode,
+                scale = scale,
                 invert_mode = invert_mode,
                 seed = seed, 
                 batch_size = batch_size,

@@ -16,7 +16,9 @@ from super_resolution.services.utils.early_stopping import EarlyStopping
 
 from torch.utils.data.dataloader import DataLoader
 
-def train_model(model_name, train_file, valid_file, eval_file, output_path, mode, invert_mode, learning_rate: float = 1e-4, seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
+                mode: str, scale: int, invert_mode: str, learning_rate: float = 1e-4, seed: int = 1, 
+                batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
     early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
     
@@ -94,13 +96,12 @@ def train_model(model_name, train_file, valid_file, eval_file, output_path, mode
                             
                             val_loss.update(loss.item())
                         
-                    
                         pbar.update(1)
                         
                         pbar.set_postfix({
                             "Mode": loop_type,
-                            "Train Loss": f"{train_loss.average:.4f}" if train_loss.average > 0 else "N/A",
-                            "Val Loss": f"{val_loss.average:.4f}" if val_loss.average > 0 else "N/A",
+                            "Train Loss": f"{train_loss.rounded_average:.4f}" if train_loss.rounded_average > 0 else "N/A",
+                            "Val Loss": f"{val_loss.rounded_average:.4f}" if val_loss.rounded_average > 0 else "N/A",
                         })
         
         early_stopping(val_loss = val_loss.average)
@@ -117,7 +118,7 @@ def train_model(model_name, train_file, valid_file, eval_file, output_path, mode
             JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
 
         
-    torch.save({"architecture": "SRCNN", "color_mode": mode, "invert_color_mode": invert_mode, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
+    torch.save({"architecture": "SRCNN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
     
     print(f"Model saved as '{output_path}'")
 
