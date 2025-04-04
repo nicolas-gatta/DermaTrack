@@ -24,3 +24,19 @@ form{
     margin: 0; 
     display: inline;
 }
+
+header{
+    height: 5%;
+}
+
+main{
+    height: 90%;
+}
+
+footer{
+    height: 5%;
+}
+
+#table{
+    height: 90%;
+}

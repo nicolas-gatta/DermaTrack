@@ -1,61 +1,64 @@
 {% load static %}
 
 <script src="{% static 'js/video_capture.js' %}" defer></script>
+
 <link href="{% static 'css/visit_modal.css' %}" rel="stylesheet" type="text/css">
 
-<div class="modal fade modal-xl" id="mainModal" tabindex="-1" role="dialog" >
-    <div class="modal-dialog modal-dialog-centered h-75">
-        <div class="modal-content h-100">
+<div class="modal fade" id="mainModal" tabindex="-1" role="dialog" data-visit-id="{{ visit.id }}">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="visitModalLabel">Appointment Details</h5>
             </div>
-            <div class="modal-body h-75">
-                <div class="row p-3 border rounded">
-                    <div id="profile-info" class="col-md-3 col-lg-3 p-3">
+
+            <div class="modal-body">
+                <div class="row p-3 border rounded mb-3">
+                    <div id="profile-info" class="col-md-3 p-3">
                         <div class="text-center">
                             <img src="https://placehold.co/600x400" alt="Profile Picture"
                                 class="rounded-circle mb-3"
                                 style="width: 6rem; height: 6rem; object-fit: cover;">
                             <h5>{{ visit.patient.full_name }}</h5>
-                            <p><strong>National Number: </strong> {{ visit.patient.national_number }}</p>
+                            <p><strong>National Number:</strong> {{ visit.patient.national_number }}</p>
                             <p><strong>Date of Birth:</strong> {{ visit.patient.date_of_birth }}</p>
                             <p><strong>Address:</strong> {{ visit.patient.full_adress }}</p>
                             <p><strong>Phone:</strong> {{ visit.patient.phone_number }}</p>
                         </div>
                     </div>
 
-                    <!-- Separator (Vertical Line) -->
-                    <div class="col-md-1 col-lg-1 d-flex justify-content-center align-items-center">
+                    <div class="col-md-1 d-flex justify-content-center align-items-center">
                         <div class="vr"></div>
                     </div>
 
-                    <!-- Notes Section -->
-                    <div id="note" class="col-md-8 col-lg-8 p-3">
+                    <div id="note" class="col-md-8 p-3">
                         <h5>Take Notes</h5>
-                        <textarea id="notesArea" class="form-control"
-                            rows="8" placeholder="Write your notes here..."
+                        <textarea id="notesArea" class="form-control" rows="8"
+                            placeholder="Write your notes here..."
                             style="background-color: #ffd6d6; color: black;"></textarea>
                     </div>
                 </div>
 
-                <!-- Second Row: File Explorer (Fix overflow issue) -->
-                <div id="file-explorer" class="row p-3 border rounded mt-3">
-                    <h5>File Explorer</h5>
-                    <div class="col-12 bg-success">
-                        <div class="d-flex flex-wrap overflow-auto" id="file-container">
-                            <!-- Files will be added dynamically -->
+                <div id="file-explorer" class="row border rounded p-3">
+                    <h5 class="mb-3">File Explorer</h5>
+                    <div class="bg-success pt-2 rounded" style="max-height: 30vh;">
+                        <div class="d-flex flex-wrap pb-4 h-100 justify-content-center" id="file-container" style="overflow-y: auto;">
+                            <!-- Files will be dynamically inserted here -->
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="modal-footer ">
-                <button type="button" class="btn btn-success" data-bs-target="#secondaryModal" data-bs-toggle="modal" onclick="stream()">Adding Picture(s)</button>
+            <div class="modal-footer">
+                {% if visit.status != "canceled" and visit.status != "finished" %}
+                    <button type="button" class="btn btn-success" data-bs-target="#secondaryModal" data-bs-toggle="modal" onclick="stream()">Adding Picture(s)</button>
+                {% endif %}
+                <button id = "backButton" type="button" class="btn btn-primary d-none" onclick="createFileExplorer({{visit.id}})">Back</button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clearPopUp()">Close</button>
             </div>
         </div>
     </div>
 </div>
+
 
 <div class="modal fade modal-xl" id = "secondaryModal" tabindex="-1" role="dialog" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
@@ -92,25 +95,19 @@
     </div>
 </div>
 
-<script>
-    var fileContainer = document.getElementById("file-container");
-    var rows = 5; // Number of rows
-    var cols = 5; // Number of columns
-    var totalFiles = rows * cols;
-
-    for (let i = 1; i <= totalFiles; i++) {
-        const figure = document.createElement("figure");
-        const img = document.createElement("img");
-        const caption = document.createElement("figcaption");
-
-        img.src = "{% static 'images/folder.svg' %}";
-        img.classList.add("file-img");
-
-        figure.classList.add("file-item", "text-center");
-        caption.innerHTML = "File " + i;
-
-        figure.appendChild(img);
-        figure.appendChild(caption);
-        fileContainer.appendChild(figure);
-    }
-</script>
+<div class="modal fade modal-xl" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Image Preview</h5>
+            </div>
+            <div class="modal-body text-center">
+                <img id="preview-image" src="" alt="Preview" class="img-fluid rounded" style="overflow: auto; max-height: 80vh; max-width: 100%;">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+  

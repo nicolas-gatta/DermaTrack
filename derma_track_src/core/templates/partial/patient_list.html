@@ -2,7 +2,7 @@
 
 <script src="{% static 'js/triggerModal.js' %}"></script>
 
-<div class="container-fluid my-3 p-3 bg-light rounded shadow-sm">
+<div class="container-fluid p-3 bg-light rounded shadow-sm">
     <div class="input-group">
         <input type="text" id="search-patient" class="form-control rounded-start" placeholder="Search by Name or Surname..." onkeyup="filterPatients()">
         <button class="btn btn-primary" onclick="filterPatients()">
@@ -11,71 +11,107 @@
     </div>
 </div>
 
-<div class="container-fluid my-3 p-3 bg-light rounded shadow-sm">
-    <table class="table align-middle mb-0 bg-white" id="patient-table">
-        <thead class="bg-light">
-            <tr>
-                <th>Name</th>
-                <th>Surname</th>
-                <th>Street</th>
-                <th>Number</th>
-                <th>City</th>
-                <th>Zip Code</th>
-                <th>Phone Number</th>
-                <th>Other Phone Number</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for patient in patients %}
-            <tr>
-                <td class="patient-name">{{ patient.name }}</td>
-                <td class="patient-surname">{{ patient.surname }}</td>
-                <td>{{ patient.street }}</td>
-                <td>{{ patient.number }}</td>
-                <td>{{ patient.city }}</td>
-                <td>{{ patient.zip_code }}</td>
-                <td>{{ patient.phone_number }}</td>
-                <td>{{ patient.other_phone_number }}</td>
-                <td>       
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <form action='/core/patient_profile' method='POST' style="margin: 0; display: inline;">
-                            {% csrf_token %}
-                            <input type="hidden" name="id" class="form-control" value="{{ patient.pk }}" required=""> 
-                            <button type="submit" class="btn btn-success" data-mdb-ripple-color="dark">View</button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div id = "table" class="container-fluid my-3 p-3 bg-light rounded shadow-sm d-flex flex-column">
+    <div class = "table-responsive">
+        <table class="table align-middle mb-0 bg-white" id="patient-table">
+            <thead class="bg-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Surname</th>
+                    <th>Street</th>
+                    <th>Number</th>
+                    <th>City</th>
+                    <th>Zip Code</th>
+                    <th>Phone Number</th>
+                    <th>Other Phone Number</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for patient in patients %}
+                <tr>
+                    <td class="patient-name">{{ patient.name }}</td>
+                    <td class="patient-surname">{{ patient.surname }}</td>
+                    <td>{{ patient.street }}</td>
+                    <td>{{ patient.number }}</td>
+                    <td>{{ patient.city }}</td>
+                    <td>{{ patient.zip_code }}</td>
+                    <td>{{ patient.phone_number }}</td>
+                    <td>{{ patient.other_phone_number }}</td>
+                    <td>       
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <form action='/core/patient_profile' method='POST' style="margin: 0; display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" class="form-control" value="{{ patient.pk }}" required=""> 
+                                <button type="submit" class="btn btn-success" data-mdb-ripple-color="dark">View</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <nav>
+    <nav class = "mt-auto">
         <ul class="pagination justify-content-center mt-3">
-            {% if patients.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" hx-get="?page=1" hx-target="#dynamic-body" hx-swap="innerHTML">&laquo; First</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" hx-get="?page={{ patients.previous_page_number }}" hx-target="#dynamic-body" hx-swap="innerHTML">Previous</a>
-                </li>
-            {% endif %}
-
+            <li class="page-item {% if not patients.has_previous %}disabled{% endif %}">
+                <a class="page-link" 
+                   href="#" 
+                   {% if patients.has_previous %}
+                       hx-get="?page=1" 
+                       hx-target="#dynamic-body" 
+                       hx-swap="innerHTML"
+                   {% endif %}
+                >
+                    &laquo; First
+                </a>
+            </li>
+        
+            <li class="page-item {% if not patients.has_previous %}disabled{% endif %}">
+                <a class="page-link" 
+                   href="#"
+                   {% if patients.has_previous %}
+                       hx-get="?page={{ patients.previous_page_number }}" 
+                       hx-target="#dynamic-body" 
+                       hx-swap="innerHTML"
+                   {% endif %}
+                >
+                    Previous
+                </a>
+            </li>
+        
             <li class="page-item active">
                 <span class="page-link">
                     Page {{ patients.number }} of {{ patients.paginator.num_pages }}
                 </span>
             </li>
-
-            {% if patients.has_next %}
-                <li class="page-item">
-                    <a class="page-link" hx-get="?page={{ patients.next_page_number }}" hx-target="#dynamic-body" hx-swap="innerHTML">Next</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" hx-get="?page={{ patients.paginator.num_pages }}" hx-target="#dynamic-body" hx-swap="innerHTML">Last &raquo;</a>
-                </li>
-            {% endif %}
-        </ul>
+        
+            <li class="page-item {% if not patients.has_next %}disabled{% endif %}">
+                <a class="page-link" 
+                   href="#"
+                   {% if patients.has_next %}
+                       hx-get="?page={{ patients.next_page_number }}" 
+                       hx-target="#dynamic-body" 
+                       hx-swap="innerHTML"
+                   {% endif %}
+                >
+                    Next
+                </a>
+            </li>
+        
+            <li class="page-item {% if not patients.has_next %}disabled{% endif %}">
+                <a class="page-link" 
+                   href="#"
+                   {% if patients.has_next %}
+                       hx-get="?page={{ patients.paginator.num_pages }}" 
+                       hx-target="#dynamic-body" 
+                       hx-swap="innerHTML"
+                   {% endif %}
+                >
+                    Last &raquo;
+                </a>
+            </li>
+        </ul> 
     </nav>
 </div>

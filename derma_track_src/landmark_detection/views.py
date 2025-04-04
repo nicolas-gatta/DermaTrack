@@ -30,7 +30,7 @@ def save_images(request, visit_id, body_part = "leg"):
         image = data.get("image", None)
         saved_paths = []
 
-        folder_path = os.path.join(settings.MEDIA_ROOT, f"visit_{visit_id}", body_part)
+        folder_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit_id}", body_part)
         
         os.makedirs(folder_path, exist_ok=True)
   

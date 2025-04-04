@@ -18,14 +18,14 @@
     align-items: center;
     justify-content: center;
     padding: 1em;
-    height: 12em;
-    width: 12em;
+    height: 13em;
+    width: 13em;
 }
 
 .file-item img {
     width: 10em;
     height: 10em;
-    object-fit: cover;
+    object-fit: contain;
     margin-bottom: 0.2em;
 }
 
@@ -37,11 +37,23 @@
 }
 
 .file-item:hover {
-    background-color: #ddd;
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
 .vr {
     width: 0.2em;
     background-color: gray;
     height: 100%;
+}
+
+.svg-wrapper {
+    position: relative;
+}
+
+.body-icon {
+    position: absolute;
+    width: 45% !important;
+    height: 45% !important;
+    top: 2.5rem;
+    pointer-events: none;
 }

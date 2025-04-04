@@ -32,7 +32,7 @@ function changingButtonState(button) {
     activeButton = button;
 }
 
-function initializeStateCore(){
+function initializeStateCore() {
     button = document.getElementById(localStorage.getItem("core_activeButton"));
     if (button == null){
         button = document.getElementById("patient");
@@ -44,5 +44,4 @@ function initializeStateCore(){
     loadBodyContentCore(button);
 } 
 
-// Initialize the state when the page loads
-window.addEventListener("DOMContentLoaded", initializeStateCore);
+window.addEventListener("DOMContentLoaded", initializeStateCore, { once: true });

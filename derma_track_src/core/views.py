@@ -1,11 +1,14 @@
 from django.shortcuts import render
 from login.models import Doctor
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 from core.models import Patient, Visit, Status
 from utils.checks import group_and_super_user_checks
+
+import os
 
 
 # Create your views here.
@@ -82,5 +85,33 @@ def doctor_list(request):
 def patient_profile(request):
     patient = Patient.objects.get(pk=request.POST["id"])
     return render(request, 'core/patient.html', {'patient': patient})
+
+@login_required
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def list_visit_folders(request, visit_id):
+    base_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit_id}")
+    folder_names = []
+
+    if os.path.exists(base_path):
+        for name in os.listdir(base_path):
+            full_path = os.path.join(base_path, name)
+            if os.path.isdir(full_path):
+                folder_names.append(name)
+    
+    return JsonResponse({"folders": folder_names})
+
+@login_required
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def list_visit_folder_images(request, visit_id, body_part):
+    base_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit_id}", f"{body_part}")
+    image_names = []
+
+    if os.path.exists(base_path):
+        for name in os.listdir(base_path):
+            full_path = os.path.join(base_path, name)
+            if not os.path.isdir(full_path):
+                image_names.append(name)
+    
+    return JsonResponse({"images": image_names})
 
 

@@ -29,7 +29,7 @@ imageSelector.addEventListener("change", (event) => {
 scaleSelector.addEventListener("change", (event) => {
 
     if(imageSelector.value != ""){
-        fetch("/super_resolution/degrade_and_save_image/0/1".replace(0, imageSelector.value).replace(1, event.target.value))
+        fetch("/super_resolution/degrade_and_save_image/50/51".replace(50, imageSelector.value).replace(51, event.target.value))
         .then(response => response.json())
         .then(data => {
             drawImageOnCanvas(lrCanvas, data.url);

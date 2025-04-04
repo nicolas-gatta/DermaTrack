@@ -1,49 +1,78 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html class = "h-100 w-100" lang="en">
     <head>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <link href="{% static 'css/core.css' %}" rel="stylesheet" type="text/css">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Derma Track</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link href="{% static 'css/core.css' %}" rel="stylesheet" type="text/css" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
         <script src="{% static 'js/dynamicBodyCore.js' %}"></script>
-
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Derma Track</title>
     </head>
-    <body class="d-flex flex-column min-vh-100">
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">
-                    <img src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Bootstrap" width="30" height="24">
-                </a>          
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="nav navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a id="patient_button" class="nav-link" hx-get="{% url 'patient_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#">Patient</a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="visit_button" class="nav-link" hx-get="{% url 'visit_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#">Visit</a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="doctor_button" class="nav-link" hx-get="{% url 'doctor_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#">Doctor</a>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/logout"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
-                    </ul>
+
+    <body class = "d-flex flex-column h-100">
+        <header>
+            <nav id = "navigation" class="navbar navbar-expand-lg bg-body-tertiary sticky-top">
+                <div class="container-fluid">
+                    <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a id="patient_button" class="nav-link" hx-get="{% url 'patient_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#"><i class="bi bi-person-circle px-1"></i>Patient</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="visit_button" class="nav-link" hx-get="{% url 'visit_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#"><i class="bi bi-clipboard2-pulse-fill px-1"></i>Visit</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="doctor_button" class="nav-link" hx-get="{% url 'doctor_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#"><i class="bi bi-hospital-fill px-1"></i>Doctor</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">Log out</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+            </nav>
+        </header>
+
+        <main class = "py-4 h-100 w-100 h-100">
+            <div id = "dynamic-body" class = "container-fluid h-100" > 
             </div>
-        </nav>
+        </main>
+
+
+
+        <footer class="mt-4 bg-dark text-light py-3">
+            <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="text-light">© 2025 Derma Track, Inc</span>
+                </div>
+                <ul class="nav list-unstyled d-flex mb-0">
+                    <li class="ms-3">
+                        <a class="text-light" href="https://github.com/nicolas-gatta" target="_blank" aria-label="Github">
+                            <i class="bi bi-github"></i>
+                        </a>
+                    </li>
+                    <li class="ms-3">
+                        <a class="text-light" href="https://www.linkedin.com/in/nicolas-gatta/" target="_blank" aria-label="LinkedIn">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </footer>
         
-        <div id="dynamic-body" class="container-fluid flex-grow-1 overflow-auto">
-            <!-- Content dynamically loaded here -->
-        </div>
-    <body>
+    </body>
 </html>
