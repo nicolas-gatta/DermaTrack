@@ -14,7 +14,8 @@ class ResizeRule(str, Enum):
     SMALLEST = "min"
 
 
-def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConverter, hi_res_images: h5py.Group, low_res_images: h5py.Group, patch_size: int, stride: int, resize_rule: ResizeRule, preprocessing_required: bool = True):
+def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConverter, hi_res_images: h5py.Group, low_res_images: h5py.Group, 
+                             patch_size: int, stride: int, resize_rule: ResizeRule, preprocessing_required: bool = True, resize_to_output: bool = True):
     
     images_file_name = [file for file in os.listdir(image_folder) if file.endswith(('.png', '.jpg', '.jpeg'))]
     
@@ -34,8 +35,9 @@ def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConv
         hr = ImageConverter.convert_image(image = hr, mode = mode)
         
         lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
-    
-        lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation = cv2.INTER_CUBIC)
+
+        if resize_to_output:
+            lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation = cv2.INTER_CUBIC)
         
         if preprocessing_required:
             if patch_size != None:
