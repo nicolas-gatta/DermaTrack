@@ -41,6 +41,10 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
 
     train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory=True, persistent_workers = True)
     val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory=True, persistent_workers = True)
+    
+    train_loss, val_loss = RunningAverage(), RunningAverage()
+    
+    epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
 
     model = SRCNN().to(device)
     
@@ -52,10 +56,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
         {'params': model.conv3.parameters(), 'lr': learning_rate * 0.1}
     ], lr=learning_rate)
     
-    train_loss, val_loss = RunningAverage(), RunningAverage()
-    
-    epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
-            
+
     for epoch in range(num_epochs):
         
         train_loss.reset()
@@ -74,14 +75,14 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         
                         low_res, high_res = low_res.to(device, non_blocking=True), high_res.to(device, non_blocking=True)
                         
+                        output = model(low_res)
+                        
+                        loss = criterion(output, high_res)
+                            
                         if loop_type == "Training":
                             
                             optimizer.zero_grad()
                             
-                            output = model(low_res)
-                        
-                            loss = criterion(output, high_res)
-                        
                             loss.backward()
                             
                             optimizer.step()
@@ -89,10 +90,6 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                             train_loss.update(loss.item())
                         
                         else:
-                            
-                            output = model(low_res)
-                        
-                            loss = criterion(output, high_res)
                             
                             val_loss.update(loss.item())
                         

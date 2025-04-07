@@ -102,11 +102,15 @@ def training_model(request):
                 
         case "SRGAN":
             srgan_train.train_model(
+                model_name = model_name,
                 train_file = train_file, 
                 valid_file = valid_file,
                 eval_file = eval_file, 
                 output_path = output_path,
                 learning_rate = learning_rate, 
+                mode = mode,
+                scale = scale,
+                invert_mode = invert_mode,
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
@@ -114,11 +118,15 @@ def training_model(request):
                         
         case "ESRGAN":
             esrgan_train.train_model(
+                model_name = model_name,
                 train_file = train_file, 
                 valid_file = valid_file,
                 eval_file = eval_file, 
                 output_path = output_path,
                 learning_rate = learning_rate, 
+                mode = mode,
+                scale = scale,
+                invert_mode = invert_mode,
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
