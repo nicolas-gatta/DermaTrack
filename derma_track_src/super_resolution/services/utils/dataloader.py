@@ -5,24 +5,16 @@ from torch.utils.data import Dataset
 
 class H5ImagesDataset(Dataset):
     
-    def __init__(self, h5_path):    
+    def __init__(self, h5_path, crop_size = 96):    
         
         self.__h5_path = h5_path
         
         self.__h5_file = None
-    
-    def __compute_image_sizes(self):
-        sizes = []
-        for i in range(len(self.__h5_file["low_res"])):
-            shape = self.__h5_file["low_res"][f'image_{i+1}'].shape
-            sizes.append((shape[1], shape[2], i))
-        sizes.sort(key=lambda x: (x[1], x[2]))
-        return sizes
 
     @property
     def image_sizes(self):
         self.__init_h5_file()
-        images_sizes = self.__compute_image_sizes()
+        images_sizes = self.__h5_file["info"]["image_size"][:].tolist()
         self.close()
         self.__reset_variables()
         return images_sizes
