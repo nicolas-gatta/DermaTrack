@@ -36,10 +36,10 @@ class SRGANDiscriminator(nn.Module):
             nn.Linear(in_features = 512 * (4 * 4), out_features = 1024),
             nn.LeakyReLU(negative_slope = 0.2, inplace = True),
             nn.Linear(in_features = 1024, out_features = 1),
-            nn.Sigmoid() # Outputs logits
+            nn.Sigmoid()
         )
 
     def forward(self, x):
         out = self.initial(x)
         out = self.blocks(out)
-        return self.fc(out)
+        return self.fc(out.view(out.size(0), -1))

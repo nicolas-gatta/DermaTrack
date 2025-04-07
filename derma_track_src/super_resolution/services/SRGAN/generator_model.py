@@ -14,7 +14,6 @@ class ResidualBlock(nn.Module):
             nn.BatchNorm2d(num_features = channels)
         )
 
-    # TODO CHECK IF SKIP CONNECTION = ELEMENT WISE SUM
     def forward(self, x):
         return x + self.block(x) 
 
