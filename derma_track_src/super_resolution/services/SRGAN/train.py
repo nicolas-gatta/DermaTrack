@@ -21,12 +21,12 @@ from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
 
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
-                mode: str, scale: int, invert_mode: str, learning_rate: float = 1e-4, seed: int = 1, 
-                batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+                mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-4, 
+                seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+    
+    crop_size = 96
     
     early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
-    
-    starting_time = time.time()
     
     cudnn.benchmark = True
     
@@ -37,21 +37,21 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
     
-    train_dataset = H5ImagesDataset(train_file)
-    val_dataset = H5ImagesDataset(valid_file)
+    train_dataset = H5ImagesDataset(train_file, crop_size = crop_size, up_scale_factor = scale)
+    val_dataset = H5ImagesDataset(valid_file, crop_size = crop_size, up_scale_factor = scale)
     
     train_batch = SizeBasedImageBatch(image_sizes = train_dataset.image_sizes, batch_size = batch_size)
     val_batch = SizeBasedImageBatch(image_sizes = val_dataset.image_sizes, batch_size = batch_size, shuffle = False)
 
-    train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory=True, persistent_workers = True)
-    val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory=True, persistent_workers = True)
+    train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory = True, persistent_workers = True)
+    val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory = True, persistent_workers = True)
     
     train_loss, val_loss = RunningAverage(), RunningAverage()
     
     epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
 
     generator = SRGANGenerator(up_scale = scale).to(device)
-    discriminator = SRGANDiscriminator().to(device)
+    discriminator = SRGANDiscriminator(crop_size = crop_size).to(device)
 
     content_loss = VGGLoss().to(device)
     
@@ -63,6 +63,8 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     
     train_loss, val_loss = RunningAverage(), RunningAverage()
     
+    starting_time = time.time()
+        
     for epoch in range(num_epochs):
         
         train_loss.reset()
@@ -83,6 +85,8 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         #=======================Train Discriminator===================
                         
                         fake_image = generator(low_res).detach()
+                        
+                        print(fake_image.shape, high_res.shape)
                         
                         real_output = discriminator(high_res)
                         
@@ -142,7 +146,8 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
             JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
 
         
-    torch.save({"architecture": "SRGAN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "model_state_dict": generator.state_dict()}, os.path.join(output_path, model_name))
+    torch.save({"architecture": "SRGAN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, 
+                    "patch_size": patch_size, "stride": stride, "model_state_dict": generator.state_dict()}, os.path.join(output_path, model_name))    
     
     print(f"Model saved as '{output_path}'")
 

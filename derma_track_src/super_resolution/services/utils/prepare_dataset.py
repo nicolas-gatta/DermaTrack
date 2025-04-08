@@ -134,7 +134,7 @@ def __get_extreme_image_size(images_file_name: list, image_folder: str, resize_r
     return (extreme_height, extreme_width)
 
 def create_h5_image_file(input_path: str, scale: int, output_path: str, mode: ImageColorConverter, patch_size: int = None, stride: int = None, 
-                         resize_rule: ResizeRule = None, preprocessing_required: bool = True):
+                         resize_rule: ResizeRule = None, preprocessing_required: bool = True, resize_to_output: bool = True):
     
     with h5py.File(output_path, 'w', libver='latest') as h5_file:
         

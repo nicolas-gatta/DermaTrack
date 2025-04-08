@@ -61,6 +61,8 @@ def training_model(request):
     
     stride = None
     
+    resize_to_output = architecture in ["SRGAN", "ESRGAN"]
+    
     if ("image-option" in request.POST):
         
         if(request.POST["image-option"] == "resize"):
@@ -71,7 +73,8 @@ def training_model(request):
             stride = int(patch_size * (float(request.POST["overlaying"]) / 100.0))
     
     train_file, valid_file, eval_file = [_dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
-                                                                  patch_size = patch_size, stride = stride, resize_rule = resize_rule) 
+                                                                  patch_size = patch_size, stride = stride, resize_rule = resize_rule, 
+                                                                  resize_to_output = resize_to_output) 
                                          for dataset, category in [(train_dataset, "training"), 
                                                                    (valid_dataset, "validation"), 
                                                                    (eval_dataset, "evaluation")] 
@@ -91,10 +94,12 @@ def training_model(request):
                 valid_file = valid_file,
                 eval_file = eval_file, 
                 output_path = output_path,
-                learning_rate = learning_rate, 
                 mode = mode,
                 scale = scale,
                 invert_mode = invert_mode,
+                patch_size= patch_size, 
+                stride = stride,
+                learning_rate = learning_rate,  
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
@@ -107,10 +112,12 @@ def training_model(request):
                 valid_file = valid_file,
                 eval_file = eval_file, 
                 output_path = output_path,
-                learning_rate = learning_rate, 
                 mode = mode,
                 scale = scale,
                 invert_mode = invert_mode,
+                patch_size= patch_size, 
+                stride = stride,
+                learning_rate = learning_rate,  
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
@@ -123,10 +130,12 @@ def training_model(request):
                 valid_file = valid_file,
                 eval_file = eval_file, 
                 output_path = output_path,
-                learning_rate = learning_rate, 
                 mode = mode,
                 scale = scale,
                 invert_mode = invert_mode,
+                patch_size= patch_size, 
+                stride = stride,
+                learning_rate = learning_rate,  
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
@@ -137,7 +146,7 @@ def training_model(request):
     return render(request, 'partial/model_form.html', {"form": None})
     
 
-def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: str):
+def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: str, resize_to_output: bool):
 
     file_name = f"{dataset}_{mode}_x{scale}"
     
@@ -152,13 +161,17 @@ def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str,
         elif resize_rule != None:
             file_name += f"_{resize_rule}"
             c_resize_rule = ResizeRule[resize_rule]
+            
+    if resize_to_output:
+        file_name += f"_nrto"
     
     output_path = os.path.join(settings.BASE_DIR, "super_resolution", "datasets", category, f"{file_name}.hdf5")
     
     if not os.path.exists(output_path):
         create_h5_image_file(input_path = os.path.join(settings.BASE_DIR, "super_resolution", "base_datasets", category, dataset),
                             scale = scale, output_path = output_path, mode = ImageColorConverter[mode], patch_size = patch_size,
-                            stride = stride, resize_rule = c_resize_rule, preprocessing_required = preprocessing_required)
+                            stride = stride, resize_rule = c_resize_rule, preprocessing_required = preprocessing_required, 
+                            resize_to_output = resize_to_output)
     return output_path
     
 @login_required
