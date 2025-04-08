@@ -21,8 +21,8 @@ from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
 
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
-                mode: str, scale: int, invert_mode: str, learning_rate: float = 1e-4, seed: int = 1, 
-                batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+                mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-4, 
+                seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
     early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
     

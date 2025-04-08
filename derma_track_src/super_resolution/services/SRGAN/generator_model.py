@@ -4,14 +4,14 @@ import numpy as np
 
 # Residual Block
 class ResidualBlock(nn.Module):
-    def __init__(self, channels = 64):
+    def __init__(self, in_channels = 64, out_channels = 64):
         super(ResidualBlock, self).__init__()
         self.block = nn.Sequential(
-            nn.Conv2d(in_channels = channels, out_channels = channels, kernel_size = 3, stride = 1, padding = 1),
-            nn.BatchNorm2d(num_features = channels),
-            nn.PReLU(),
-            nn.Conv2d(in_channels = channels, out_channels = channels, kernel_size = 3, stride = 1, padding = 1),
-            nn.BatchNorm2d(num_features = channels)
+            nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same"),
+            nn.BatchNorm2d(num_features = out_channels),
+            nn.PReLU(out_channels),
+            nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same"),
+            nn.BatchNorm2d(num_features = out_channels)
         )
 
     def forward(self, x):
@@ -22,9 +22,9 @@ class UpsampleBlock(nn.Module):
     def __init__(self, in_channels = 64, out_channels = 256):
         super(UpsampleBlock, self).__init__()
         self.block = nn.Sequential(
-            nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = 1),
+            nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same"),
             nn.PixelShuffle(upscale_factor = 2),
-            nn.PReLU()
+            nn.PReLU(in_channels)
         )
 
     def forward(self, x):
@@ -38,8 +38,8 @@ class SRGANGenerator(nn.Module):
         upscale_block = int(np.log2(up_scale))
         
         self.initial = nn.Sequential(
-            nn.Conv2d(in_channels = 3, out_channels = 64, kernel_size = 9, stride = 1, padding = 4),
-            nn.PReLU()
+            nn.Conv2d(in_channels = 3, out_channels = 64, kernel_size = 9, stride = 1, padding = "same"),
+            nn.PReLU(channels)
         )
 
         self.residual_blocks = nn.Sequential(
@@ -47,7 +47,7 @@ class SRGANGenerator(nn.Module):
         )
 
         self.post_residual = nn.Sequential(
-            nn.Conv2d(in_channels = channels, out_channels = channels, kernel_size = 3, stride = 1, padding = 1),
+            nn.Conv2d(in_channels = channels, out_channels = channels, kernel_size = 3, stride = 1, padding = "same"),
             nn.BatchNorm2d(num_features = channels)
         )
 
@@ -55,7 +55,7 @@ class SRGANGenerator(nn.Module):
             *([UpsampleBlock(in_channels = channels, out_channels = channels * 4)] * upscale_block)
         )
 
-        self.final = nn.Conv2d(in_channels = channels, out_channels = 3, kernel_size = 9, stride = 1, padding = 4)
+        self.final = nn.Conv2d(in_channels = channels, out_channels = 3, kernel_size = 9, stride = 1, padding = "same")
 
     def forward(self, x):
         start = self.initial(x)

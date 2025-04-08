@@ -6,6 +6,7 @@ import os
 
 from torch import nn
 from tqdm import tqdm
+from super_resolution.services.utils.super_resolution import SuperResolution
 from super_resolution.services.SRCNN.model import SRCNN
 from super_resolution.services.utils.dataloader import H5ImagesDataset
 from super_resolution.services.utils.running_average import RunningAverage
@@ -17,12 +18,10 @@ from super_resolution.services.utils.early_stopping import EarlyStopping
 from torch.utils.data.dataloader import DataLoader
 
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
-                mode: str, scale: int, invert_mode: str, learning_rate: float = 1e-4, seed: int = 1, 
-                batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+                mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-4, 
+                seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
     early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
-    
-    starting_time = time.time()
     
     cudnn.benchmark = True
     
@@ -56,6 +55,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
         {'params': model.conv3.parameters(), 'lr': learning_rate * 0.1}
     ], lr=learning_rate)
     
+    starting_time = time.time()
 
     for epoch in range(num_epochs):
         
@@ -115,7 +115,8 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
             JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
 
         
-    torch.save({"architecture": "SRCNN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
+    torch.save({"architecture": "SRCNN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, 
+                "patch_size": patch_size, "stride": stride, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
     
     print(f"Model saved as '{output_path}'")
 
@@ -128,11 +129,11 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                                                                              ModelField.TRAINING_LOSSES: epoch_train_loss.all_values, 
                                                                              ModelField.VALIDATION_LOSSES: epoch_val_loss.all_values})
     
-    evaluate_model(model_name = model_name, model = model, device = device, eval_file = eval_file)
+    evaluate_model(model_name = model_name, output_path = output_path, device = device, eval_file = eval_file)
     
-def evaluate_model(model_name, model, device, eval_file):
+def evaluate_model(model_name, output_path, device, eval_file):
     
-    model.eval()
+    model = SuperResolution(model_path = os.path.join(output_path, model_name))
     
     eval_dataset = H5ImagesDataset(eval_file)
     
@@ -148,7 +149,7 @@ def evaluate_model(model_name, model, device, eval_file):
                 
                 lr, hr = lr.to(device), hr.to(device)
                 
-                output = model(lr)
+                output = model.process_image(lr)
                 
                 evaluator.evaluate(hr = hr, output = output)
             
