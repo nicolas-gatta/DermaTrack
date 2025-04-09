@@ -146,4 +146,5 @@ def create_h5_image_file(input_path: str, scale: int, output_path: str, mode: Im
         
         __prepare_and_add_images(image_folder = input_path, scale = scale, mode = mode, hi_res_images = hi_res_images, 
                                  low_res_images = low_res_images, image_info = image_info, patch_size=patch_size,
-                                 stride = stride, resize_rule = resize_rule, preprocessing_required = preprocessing_required)
+                                 stride = stride, resize_rule = resize_rule, preprocessing_required = preprocessing_required,
+                                 resize_to_output = resize_to_output)

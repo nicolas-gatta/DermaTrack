@@ -61,7 +61,7 @@ def training_model(request):
     
     stride = None
     
-    resize_to_output = architecture in ["SRGAN", "ESRGAN"]
+    resize_to_output = architecture in ["SRCNN"]
     
     if ("image-option" in request.POST):
         
@@ -162,7 +162,7 @@ def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str,
             file_name += f"_{resize_rule}"
             c_resize_rule = ResizeRule[resize_rule]
             
-    if resize_to_output:
+    if not resize_to_output:
         file_name += f"_nrto"
     
     output_path = os.path.join(settings.BASE_DIR, "super_resolution", "datasets", category, f"{file_name}.hdf5")

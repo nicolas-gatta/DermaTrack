@@ -11,7 +11,7 @@ class H5ImagesDataset(Dataset):
         self.__h5_path = h5_path
         self.__h5_file = None
         self.crop_size = crop_size
-        self.crop_size_lr = crop_size // up_scale_factor
+        self.crop_size_lr = crop_size // up_scale_factor if up_scale_factor != 0 else 0
         self.up_scale_factor = up_scale_factor
 
     @property
@@ -26,7 +26,6 @@ class H5ImagesDataset(Dataset):
         self.__init_h5_file()
         return len(self.__h5_file["low_res"])
     
-
     def __getitem__(self, index):
         self.__init_h5_file()
         try:
@@ -55,8 +54,7 @@ class H5ImagesDataset(Dataset):
     def __del__(self):
         """ Ensures the file is closed when dataset object is deleted. """
         self.close()
-
-        
+ 
     def close(self):
         """ Ensures the file is closed. """
         if self.__h5_file is not None:

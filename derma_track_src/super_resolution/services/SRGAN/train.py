@@ -19,6 +19,7 @@ from super_resolution.services.utils.image_evaluator import ImageEvaluator
 from super_resolution.services.utils.early_stopping import EarlyStopping
 from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
+from super_resolution.services.utils.super_resolution import SuperResolution
 
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
                 mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-4, 
@@ -45,14 +46,19 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
 
     train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory = True, persistent_workers = True)
     val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory = True, persistent_workers = True)
+
+    generator = SRGANGenerator(up_scale = scale).to(device)
+
+    starting_time = time.time()
+    
+    pretrained_model(model=generator, learning_rate=learning_rate, num_epochs=num_epochs, train_loader=train_loader, val_loader=val_loader, device=device)
     
     train_loss, val_loss = RunningAverage(), RunningAverage()
     
     epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
-
-    generator = SRGANGenerator(up_scale = scale).to(device)
+    
     discriminator = SRGANDiscriminator(crop_size = crop_size).to(device)
-
+    
     content_loss = VGGLoss().to(device)
     
     adversarial_loss = nn.BCELoss()
@@ -60,17 +66,13 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     generator_optimizer = optim.Adam(generator.parameters(), lr = learning_rate)
     
     discriminator_optimizer = optim.Adam(discriminator.parameters(), lr = learning_rate)
-    
-    train_loss, val_loss = RunningAverage(), RunningAverage()
-    
-    starting_time = time.time()
         
     for epoch in range(num_epochs):
         
         train_loss.reset()
         val_loss.reset()
         
-        with tqdm(total = len(train_loader) + len(val_loader), desc=f"Epoch {epoch+1}/{num_epochs}", leave=True) as pbar:
+        with tqdm(total = len(train_loader) + len(val_loader), desc=f"Epoch {epoch+1}/{num_epochs}", leave=True, dynamic_ncols=True) as pbar:
             
             for loop_type, dataloader in [("Training", train_loader), ("Validation", val_loader)]:
                 
@@ -86,14 +88,12 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         
                         fake_image = generator(low_res).detach()
                         
-                        print(fake_image.shape, high_res.shape)
-                        
                         real_output = discriminator(high_res)
                         
                         fake_output = discriminator(fake_image)
                         
                         # 1 => True image & 0 => Fake Image
-                        discriminator_loss = adversarial_loss(real_output, torch.ones_like(real_output)) + discriminator_loss(fake_output, torch.zeros_like(fake_output))
+                        discriminator_loss = adversarial_loss(real_output, torch.ones_like(real_output)) + adversarial_loss(fake_output, torch.zeros_like(fake_output))
                         
                         if loop_type == "Training":
                             discriminator_optimizer.zero_grad()
@@ -118,11 +118,11 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                             
                             generator_optimizer.step()
                         
-                            train_loss.update(generator_loss)
+                            train_loss.update(generator_loss.item())
                             
                         else:
                             
-                            val_loss.update(generator_loss)
+                            val_loss.update(generator_loss.item())
                         
                         pbar.update(1)
                         
@@ -160,13 +160,76 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                                                                              ModelField.TRAINING_LOSSES: epoch_train_loss.all_values, 
                                                                              ModelField.VALIDATION_LOSSES: epoch_val_loss.all_values})
     
-    evaluate_model(model_name = model_name, model = generator, device = device, eval_file = eval_file)    
+    evaluate_model(model_name = model_name, output_path = output_path, device = device, eval_file = eval_file)
+
+def pretrained_model(model: SRGANGenerator, learning_rate: float, num_epochs: int, train_loader: DataLoader, 
+                     val_loader: DataLoader, device: torch.device):
     
-def evaluate_model(model_name, model, device, eval_file):
+    early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
     
-    model.eval()
+    optimizer = optim.Adam(model.parameters(), lr = learning_rate)
     
-    eval_dataset = H5ImagesDataset(eval_file)
+    train_loss, val_loss = RunningAverage(), RunningAverage()
+    
+    criterion = nn.MSELoss()
+    
+    total_steps = num_epochs * (len(train_loader) + len(val_loader))
+    
+    with tqdm(total=total_steps, desc="Pretraining Generator", leave=True, dynamic_ncols=True) as pbar:
+
+        for epoch in range(num_epochs):
+            
+            train_loss.reset()
+            val_loss.reset()
+                        
+            for loop_type, dataloader in [("Training", train_loader), ("Validation", val_loader)]:
+                
+                model.train() if loop_type == "Training" else model.eval()
+                
+                with torch.set_grad_enabled(loop_type == "Training"):
+                
+                    for low_res, high_res in dataloader:
+
+                        low_res, high_res = low_res.to(device, non_blocking=True), high_res.to(device, non_blocking=True)
+                        
+                        output = model(low_res)
+
+                        loss = criterion(output, high_res)
+                        
+                        if loop_type == "Training":
+                            optimizer.zero_grad()
+                            
+                            loss.backward()
+                            
+                            optimizer.step()
+                        
+                            train_loss.update(loss.item())
+                            
+                        else:
+                            
+                            val_loss.update(loss.item())
+                        
+                        pbar.set_postfix({
+                            "Epoch":f"{epoch+1}/{num_epochs}",
+                            "Mode": f"{loop_type}",
+                            "Train Loss": f"{train_loss.rounded_average:.4f}" if train_loss.rounded_average > 0 else "N/A",
+                            "Val Loss": f"{val_loss.rounded_average:.4f}" if val_loss.rounded_average > 0 else "N/A",
+                        })
+                        
+                        pbar.update(1)
+
+            early_stopping(val_loss = val_loss.average)
+                        
+            
+            if early_stopping.early_stop:
+                print(f"Early stopping triggered: No improvement observed for {early_stopping.patience} consecutive epochs.")
+    
+
+def evaluate_model(model_name, output_path, device, eval_file):
+    
+    model = SuperResolution(model_path = os.path.join(output_path, model_name))
+    
+    eval_dataset = H5ImagesDataset(h5_path = eval_file)
     
     eval_batch = SizeBasedImageBatch(image_sizes = eval_dataset.image_sizes, batch_size = 1, shuffle = False)
 
@@ -180,7 +243,7 @@ def evaluate_model(model_name, model, device, eval_file):
                 
                 lr, hr = lr.to(device), hr.to(device)
                 
-                output = model(lr)
+                output = model.process_image(lr)
                 
                 evaluator.evaluate(hr = hr, output = output)
             

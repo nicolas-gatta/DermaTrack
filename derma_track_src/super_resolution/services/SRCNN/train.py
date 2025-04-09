@@ -63,7 +63,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
         
         val_loss.reset()
         
-        with tqdm(total = len(train_loader) + len(val_loader), desc=f"Epoch {epoch+1}/{num_epochs}", leave=True) as pbar:
+        with tqdm(total = len(train_loader) + len(val_loader), desc=f"Epoch {epoch+1}/{num_epochs}", leave=True, dynamic_ncols=True) as pbar:
             
             for loop_type, dataloader in [("Training", train_loader), ("Validation", val_loader)]:
                 
