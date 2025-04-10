@@ -35,6 +35,8 @@ def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConv
         hr = cv2.imread(img_path)
             
         hr = ImageConverter.convert_image(image = hr, mode = mode)
+
+        hr = hr[:(hr.shape[0] // scale) * scale, :(hr.shape[1] // scale) * scale] 
         
         lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
 
