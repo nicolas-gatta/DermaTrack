@@ -209,20 +209,21 @@ def pretrained_model(model: SRGANGenerator, learning_rate: float, num_epochs: in
                             
                             val_loss.update(loss.item())
                         
+                        pbar.update(1)
+                        
                         pbar.set_postfix({
                             "Epoch":f"{epoch+1}/{num_epochs}",
                             "Mode": f"{loop_type}",
-                            "Train Loss": f"{train_loss.rounded_average:.4f}" if train_loss.rounded_average > 0 else "N/A",
-                            "Val Loss": f"{val_loss.rounded_average:.4f}" if val_loss.rounded_average > 0 else "N/A",
+                            "Train Loss": f"{train_loss.rounded_average}" if train_loss.rounded_average > 0 else "N/A",
+                            "Val Loss": f"{val_loss.rounded_average}" if val_loss.rounded_average > 0 else "N/A",
                         })
-                        
-                        pbar.update(1)
 
             early_stopping(val_loss = val_loss.average)
-                        
             
             if early_stopping.early_stop:
                 print(f"Early stopping triggered: No improvement observed for {early_stopping.patience} consecutive epochs.")
+                pbar.close()
+                break
     
 
 def evaluate_model(model_name, output_path, device, eval_file):
