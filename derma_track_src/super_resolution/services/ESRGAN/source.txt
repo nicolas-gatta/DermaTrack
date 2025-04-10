@@ -1,3 +1,4 @@
 Base on the paper https://arxiv.org/pdf/1809.00219
+https://arxiv.org/pdf/1807.00734
 https://github.com/xinntao/ESRGAN
 https://youtu.be/eAmV_7PYgyE
