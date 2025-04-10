@@ -37,7 +37,7 @@ class ResidualDenseBlock(nn.Module):
         final = self.conv1(torch.cat(tensors = [x, d1, d2, d3, d4], dim = 1))
         return (final * 0.2) + x
     
-class ResidualInResidualDenseBlock():
+class ResidualInResidualDenseBlock(nn.Module):
     def __init__(self, num_features = 64, growth_channels = 32, bias = True):
         super(ResidualInResidualDenseBlock, self).__init__()
         
@@ -51,7 +51,6 @@ class ResidualInResidualDenseBlock():
         out = self.RRDB3(out)
         return (out * 0.2) + x
         
-    
 # Sub-Pixel Convolution Layers (Increase Image resolution) each block is 2x factor
 class UpsampleBlock(nn.Module):
     def __init__(self, in_channels = 64, out_channels = 256):
