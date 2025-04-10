@@ -97,8 +97,8 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         
                         pbar.set_postfix({
                             "Mode": loop_type,
-                            "Train Loss": f"{train_loss.rounded_average:.4f}" if train_loss.rounded_average > 0 else "N/A",
-                            "Val Loss": f"{val_loss.rounded_average:.4f}" if val_loss.rounded_average > 0 else "N/A",
+                            "Train Loss": f"{train_loss.rounded_average}" if train_loss.rounded_average > 0 else "N/A",
+                            "Val Loss": f"{val_loss.rounded_average}" if val_loss.rounded_average > 0 else "N/A",
                         })
         
         early_stopping(val_loss = val_loss.average)
