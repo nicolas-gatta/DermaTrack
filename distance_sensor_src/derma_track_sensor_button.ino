@@ -48,7 +48,7 @@ void setup() {
     check_button_connection();
     
     dataSend["take_picture"] = false;
-    dataSend["distances"] = null;
+    dataSend["distances"] = NULL;
     dataReceive["picture_taken"] = false;
 
     Wire.begin(); //This resets to 100kHz I2C
@@ -96,7 +96,7 @@ void loop(){
 
     if(!error && dataReceive["picture_taken"]){
         dataSend["take_picture"] = false;
-        dataSend["distances"] = null;
+        dataSend["distances"] = NULL;
         dataReceive["picture_taken"] = false;
     }
   }
