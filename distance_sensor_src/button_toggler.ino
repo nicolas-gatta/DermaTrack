@@ -12,21 +12,25 @@ int previous = HIGH;
 JsonDocument data;
 
 void setup() {
+   
    Serial.begin(115200);
-   // Define pin #12 as input and activate the internal pull-up resistor
+
    pinMode(BUTTON_PIN, INPUT_PULLUP);
+
    data["take_picture"] = false;
+
 }
 
 void loop(){
+  
   reading = digitalRead(BUTTON_PIN);
 
   if (reading == LOW && previous == HIGH){
     if (state == HIGH){
-      data["take_picture"] = true;
+      data["take_picture"] = false;
       state = LOW;
     }else{
-      data["take_picture"] = false;
+      data["take_picture"] = true;
       state = HIGH;
     }
   }
