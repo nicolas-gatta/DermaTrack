@@ -28,8 +28,7 @@ class ModelField(str, Enum):
     STRIDE = "stride"
     PATCH_SIZE = "patch_size"
     RESIZE_RULE = "resize_rule"
-    
-
+    PRETRAINED_MODEL = "pretrained_model"
 
 class JsonManager:
     
@@ -37,14 +36,14 @@ class JsonManager:
 
     @staticmethod
     def training_results_to_json(architecture: str, stride: int, patch_size: int, resize_rule: ResizeRule, model_name: str, train_file: str, valid_file: str, eval_file: str, 
-                                mode: str, scale: int, learning_rate: float, seed: int, batch_size: int, 
-                                num_epochs: int, num_workers: int):
+                                mode: str, scale: int, learning_rate: float, seed: int, batch_size: int, num_epochs: int, num_workers: int):
         """
         Save or update the training results in a JSON file using `model_name` 
         as the key.
         """
         model_data = {
             ModelField.ARCHITECTURE: architecture,
+            ModelField.PRETRAINED_MODEL: None,
             ModelField.STRIDE: stride, 
             ModelField.PATCH_SIZE: patch_size,
             ModelField.RESIZE_RULE: resize_rule,
@@ -129,3 +128,27 @@ class JsonManager:
         
         with open(JsonManager._output_file, "w") as f:
             json.dump(existing_data, f, indent=4)
+            
+    def copy_model_data_and_update(source_model_name: str, destination_model_name: str, updated_fields: dict = None):
+        
+        if not os.path.exists(JsonManager._output_file):
+            raise FileNotFoundError("The training results file does not exist.")
+    
+        try:
+            with open(JsonManager._output_file, "r") as f:
+                existing_data = json.load(f)
+        except (json.JSONDecodeError, FileNotFoundError):
+            raise ValueError("The training results file is invalid or cannot be read.")
+        
+        if source_model_name not in existing_data:
+            raise KeyError(f"Model '{source_model_name}' does not exist in the training results.")
+        
+        new_model_data = dict(existing_data[source_model_name])
+        
+        existing_data[destination_model_name] = new_model_data
+    
+        with open(JsonManager._output_file, "w") as f:
+            json.dump(existing_data, f, indent=4)
+            
+        if updated_fields != None:
+            JsonManager.update_model_data(model_name = destination_model_name, updated_fields = updated_fields)
