@@ -36,7 +36,6 @@ document.querySelectorAll(".view-chart-btn").forEach((button) => {
       const ctx = document.querySelector("canvas").getContext("2d");
   
       new Chart(ctx, {
-        plugins: [ChartDataLabels],
         type: "line",
         data: {
           labels: validationLosses.map((_, idx) => `Epoch ${idx + 1}`),
@@ -46,24 +45,14 @@ document.querySelectorAll(".view-chart-btn").forEach((button) => {
               data: validationLosses,
               borderColor: "red",
               fill: false,
-              tension: 0.1,
-              datalabels: {
-                color: "red",
-                align: "end",
-                anchor: "end"
-              }
+              tension: 0.1
             },
             {
               label: "Training Loss",
               data: trainingLosses,
               borderColor: "blue",
               fill: false,
-              tension: 0.1,
-              datalabels: {
-                color: "blue",
-                align: "top",
-                anchor: "top"
-              }
+              tension: 0.1
             }
           ]
         },
