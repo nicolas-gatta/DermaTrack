@@ -144,7 +144,7 @@ def evaluate_model(model_name, output_path, device, eval_file):
     evaluator = ImageEvaluator()
     
     with torch.no_grad():
-        with tqdm(total = len(eval_loader), desc="Evaluation", leave=True) as pbar:
+        with tqdm(total = len(eval_loader), desc="Evaluation", leave=True, dynamic_ncols=True) as pbar:
             for lr, hr in eval_loader:
                 
                 lr, hr = lr.to(device), hr.to(device)
