@@ -48,10 +48,20 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory = True, persistent_workers = True)
 
     generator = SRGANGenerator(up_scale = scale).to(device)
-
-    starting_time = time.time()
     
-    pretrained_model(model=generator, learning_rate=learning_rate, num_epochs=num_epochs, train_loader=train_loader, val_loader=val_loader, device=device)
+    pretrained_model_name = f"SRResNet_x{scale}.pth"
+    pretrained_model_path = os.path.join(output_path, pretrained_model_name)
+    
+    if os.path.exists(pretrained_model_path):
+        model_info = torch.load(f = pretrained_model_path, map_location = device, weights_only=True)
+        generator.load_state_dict(model_info['model_state_dict'])
+    else:
+        generator = pretrained_model(model=generator, train_loader=train_loader, val_loader=val_loader, eval_file=eval_file, device=device, 
+                                    mode=mode, scale=scale, invert_mode=invert_mode, patch_size=patch_size, stride=stride,
+                                    learning_rate=learning_rate, num_epochs=num_epochs, SRGAN_model_name = model_name, 
+                                    model_name = f"SRResNet_x{scale}.pth", output_path = output_path)
+    
+    JsonManager.update_model_data(model_name=model_name, updated_fields={ModelField.PRETRAINED_MODEL: pretrained_model_name})
     
     train_loss, val_loss = RunningAverage(), RunningAverage()
     
@@ -61,12 +71,14 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     
     content_loss = VGGLoss().to(device)
     
-    adversarial_loss = nn.BCELoss()
+    adversarial_loss = nn.BCEWithLogitsLoss()
     
     generator_optimizer = optim.Adam(generator.parameters(), lr = learning_rate)
     
     discriminator_optimizer = optim.Adam(discriminator.parameters(), lr = learning_rate)
-        
+    
+    starting_time = time.time()
+    
     for epoch in range(num_epochs):
         
         train_loss.reset()
@@ -83,33 +95,12 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                     for low_res, high_res in dataloader:
 
                         low_res, high_res = low_res.to(device, non_blocking=True), high_res.to(device, non_blocking=True)
-
-                        #=======================Train Discriminator===================
-                        
-                        fake_image = generator(low_res).detach()
-                        
-                        real_output = discriminator(high_res)
-                        
-                        fake_output = discriminator(fake_image)
-                        
-                        # 1 => True image & 0 => Fake Image
-                        discriminator_loss = adversarial_loss(real_output, torch.ones_like(real_output)) + adversarial_loss(fake_output, torch.zeros_like(fake_output))
-                        
-                        if loop_type == "Training":
-                            discriminator_optimizer.zero_grad()
-                                                    
-                            discriminator_loss.backward()
                             
-                            discriminator_optimizer.step()
-                            
-                    
                         #=======================Train Generator===================
                         
                         fake_image = generator(low_res)
                         
-                        fake_output = discriminator(fake_image)
-                        
-                        generator_loss = content_loss(fake_image, high_res) + (1e-3 * adversarial_loss(fake_output, torch.ones_like(fake_output)))
+                        generator_loss = content_loss(fake_image, high_res) + (1e-3 * adversarial_loss(discriminator(fake_image), torch.ones_like(high_res)))
                         
                         if loop_type == "Training":
                             generator_optimizer.zero_grad()
@@ -131,6 +122,22 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                             "Train Loss": f"{train_loss.rounded_average:.4f}" if train_loss.rounded_average > 0 else "N/A",
                             "Val Loss": f"{val_loss.rounded_average:.4f}" if val_loss.rounded_average > 0 else "N/A",
                         })
+                        
+                        #=======================Train Discriminator===================
+                        
+                        real_output = discriminator(high_res)
+                        
+                        fake_output = discriminator(fake_image.detach())
+                        
+                        # 0 => True image & 1 => Fake Image
+                        discriminator_loss = adversarial_loss(real_output, torch.ones_like(real_output)) + adversarial_loss(fake_output, torch.zeros_like(fake_output))
+                        
+                        if loop_type == "Training":
+                            discriminator_optimizer.zero_grad()
+                                                    
+                            discriminator_loss.backward()
+                            
+                            discriminator_optimizer.step()
 
         early_stopping(val_loss = val_loss.average)
                     
@@ -160,10 +167,13 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                                                                              ModelField.TRAINING_LOSSES: epoch_train_loss.all_values, 
                                                                              ModelField.VALIDATION_LOSSES: epoch_val_loss.all_values})
     
-    evaluate_model(model_name = model_name, output_path = output_path, device = device, eval_file = eval_file)
+    evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file)
 
-def pretrained_model(model: SRGANGenerator, learning_rate: float, num_epochs: int, train_loader: DataLoader, 
-                     val_loader: DataLoader, device: torch.device):
+def pretrained_model(model: SRGANGenerator, train_loader: DataLoader, val_loader: DataLoader, eval_file: str, 
+                     device: torch.device, mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, 
+                     learning_rate: float, num_epochs: int, SRGAN_model_name: str, model_name: str, output_path: str):
+    
+    JsonManager.copy_model_data_and_update(source_model_name = SRGAN_model_name, destination_model_name = model_name, updated_fields = {ModelField.ARCHITECTURE: "SRResNet"})
     
     early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
     
@@ -171,11 +181,15 @@ def pretrained_model(model: SRGANGenerator, learning_rate: float, num_epochs: in
     
     train_loss, val_loss = RunningAverage(), RunningAverage()
     
+    epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
+    
     criterion = nn.MSELoss()
     
     total_steps = num_epochs * (len(train_loader) + len(val_loader))
     
-    with tqdm(total=total_steps, desc="Pretraining Generator", leave=True, dynamic_ncols=True) as pbar:
+    starting_time = time.time()
+    
+    with tqdm(total=total_steps, desc="Pretraining SRResNet", leave=True, dynamic_ncols=True) as pbar:
 
         for epoch in range(num_epochs):
             
@@ -217,18 +231,39 @@ def pretrained_model(model: SRGANGenerator, learning_rate: float, num_epochs: in
                             "Train Loss": f"{train_loss.rounded_average}" if train_loss.rounded_average > 0 else "N/A",
                             "Val Loss": f"{val_loss.rounded_average}" if val_loss.rounded_average > 0 else "N/A",
                         })
-
+                        
             early_stopping(val_loss = val_loss.average)
+                        
+            epoch_train_loss.update(train_loss.average)
+            
+            epoch_val_loss.update(val_loss.average)
             
             if early_stopping.early_stop:
                 print(f"Early stopping triggered: No improvement observed for {early_stopping.patience} consecutive epochs.")
                 pbar.close()
+                JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.NUM_EPOCHS: epoch + 1})
                 break
+            else:
+                JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
+    
+    torch.save({"architecture": "SRResNet", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, 
+                    "patch_size": patch_size, "stride": stride, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))    
+    
+    JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: "Completed", 
+                                                                            ModelField.COMPLETION_TIME: int(time.time() - starting_time),
+                                                                            ModelField.TRAINING_LOSSES: epoch_train_loss.all_values, 
+                                                                            ModelField.VALIDATION_LOSSES: epoch_val_loss.all_values})
+    
+    print(f"Pretrained Model saved as '{output_path}'")
+    
+    evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file)
+    
+    return model
     
 
-def evaluate_model(model_name, output_path, device, eval_file):
+def evaluate_model(model_name, path_to_model, device, eval_file):
     
-    model = SuperResolution(model_path = os.path.join(output_path, model_name))
+    model = SuperResolution(model_path = os.path.join(path_to_model, model_name))
     
     eval_dataset = H5ImagesDataset(h5_path = eval_file)
     
@@ -239,7 +274,7 @@ def evaluate_model(model_name, output_path, device, eval_file):
     evaluator = ImageEvaluator()
     
     with torch.no_grad():
-        with tqdm(total = len(eval_loader), desc="Evaluation", leave=True) as pbar:
+        with tqdm(total = len(eval_loader), desc="Evaluation", leave=True, dynamic_ncols=True) as pbar:
             for lr, hr in eval_loader:
                 
                 lr, hr = lr.to(device), hr.to(device)

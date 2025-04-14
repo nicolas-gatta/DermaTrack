@@ -34,7 +34,7 @@ class SuperResolution:
             case "SRCNN":
                 model = SRCNN()
             
-            case "SRGAN":
+            case "SRGAN" | "SRResNet":
                 model = SRGANGenerator()
             
             case "ESRGAN":
