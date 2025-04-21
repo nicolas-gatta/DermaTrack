@@ -13,25 +13,25 @@ import os
 
 # Create your views here.
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def index(request):
     return render(request, 'core/index.html')
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def patient_list(request):
     if request.headers.get('HX-Request'):
         patients = Patient.objects.all() 
         return render(request, 'partial/patient_list.html', {'patients': patients})
     
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def image_capture(request):
     if request.headers.get('HX-Request'):
         return render(request, 'partial/image_capture.html')
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def visit_list(request):
     if request.headers.get('HX-Request'):
@@ -43,7 +43,7 @@ def visit_list(request):
 
         return render(request, 'partial/visit_list.html', {'visits': visits})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def visit_status_change(request):
     if request.method == "POST":
@@ -67,26 +67,26 @@ def visit_status_change(request):
         
         return render(request, 'partial/visit_list.html', {'visits': visits})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def visit_view(request):
     visit = Visit.objects.get(pk = request.POST['id'])
     return render(request, 'partial/visit_view.html', {'visit': visit})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def doctor_list(request):
     if request.headers.get('HX-Request'):
         doctors = Doctor.objects.all()
         return render(request, 'partial/doctor_list.html', {'doctors': doctors})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def patient_profile(request):
     patient = Patient.objects.get(pk=request.POST["id"])
     return render(request, 'core/patient.html', {'patient': patient})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def list_visit_folders(request, visit_id):
     base_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit_id}")
@@ -100,7 +100,7 @@ def list_visit_folders(request, visit_id):
     
     return JsonResponse({"folders": folder_names})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def list_visit_folder_images(request, visit_id, body_part):
     base_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit_id}", f"{body_part}")

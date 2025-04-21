@@ -241,8 +241,8 @@ def pretrained_model(model: SRGANGenerator, train_loader: DataLoader, val_loader
             epoch_val_loss.update(val_loss.average)
             
             if early_stopping.early_stop:
-                print(f"Early stopping triggered: No improvement observed for {early_stopping.patience} consecutive epochs.")
                 pbar.close()
+                print(f"Early stopping triggered: No improvement observed for {early_stopping.patience} consecutive epochs.")
                 JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.NUM_EPOCHS: epoch + 1})
                 break
             else:

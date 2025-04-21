@@ -4,7 +4,7 @@ from utils.checks import group_and_super_user_checks
 
 # Create your views here.
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def index(request):
     return render(request, 'administrator/index.html', {})

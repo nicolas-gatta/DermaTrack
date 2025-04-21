@@ -23,7 +23,7 @@ from utils.checks import group_and_super_user_checks
 _model = None
 __test_model = None
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def training_model(request):
     
@@ -174,21 +174,21 @@ def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str,
                             resize_to_output = resize_to_output)
     return output_path
     
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def show_models(request):
     if request.headers.get('HX-Request'):
         models = JsonManager.load_training_results()
         return render(request, 'partial/show_models.html', {"models": models})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def model_form(request):
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/model_form.html', {"form": None})
     
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def load_test_model(request, model_name):
     global __test_model
@@ -198,7 +198,7 @@ def load_test_model(request, model_name):
         
         return HttpResponse("Model Loaded")
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def apply_test_sr(request, image_name):
     global __test_model
@@ -210,21 +210,21 @@ def apply_test_sr(request, image_name):
     
         return JsonResponse({'url': os.path.join(settings.MEDIA_URL, "output_test", filename)})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def dataset_form(request):
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/dataset_form.html', {"form": None})
     
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def test_model_view(request):
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/test_model.html', {"form": None})
     
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def create_dataset(request):
     
@@ -235,7 +235,7 @@ def create_dataset(request):
     
     return render(request, 'partial/dataset_form.html', {"form": None})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def get_datasets(request, category):
     base_path = os.path.join(settings.BASE_DIR, "super_resolution", "base_datasets", category)
@@ -246,7 +246,7 @@ def get_datasets(request, category):
     
     return JsonResponse({'datasets': datasets})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def get_all_test_images(request):
     
@@ -260,7 +260,7 @@ def get_all_test_images(request):
     return JsonResponse({'images': images})
 
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def get_test_image(request, name):
     
@@ -268,7 +268,7 @@ def get_test_image(request, name):
     
     return JsonResponse({'url': base_path})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def degrade_and_save_image(request, name, scale):
     
@@ -286,7 +286,7 @@ def degrade_and_save_image(request, name, scale):
 
     return JsonResponse({'url': os.path.join(settings.MEDIA_URL, "output_test", "degraded_image.png")})
 
-@login_required
+@login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def get_models(request):
     base_path = os.path.join(settings.BASE_DIR, "super_resolution", "models")
