@@ -22,7 +22,7 @@ from super_resolution.services.utils.json_manager import JsonManager, ModelField
 from super_resolution.services.utils.super_resolution import SuperResolution
 
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
-                mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-4, 
+                mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-5, 
                 seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
     crop_size = 96
@@ -58,7 +58,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     else:
         generator = pretrained_model(model=generator, train_loader=train_loader, val_loader=val_loader, eval_file=eval_file, device=device, 
                                     mode=mode, scale=scale, invert_mode=invert_mode, patch_size=patch_size, stride=stride,
-                                    learning_rate=learning_rate, num_epochs=num_epochs, SRGAN_model_name = model_name, 
+                                    learning_rate = 1e-4, num_epochs = 100, SRGAN_model_name = model_name, 
                                     model_name = pretrained_model_name, output_path = output_path)
     
     JsonManager.update_model_data(model_name=model_name, updated_fields={ModelField.PRETRAINED_MODEL: pretrained_model_name})
@@ -102,7 +102,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         
                         fake_ouput = discriminator(fake_image)
                         
-                        generator_loss = content_loss(fake_image, high_res) + (1e-3 * adversarial_loss(discriminator(fake_image), torch.ones_like(fake_ouput)))
+                        generator_loss = content_loss(fake_image, high_res) + (1e-3 * adversarial_loss(fake_ouput, torch.ones_like(fake_ouput)))
                         
                         if loop_type == "Training":
                             generator_optimizer.zero_grad()
