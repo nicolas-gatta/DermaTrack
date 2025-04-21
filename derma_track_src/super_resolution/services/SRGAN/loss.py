@@ -2,7 +2,6 @@ import torch.nn as nn
 
 from torchvision import models
 
-# VGG-based Content Loss
 class VGGLoss(nn.Module):
     def __init__(self):
         super(VGGLoss, self).__init__()
@@ -14,4 +13,4 @@ class VGGLoss(nn.Module):
     def forward(self, sr, hr):
         sr_features = self.feature_extractor(sr)
         hr_features = self.feature_extractor(hr)
-        return nn.functional.mse_loss(sr_features, hr_features)
+        return nn.functional.mse_loss(sr_features, hr_features.detach())

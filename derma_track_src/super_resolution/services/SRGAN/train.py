@@ -49,7 +49,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
 
     generator = SRGANGenerator(up_scale = scale).to(device)
     
-    pretrained_model_name = f"SRResNet_x{scale}.pth"
+    pretrained_model_name = f"SRResNet_x{scale}_{mode}.pth"
     pretrained_model_path = os.path.join(output_path, pretrained_model_name)
     
     if os.path.exists(pretrained_model_path):
@@ -59,7 +59,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
         generator = pretrained_model(model=generator, train_loader=train_loader, val_loader=val_loader, eval_file=eval_file, device=device, 
                                     mode=mode, scale=scale, invert_mode=invert_mode, patch_size=patch_size, stride=stride,
                                     learning_rate=learning_rate, num_epochs=num_epochs, SRGAN_model_name = model_name, 
-                                    model_name = f"SRResNet_x{scale}.pth", output_path = output_path)
+                                    model_name = pretrained_model_name, output_path = output_path)
     
     JsonManager.update_model_data(model_name=model_name, updated_fields={ModelField.PRETRAINED_MODEL: pretrained_model_name})
     
@@ -100,7 +100,9 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         
                         fake_image = generator(low_res)
                         
-                        generator_loss = content_loss(fake_image, high_res) + (1e-3 * adversarial_loss(discriminator(fake_image), torch.ones_like(high_res)))
+                        fake_ouput = discriminator(fake_image)
+                        
+                        generator_loss = content_loss(fake_image, high_res) + (1e-3 * adversarial_loss(discriminator(fake_image), torch.ones_like(fake_ouput)))
                         
                         if loop_type == "Training":
                             generator_optimizer.zero_grad()
@@ -130,7 +132,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         fake_output = discriminator(fake_image.detach())
                         
                         # 0 => True image & 1 => Fake Image
-                        discriminator_loss = adversarial_loss(real_output, torch.ones_like(real_output)) + adversarial_loss(fake_output, torch.zeros_like(fake_output))
+                        discriminator_loss = (adversarial_loss(real_output, torch.ones_like(real_output)) + adversarial_loss(fake_output, torch.zeros_like(fake_output))) / 2
                         
                         if loop_type == "Training":
                             discriminator_optimizer.zero_grad()
