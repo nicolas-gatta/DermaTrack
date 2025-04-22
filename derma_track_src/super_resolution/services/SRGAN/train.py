@@ -71,7 +71,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     
     content_loss = VGGLoss().to(device)
     
-    adversarial_loss = nn.BCEWithLogitsLoss()
+    adversarial_loss = nn.BCELoss()
     
     generator_optimizer = optim.Adam(generator.parameters(), lr = learning_rate)
     
