@@ -53,7 +53,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     pretrained_model_path = os.path.join(output_path, pretrained_model_name)
     
     if os.path.exists(pretrained_model_path):
-        model_info = torch.load(f = pretrained_model_path, map_location = device, weights_only=True)
+        model_info = torch.load(f = pretrained_model_path, map_location = device)
         generator.load_state_dict(model_info['model_state_dict'])
     else:
         generator = pretrained_model(model=generator, train_loader=train_loader, val_loader=val_loader, eval_file=eval_file, device=device, 
@@ -132,7 +132,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         fake_output = discriminator(fake_image.detach())
                         
                         # 0 => True image & 1 => Fake Image
-                        discriminator_loss = (adversarial_loss(real_output, torch.ones_like(real_output)) + adversarial_loss(fake_output, torch.zeros_like(fake_output))) / 2
+                        discriminator_loss = (adversarial_loss(real_output, torch.ones_like(real_output)) + adversarial_loss(fake_output, torch.zeros_like(fake_output)))
                         
                         if loop_type == "Training":
                             discriminator_optimizer.zero_grad()

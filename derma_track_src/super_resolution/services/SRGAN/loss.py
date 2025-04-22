@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 
 from torchvision import models, transforms
@@ -19,7 +20,9 @@ class VGGLoss(nn.Module):
         self.feature_extractor.eval()
         self.criterion = nn.MSELoss()
 
-    def forward(self, sr, hr):
+    def forward(self, sr: torch.Tensor, hr: torch.Tensor):
+        
         sr_features = self.feature_extractor(self.normalize(sr))
         hr_features = self.feature_extractor(self.normalize(hr))
+        
         return self.criterion(sr_features, hr_features.detach())

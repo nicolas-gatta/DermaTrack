@@ -280,7 +280,7 @@ def degrade_and_save_image(request, name, scale):
     
     degraded_image = cv2.resize(image, (image.shape[1] // scale, image.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
     
-    degraded_image = cv2.resize(degraded_image, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_NEAREST)
+    #degraded_image = cv2.resize(degraded_image, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_NEAREST)
     
     cv2.imwrite(output_path, degraded_image)
 
