@@ -50,10 +50,10 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     criterion = nn.MSELoss()  
     
     optimizer = optim.Adam([
-        {'params': model.conv1.parameters()},
-        {'params': model.conv2.parameters()},
+        {'params': model.conv1.parameters(), 'lr': learning_rate},
+        {'params': model.conv2.parameters(), 'lr': learning_rate},
         {'params': model.conv3.parameters(), 'lr': learning_rate * 0.1}
-    ], lr=learning_rate)
+    ])
     
     starting_time = time.time()
 
