@@ -7,10 +7,10 @@ class ResidualBlock(nn.Module):
     def __init__(self, in_channels = 64, out_channels = 64):
         super(ResidualBlock, self).__init__()
         self.block = nn.Sequential(
-            nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same"),
+            nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same", bias = False),
             nn.BatchNorm2d(num_features = out_channels),
             nn.PReLU(out_channels),
-            nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same"),
+            nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same", bias = False),
             nn.BatchNorm2d(num_features = out_channels)
         )
 
@@ -47,7 +47,7 @@ class SRGANGenerator(nn.Module):
         )
 
         self.post_residual = nn.Sequential(
-            nn.Conv2d(in_channels = channels, out_channels = channels, kernel_size = 3, stride = 1, padding = "same"),
+            nn.Conv2d(in_channels = channels, out_channels = channels, kernel_size = 3, stride = 1, padding = "same", bias = False),
             nn.BatchNorm2d(num_features = channels)
         )
 
