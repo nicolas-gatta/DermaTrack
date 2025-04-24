@@ -71,13 +71,14 @@ class SuperResolution:
         else:
             preprocess_image = image
             postprocess_required = False
-        
-        if isinstance(self.model, SRCNN) and self.model_info["stride"] != None and self.model_info["patch_size"] != None:
-            sr_image = self.__srcnn_special_processing(image_tensor = preprocess_image)
+
+        if self.model_info["patch_size"] != 0 and self.model_info["stride"] != 0:
+            sr_image = self._special_processing(image_tensor=preprocess_image)
         else:
             with torch.no_grad():
                 sr_image = self.model(preprocess_image)
 
+        sr_image = torch.clamp(sr_image, 0.0, 1.0)
         return self.__postprocess_image(sr_image) if postprocess_required else sr_image
         
     def __fetch_image(self, image_source: str):
@@ -111,29 +112,37 @@ class SuperResolution:
         return tensor_image.unsqueeze(0).to(self.device)
     
     def __postprocess_image(self, sr_image: torch.Tensor) -> np.ndarray:
-        clamp_sr_image = torch.clamp(sr_image, 0.0, 1.0)
-        tensor_image = clamp_sr_image.squeeze(0).permute(1, 2, 0) * 255
+        tensor_image = sr_image.squeeze(0).permute(1, 2, 0) * 255
         numpy_image = tensor_image.cpu().detach().numpy().astype(np.uint8)
         convert_image = ImageConverter.convert_image(numpy_image, ImageColorConverter[self.model_info["invert_color_mode"]])
         return convert_image
     
-    def __srcnn_special_processing(self, image_tensor: torch.Tensor) -> torch.Tensor:
+    def _special_processing(self, image_tensor: torch.Tensor) -> torch.Tensor:
         
         _, c, h, w = image_tensor.shape
+        
         output = torch.zeros((1, c, h, w), device = self.device)
         weight = torch.zeros((1, c, h, w), device = self.device)
+        
+        y_positions = list(range(0, h - self.model_info["patch_size"] + 1, self.model_info["stride"]))
+        x_positions = list(range(0, w - self.model_info["patch_size"] + 1, self.model_info["stride"]))
+        
+        if h - self.model_info["patch_size"] % self.model_info["stride"] != 0:
+            y_positions.append(h - self.model_info["patch_size"])
+        if w - self.model_info["patch_size"] % self.model_info["stride"] != 0:
+            x_positions.append(w - self.model_info["patch_size"])
 
-        for y in range(0, h - self.model_info["patch_size"] + 1, self.model_info["stride"]):
-            for x in range(0, w - self.model_info["patch_size"] + 1, self.model_info["stride"]):
+        for y in y_positions:
+            for x in x_positions:
                 patch = image_tensor[:, :, y:y + self.model_info["patch_size"], x:x + self.model_info["patch_size"]]
+                
                 with torch.no_grad():
                     sr_patch = self.model(patch)
-
+                
                 _, _, ph, pw = sr_patch.shape
                 output[:, :, y:y + ph, x:x + pw] += sr_patch
                 weight[:, :, y:y + ph, x:x + pw] += 1
 
-        # Avoid division by zero
         weight[weight == 0] = 1
         result = output / weight
         

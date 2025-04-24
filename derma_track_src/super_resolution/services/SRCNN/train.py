@@ -25,6 +25,8 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     
     cudnn.benchmark = True
     
+    scaler = torch.amp.GradScaler()
+    
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     torch.manual_seed(seed)
@@ -75,17 +77,24 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         
                         low_res, high_res = low_res.to(device, non_blocking=True), high_res.to(device, non_blocking=True)
                         
-                        output = model(low_res)
-                        
-                        loss = criterion(output, high_res)
+                        with torch.autocast(device_type=device.type):
+                            output = model(low_res)
+                            
+                            loss = criterion(output, high_res)
                             
                         if loop_type == "Training":
                             
                             optimizer.zero_grad()
                             
-                            loss.backward()
+                            # loss.backward()
                             
-                            optimizer.step()
+                            # optimizer.step()
+                            
+                            scaler.scale(loss).backward()
+                            
+                            scaler.step(optimizer=optimizer)
+                            
+                            scaler.update()
                             
                             train_loss.update(loss.item())
                         
@@ -115,7 +124,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
             JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
 
         
-    torch.save({"architecture": "SRCNN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, 
+    torch.save({"architecture": "SRCNN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": True,
                 "patch_size": patch_size, "stride": stride, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
     
     print(f"Model saved as '{output_path}'")
