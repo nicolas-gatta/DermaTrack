@@ -12,9 +12,8 @@ from django.conf import settings
 from super_resolution.services.SRCNN import train as srcnn_train
 from super_resolution.services.ESRGAN import train as esrgan_train
 from super_resolution.services.SRGAN import train as srgan_train
-from super_resolution.services.utils.prepare_dataset import create_h5_image_file, ResizeRule
+from super_resolution.services.utils.prepare_dataset import dataset_exist_or_create
 from super_resolution.services.utils.json_manager import JsonManager
-from super_resolution.services.utils.image_converter import ImageColorConverter
 from super_resolution.services.utils.super_resolution import SuperResolution
 from utils.unique_filename import get_unique_filename
 
@@ -72,13 +71,13 @@ def training_model(request):
             patch_size = int(request.POST["patch-size"])
             stride = int(patch_size * (float(request.POST["overlaying"]) / 100.0))
     
-    train_file, valid_file, eval_file = [_dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
+    train_file, valid_file, eval_file = [dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
                                                                   patch_size = patch_size, stride = stride, resize_rule = resize_rule, 
-                                                                  resize_to_output = resize_to_output) 
+                                                                  resize_to_output = resize_to_output, base_dir = settings.BASE_DIR) 
                                          for dataset, category in [(train_dataset, "training"), 
                                                                    (valid_dataset, "validation"), 
                                                                    (eval_dataset, "evaluation")] 
-                                         ]
+                                        ]
     
     JsonManager.training_results_to_json(architecture = architecture, stride = stride, patch_size = patch_size, resize_rule = resize_rule, 
                                                     model_name = model_name, train_file = train_dataset, valid_file = valid_dataset, 
@@ -144,35 +143,6 @@ def training_model(request):
             pass
         
     return render(request, 'partial/model_form.html', {"form": None})
-    
-
-def _dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: str, resize_to_output: bool):
-
-    file_name = f"{dataset}_{mode}_x{scale}"
-    
-    c_resize_rule = None
-            
-    preprocessing_required = (category != "evaluation") and (patch_size != None and stride != None) or resize_rule != None
-    
-    if preprocessing_required:
-        if patch_size != None and stride != None:
-            file_name += f"_{patch_size}_s{stride}"
-            
-        elif resize_rule != None:
-            file_name += f"_{resize_rule}"
-            c_resize_rule = ResizeRule[resize_rule]
-            
-    if not resize_to_output:
-        file_name += f"_nrto"
-    
-    output_path = os.path.join(settings.BASE_DIR, "super_resolution", "datasets", category, f"{file_name}.hdf5")
-    
-    if not os.path.exists(output_path):
-        create_h5_image_file(input_path = os.path.join(settings.BASE_DIR, "super_resolution", "base_datasets", category, dataset),
-                            scale = scale, output_path = output_path, mode = ImageColorConverter[mode], patch_size = patch_size,
-                            stride = stride, resize_rule = c_resize_rule, preprocessing_required = preprocessing_required, 
-                            resize_to_output = resize_to_output)
-    return output_path
     
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
