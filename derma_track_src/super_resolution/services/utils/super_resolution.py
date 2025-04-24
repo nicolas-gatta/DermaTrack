@@ -5,7 +5,7 @@ import torch
 
 from super_resolution.services.utils.image_converter import ImageColorConverter, ImageConverter
 from super_resolution.services.SRCNN.model import SRCNN
-from super_resolution.services.SRGAN.generator_model import SRGANGenerator
+from super_resolution.services.SRResNet.model import SRGANGenerator
 from super_resolution.services.ESRGAN.generator_model import ESRGANGenerator
 
 class SuperResolution:

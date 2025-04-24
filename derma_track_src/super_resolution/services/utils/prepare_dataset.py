@@ -17,7 +17,7 @@ class ResizeRule(str, Enum):
 def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConverter, hi_res_images: h5py.Group, low_res_images: h5py.Group, image_info: h5py.Group,
                              patch_size: int, stride: int, resize_rule: ResizeRule, preprocessing_required: bool = True, resize_to_output: bool = True):
     
-    images_file_name = [file for file in os.listdir(image_folder) if file.endswith(('.png', '.jpg', '.jpeg'))]
+    images_file_name = [file for file in os.listdir(image_folder) if file.lower().endswith(('.png', '.jpg', '.jpeg'))]
     
     target_size = None
     
@@ -48,30 +48,44 @@ def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConv
                 height, width, _ = hr.shape
                 
                 if height < patch_size or width < patch_size:
+                    
+                    lr_target_height = patch_size if resize_to_output else (patch_size // scale)
+                    
+                    lr_target_width =  patch_size if resize_to_output else (patch_size // scale)
+                    
                     hr = __resize_image(image = hr, target_height = patch_size, target_width = patch_size) 
-                    lr = __resize_image(image = lr, target_height = patch_size, target_width = patch_size)
+                    
+                    lr = __resize_image(image = lr, target_height = lr_target_height, target_width = lr_target_width)
+                        
                     image_info_list = __add_image(file = file, hr = hr, lr = lr, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count, image_info_list = image_info_list)
                     count += 1
                     
                 else:
                     
-                    pad_height = (stride - (height - patch_size) % stride) % stride
-                    pad_width = (stride - (width - patch_size) % stride) % stride
-                    
-                    if (pad_width > 0 or pad_height > 0):
-                        hr = __resize_image(image = hr, target_height = height + pad_height, target_width = width + pad_width)
-                        lr = __resize_image(image = lr, target_height = height + pad_height, target_width = width + pad_width)
-                    
                     for y in range(0, height - patch_size + 1, stride):
                         for x in range(0, width - patch_size + 1, stride):
+                            
+                            lr_y = y if resize_to_output else y // scale
+                            
+                            lr_x = x if resize_to_output else x // scale
+                            
+                            lr_patch_size = patch_size if resize_to_output else patch_size // scale
+                            
                             hr_patch_image = hr[y : y + patch_size, x : x + patch_size]
-                            lr_patch_image = lr[y : y + patch_size, x : x + patch_size]
+                            lr_patch_image = lr[lr_y : lr_y + lr_patch_size, lr_x : lr_x + lr_patch_size]
                             image_info_list = __add_image(file = file, hr = hr_patch_image, lr = lr_patch_image, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count, image_info_list = image_info_list)
                             count += 1
                         
             elif resize_rule != None:
+                
+                lr_target_height = target_size[0] if resize_to_output else (target_size[0] // scale)  
+                    
+                lr_target_width = target_size[1] if resize_to_output else (target_size[1] // scale) 
+                    
                 hr = __resize_image(image = hr, target_height = target_size[0], target_width = target_size[1])
-                lr = __resize_image(image = lr, target_height = target_size[0], target_width = target_size[1])
+                
+                lr = __resize_image(image = lr, target_height = lr_target_height, target_width = lr_target_width)
+                    
                 image_info_list = __add_image(file = file, hr = hr, lr = lr, hi_res_images = hi_res_images, low_res_images = low_res_images, count = count)
                 count += 1
             
@@ -123,14 +137,14 @@ def __get_extreme_image_size(images_file_name: list, image_folder: str, resize_r
             if(extreme_height < height):
                 extreme_height = height
                 
-            elif(extreme_width < width):
+            if(extreme_width < width):
                 extreme_width = width
         
         else:
             if(extreme_height > height):
                 extreme_height = height
                 
-            elif(extreme_width > width):
+            if(extreme_width > width):
                 extreme_width = width
     
     return (extreme_height, extreme_width)
@@ -150,3 +164,31 @@ def create_h5_image_file(input_path: str, scale: int, output_path: str, mode: Im
                                  low_res_images = low_res_images, image_info = image_info, patch_size=patch_size,
                                  stride = stride, resize_rule = resize_rule, preprocessing_required = preprocessing_required,
                                  resize_to_output = resize_to_output)
+
+def dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: str, resize_to_output: bool, base_dir: str):
+
+    file_name = f"{dataset}_{mode}_x{scale}"
+    
+    c_resize_rule = None
+            
+    preprocessing_required = (category != "evaluation") and (patch_size != None and stride != None) or resize_rule != None
+    
+    if preprocessing_required:
+        if patch_size != None and stride != None:
+            file_name += f"_{patch_size}_s{stride}"
+            
+        elif resize_rule != None:
+            file_name += f"_{resize_rule}"
+            c_resize_rule = ResizeRule[resize_rule]
+            
+    if not resize_to_output:
+        file_name += f"_nrto"
+    
+    output_path = os.path.join(base_dir, "super_resolution", "datasets", category, f"{file_name}.hdf5")
+    
+    if not os.path.exists(output_path):
+        create_h5_image_file(input_path = os.path.join(base_dir, "super_resolution", "base_datasets", category, dataset),
+                            scale = scale, output_path = output_path, mode = ImageColorConverter[mode], patch_size = patch_size,
+                            stride = stride, resize_rule = c_resize_rule, preprocessing_required = preprocessing_required, 
+                            resize_to_output = resize_to_output)
+    return output_path
