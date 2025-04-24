@@ -28,7 +28,7 @@ def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConv
     if resize_rule != None:
         target_size = __get_extreme_image_size(images_file_name = images_file_name, image_folder = image_folder, resize_rule = resize_rule)
     
-    for file in tqdm(images_file_name, desc="Creating Dataset"):
+    for file in tqdm(images_file_name, desc="Creating Dataset", leave=True, dynamic_ncols=True):
             
         img_path = os.path.join(image_folder, file)
         
