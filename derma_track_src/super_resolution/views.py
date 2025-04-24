@@ -291,7 +291,10 @@ def degrade_and_save_image(request, name, scale):
 def get_models(request):
     base_path = os.path.join(settings.BASE_DIR, "super_resolution", "models")
     try:
-        models = os.listdir(base_path)
+        models = [
+            file for file in os.listdir(base_path)
+            if os.path.isfile(os.path.join(base_path, file)) and file.endswith(".pth")
+        ]
     except FileNotFoundError:
         models = []
     
