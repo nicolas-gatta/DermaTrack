@@ -31,7 +31,7 @@ def pretrain_model(model_name: str, train_dataset: str, valid_dataset: str, eval
                                                 batch_size = batch_size, num_epochs = num_epochs, num_workers = num_workers)
         
     train_file, valid_file, eval_file = [dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
-                                                                patch_size = patch_size, stride = patch_size, resize_rule = None, 
+                                                                patch_size = patch_size, stride = stride, resize_rule = None, 
                                                                 resize_to_output = False, base_dir = settings.BASE_DIR) 
                                         for dataset, category in [(train_dataset, "training"), 
                                                                 (valid_dataset, "validation"), 
