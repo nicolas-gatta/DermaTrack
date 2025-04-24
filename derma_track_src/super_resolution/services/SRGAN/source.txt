@@ -5,4 +5,3 @@ https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html
 https://github.com/dongheehand/VGG_feature_extractor/blob/master/vgg19.py
 https://github.com/pytorch/examples/blob/42e5b996718797e45c46a25c55b031e6768f8440/imagenet/main.py#L89-L101
 https://pytorch.org/vision/main/models/generated/torchvision.models.vgg19.html
-https://github.com/twtygqyy/pytorch-SRResNet/blob/master/data/generate_train_srresnet.m
