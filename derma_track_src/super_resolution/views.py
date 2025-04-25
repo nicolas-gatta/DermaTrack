@@ -198,7 +198,7 @@ def test_model_view(request):
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def create_dataset(request):
     
-    _dataset_exist_or_create(dataset = request.POST["dataset"], 
+    dataset_exist_or_create(dataset = request.POST["dataset"], 
                              mode = request.POST["mode"], 
                              scale = int(request.POST["scale"]), 
                              category = request.POST["category"])
