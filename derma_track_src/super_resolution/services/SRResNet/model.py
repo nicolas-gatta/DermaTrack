@@ -9,7 +9,7 @@ class ResidualBlock(nn.Module):
         self.block = nn.Sequential(
             nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same", bias = False),
             nn.BatchNorm2d(num_features = out_channels),
-            nn.PReLU(out_channels),
+            nn.PReLU(),
             nn.Conv2d(in_channels = out_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same", bias = False),
             nn.BatchNorm2d(num_features = out_channels)
         )
@@ -24,7 +24,7 @@ class UpsampleBlock(nn.Module):
         self.block = nn.Sequential(
             nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = "same"),
             nn.PixelShuffle(upscale_factor = 2),
-            nn.PReLU(in_channels)
+            nn.PReLU()
         )
 
     def forward(self, x):
@@ -39,7 +39,7 @@ class SRResNet(nn.Module):
         
         self.initial = nn.Sequential(
             nn.Conv2d(in_channels = 3, out_channels = 64, kernel_size = 9, stride = 1, padding = "same"),
-            nn.PReLU(channels)
+            nn.PReLU()
         )
 
         self.residual_blocks = nn.Sequential(
