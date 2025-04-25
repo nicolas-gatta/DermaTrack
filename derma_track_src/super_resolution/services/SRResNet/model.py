@@ -31,9 +31,9 @@ class UpsampleBlock(nn.Module):
         return self.block(x)
 
 
-class SRGANGenerator(nn.Module):
+class SRResNet(nn.Module):
     def __init__(self, channels = 64, num_residual_blocks = 16, up_scale = 4):
-        super(SRGANGenerator, self).__init__()
+        super(SRResNet, self).__init__()
         
         upscale_block = int(np.log2(up_scale))
         
@@ -43,7 +43,7 @@ class SRGANGenerator(nn.Module):
         )
 
         self.residual_blocks = nn.Sequential(
-            *([ResidualBlock(channels)] * num_residual_blocks)
+            *[ResidualBlock(channels) for _ in range(num_residual_blocks)]
         )
 
         self.post_residual = nn.Sequential(
@@ -52,7 +52,7 @@ class SRGANGenerator(nn.Module):
         )
 
         self.upsampling = nn.Sequential(
-            *([UpsampleBlock(in_channels = channels, out_channels = channels * 4)] * upscale_block)
+            *[UpsampleBlock(in_channels = channels, out_channels = channels * 4) for _ in range(upscale_block)]
         )
 
         self.final = nn.Conv2d(in_channels = channels, out_channels = 3, kernel_size = 9, stride = 1, padding = "same")

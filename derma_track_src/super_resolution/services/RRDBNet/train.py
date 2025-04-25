@@ -8,7 +8,7 @@ from django.conf import settings
 from torch import nn
 from tqdm import tqdm
 
-from super_resolution.services.SRResNet.model import SRResNet
+from super_resolution.services.RRDBNet.model import RRDBNet
 
 from torch.utils.data.dataloader import DataLoader
 
@@ -25,7 +25,7 @@ def pretrain_model(model_name: str, train_dataset: str, valid_dataset: str, eval
                 mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-4, 
                 seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
-    JsonManager.training_results_to_json(architecture = "SRResNet", stride = stride, patch_size = patch_size, resize_rule = None, 
+    JsonManager.training_results_to_json(architecture = "RRDB", stride = stride, patch_size = patch_size, resize_rule = None, 
                                                 model_name = model_name, train_file = train_dataset, valid_file = valid_dataset, 
                                                 eval_file = eval_dataset, mode = mode, scale = scale, learning_rate = learning_rate, seed = seed, 
                                                 batch_size = batch_size, num_epochs = num_epochs, num_workers = num_workers)
@@ -69,7 +69,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory = True, persistent_workers = True)
     val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory = True, persistent_workers = True)
 
-    model = SRResNet(up_scale = scale).to(device)
+    model = RRDBNet(up_scale = scale).to(device)
     
     optimizer = optim.Adam(model.parameters(), lr = learning_rate)
     
@@ -81,7 +81,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     
     starting_time = time.time()
     
-    with tqdm(total=num_epochs * (len(train_loader) + len(val_loader)), desc="Training SRResNet", leave=True, dynamic_ncols=True) as pbar:
+    with tqdm(total=num_epochs * (len(train_loader) + len(val_loader)), desc="Training RRDB", leave=True, dynamic_ncols=True) as pbar:
 
         for epoch in range(num_epochs):
             
@@ -147,7 +147,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
             else:
                 JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
     
-    torch.save({"architecture": "SRResNet", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": False,
+    torch.save({"architecture": "RRDBNet", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": False,
                 "patch_size": patch_size, "stride": stride, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))    
     
     JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: "Completed", 

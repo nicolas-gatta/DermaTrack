@@ -5,8 +5,8 @@ import torch
 
 from super_resolution.services.utils.image_converter import ImageColorConverter, ImageConverter
 from super_resolution.services.SRCNN.model import SRCNN
-from super_resolution.services.SRResNet.model import SRGANGenerator
-from super_resolution.services.ESRGAN.generator_model import ESRGANGenerator
+from super_resolution.services.SRResNet.model import SRResNet
+from super_resolution.services.RRDBNet.model import RRDBNet
 
 class SuperResolution:
     def __init__(self, model_path: str):
@@ -35,10 +35,10 @@ class SuperResolution:
                 model = SRCNN()
             
             case "SRGAN" | "SRResNet":
-                model = SRGANGenerator()
+                model = SRResNet()
             
             case "ESRGAN":
-                model = ESRGANGenerator()
+                model = RRDBNet()
             
             case _:
                 raise ValueError(f"Unknown architecture: {model_info['architecture']}")

@@ -64,9 +64,9 @@ class UpsampleBlock(nn.Module):
     def forward(self, x):
         return self.block(x)
 
-class ESRGANGenerator(nn.Module):
+class RRDBNet(nn.Module):
     def __init__(self, in_channels = 3, out_channels = 3, num_features = 64, growth_channels = 32, bias = True, num_blocks = 23, up_scale = 4):
-        super(ESRGANGenerator, self).__init__()
+        super(RRDBNet, self).__init__()
         
         upscale_block = int(np.log2(up_scale))
         
