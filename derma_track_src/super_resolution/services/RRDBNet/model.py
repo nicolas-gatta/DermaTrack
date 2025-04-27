@@ -76,7 +76,7 @@ class RRDBNet(nn.Module):
         
         self.post_RRDB = nn.Conv2d(in_channels = num_features, out_channels = num_features, kernel_size = 3, stride = 1, padding = 1, bias = True)
         
-        self.upsampling = nn.Sequential(*[UpsampleBlock(in_channels = num_features, out_channels = num_features * 4) for _ in range(upscale_block)])
+        self.upsampling = nn.Sequential(*[UpsampleBlock(in_channels = num_features, out_channels = num_features) for _ in range(upscale_block)])
         
         self.conv = nn.Conv2d(in_channels = num_features, out_channels = num_features, kernel_size = 3, stride = 1, padding = 1, bias = True)
         
