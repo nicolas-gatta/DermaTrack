@@ -1,5 +1,4 @@
 import torch
-import sys
 
 def print_pth_file_contents(pth_path):
     try:
@@ -8,17 +7,16 @@ def print_pth_file_contents(pth_path):
         if isinstance(data, dict):
             if 'model_state_dict' in data:
                 print("The .pth file contains 'model_state_dict':\n")
-                state_dict = data['model_state_dict']
-                print(f"Type: {type(state_dict)}")
-                print("Keys:")
-                for key in state_dict:
-                    print(f"- {key}")
-            else:
-                print("The .pth file contains a dictionary with the following keys:\n")
-                state_dict = data['state_dict']
-                print(f"Type: {type(state_dict)}")
-                print("Keys:")
-                for key in state_dict:
+                state_dict = data['model_state_dict'].items()
+            elif 'state_dict' in data:
+                print("The .pth file contains 'state_dict':\n")
+                state_dict = data['state_dict'].items()
+            print(f"Type: {type(state_dict)}")
+            print("Keys:")
+            for key, value in state_dict:
+                if value.shape == torch.Size([1]):
+                    print(f"- {key} but problem in the value: {value}")
+                else:
                     print(f"- {key}")
         else:
             print(f"The .pth file contains an object of type: {type(data)}")
@@ -33,5 +31,4 @@ def print_pth_file_contents(pth_path):
 
 
 if __name__ == "__main__":
-    print_pth_file_contents("C:\\Users\\Utilisateur\\Downloads\\SRResNet_x4-SRGAN_ImageNet.pth.tar")
-    print_pth_file_contents("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\SRResNet_x4_BGR2RGB.pth")
+    print_pth_file_contents("X")
