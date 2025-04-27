@@ -35,10 +35,10 @@ class SuperResolution:
                 model = SRCNN()
             
             case "SRGAN" | "SRResNet":
-                model = SRResNet()
+                model = SRResNet(up_scale = model_info["scale"])
             
-            case "ESRGAN":
-                model = RRDBNet()
+            case "ESRGAN" | "RRDBNet":
+                model = RRDBNet(up_scale = model_info["scale"])
             
             case _:
                 raise ValueError(f"Unknown architecture: {model_info['architecture']}")
@@ -72,11 +72,11 @@ class SuperResolution:
             preprocess_image = image
             postprocess_required = False
 
-        if self.model_info["patch_size"] != 0 and self.model_info["stride"] != 0:
-            sr_image = self._special_processing(image_tensor=preprocess_image)
-        else:
-            with torch.no_grad():
-                sr_image = self.model(preprocess_image)
+        # if self.model_info["patch_size"] not in [0, None] and self.model_info["stride"] not in [0, None]:
+        #    sr_image = self._special_processing(image_tensor=preprocess_image)
+        #else:
+        with torch.no_grad():
+            sr_image = self.model(preprocess_image)
 
         sr_image = torch.clamp(sr_image, 0.0, 1.0)
         return self.__postprocess_image(sr_image) if postprocess_required else sr_image
