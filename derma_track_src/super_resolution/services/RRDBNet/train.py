@@ -77,7 +77,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     
     epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
     
-    criterion = nn.MSELoss()
+    criterion = nn.L1Loss()
     
     starting_time = time.time()
     
