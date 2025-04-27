@@ -52,31 +52,37 @@ def verify_model(architecture, model_path):
           case _:
                raise ValueError(f"Unknown architecture: {architecture}")
           
-     try:
-          model.load_state_dict(model_info["model_state_dict"])
-          return True
-     except:
-          return False
+
+     model.load_state_dict(model_info["model_state_dict"])
 
 def main(inputs_model_path, output_model_path, architecture, scale, mode, invert_mode, patch_size, stride):
      
      print(f"Strating Transfer of the model {architecture} !")
      model_layers = get_layers(architecture = architecture, scale = scale)
+     model_info = torch.load(inputs_model_path, map_location=torch.device("cpu"), weights_only=True)
      
      # Process parameter dictionary
-     state_dict = torch.load(inputs_model_path, map_location=torch.device("cpu"), weights_only=True)["state_dict"]
+     if 'model_state_dict' in model_info:
+          print("The .pth file contains 'model_state_dict':\n")
+          state_dict = model_info['model_state_dict'].items()
+     elif 'state_dict' in model_info:
+          print("The .pth file contains 'state_dict':\n")
+          state_dict = model_info['state_dict'].items()
+     else:
+          state_dict = model_info.items()
+          
      new_state_dict = OrderedDict()
 
-     for k, v in state_dict.items():
+     for k, v in state_dict:
           new_state_dict[model_layers.pop(0)] = v
 
      torch.save({"architecture": architecture, "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": False, 
                 "patch_size": patch_size, "stride": stride, "model_state_dict": new_state_dict}, output_model_path)
      
-     if not verify_model(architecture=architecture, model_path=output_model_path):
-          raise ValueError(f"Problem append during the loading of the model !")
+     verify_model(architecture=architecture, model_path=output_model_path)
      
      print(f"End of the transfer for {architecture}, everything went smoothly !")
 
 if __name__ == "__main__":
-     main("X", "Y", architecture = "SRGAN", scale = 2, mode = "BGR2RGB", invert_mode = "RGB2BGR", patch_size = None, stride = None)
+     main(inputs_model_path = "C:\\Users\\Utilisateur\\Downloads\\RRDB_PSNR_x4.pth", output_model_path = "C:\\Users\\Utilisateur\\Downloads\\Pretrained_RRDB_PSNR_x4_BGR2RGB.pth", 
+          architecture = "RRDBNet", scale = 4, mode = "BGR2RGB", invert_mode = "RGB2BGR", patch_size = None, stride = None)
