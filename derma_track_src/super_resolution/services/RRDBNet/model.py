@@ -1,6 +1,16 @@
 import torch
 import torch.nn as nn
 import numpy as np
+import torch.nn.functional as F
+
+class Interpolate(nn.Module):
+    def __init__(self, scale_factor = 2, mode = "nearest"):
+        super().__init__()
+        self.scale_factor = scale_factor
+        self.mode = mode
+
+    def forward(self, x):
+        return F.interpolate(x, scale_factor=self.scale_factor, mode=self.mode)
 
 # Dense Block 
 class ResidualDenseBlock(nn.Module):
@@ -53,11 +63,11 @@ class ResidualInResidualDenseBlock(nn.Module):
         
 # Sub-Pixel Convolution Layers (Increase Image resolution) each block is 2x factor
 class UpsampleBlock(nn.Module):
-    def __init__(self, in_channels = 64, out_channels = 256):
+    def __init__(self, in_channels = 64, out_channels = 64):
         super(UpsampleBlock, self).__init__()
         self.block = nn.Sequential(
+            Interpolate(scale_factor = 2, mode = "nearest"),
             nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = 1),
-            nn.PixelShuffle(upscale_factor = 2),
             nn.LeakyReLU(negative_slope = 0.2, inplace = True)
         )
 
