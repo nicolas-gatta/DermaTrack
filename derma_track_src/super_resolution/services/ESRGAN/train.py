@@ -114,7 +114,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
 
                         
                         if loop_type == "Training":
-                            generator_optimizer.zero_grad()
+                            generator_optimizer.zero_grad(set_to_none = True)
                             
                             # loss.backward()
                             
@@ -152,7 +152,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         
                         if loop_type == "Training":
                             
-                            discriminator_optimizer.zero_grad()
+                            discriminator_optimizer.zero_grad(set_to_none = True)
                             
                             # loss.backward()
                             

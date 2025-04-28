@@ -106,7 +106,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                         
                         if loop_type == "Training":
                             
-                            optimizer.zero_grad()
+                            optimizer.zero_grad(set_to_none = True)
                             
                             # loss.backward()
                             
@@ -114,7 +114,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                             
                             scaler.scale(loss).backward()
                             
-                            scaler.step(optimizer=optimizer)
+                            scaler.step(optimizer = optimizer)
                             
                             scaler.update()
                         
