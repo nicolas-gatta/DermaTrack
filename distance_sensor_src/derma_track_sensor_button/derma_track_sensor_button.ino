@@ -6,6 +6,7 @@
 #include <ArduinoJson.h>
 #include <Wire.h>
 #include <SparkFun_VL53L5CX_Library.h>
+#include <RunningMedian.h>
 
 //-----------------Laser Sensor Variables
 SparkFun_VL53L5CX myImager;
@@ -14,6 +15,7 @@ int sensorResolution = 0;
 int numberDataPerRow = 0;
 int mapping_size = 8;
 bool is_laser_sensor = true;
+RunningMedian distance_data = RunningMedian((mapping_size - 2) * (mapping_size - 2));
 
 //----------------Sonic Sensor Variables
 const int TRIGGER_PIN = 27;  
@@ -41,33 +43,32 @@ void check_button_connection(){
 
 void check_sensor_connection(){
   if (myImager.begin() == false){
-    
+
     is_laser_sensor = false;
     pinMode(TRIGGER_PIN, OUTPUT);  
     pinMode(ECHO_PIN, INPUT_PULLDOWN);
     measure_distance_sonic();
     
-    if(dataSend["distances"] == 0){
+    if(dataSend["distance"] == 0){
       Serial.println(F("Sensor not found - check your wiring. Freezing"));
       while(1);
     }
   }else{
-    myImager.setResolution(mapping_size*mapping_size);
+    myImager.setResolution(mapping_size * mapping_size);
     sensorResolution = myImager.getResolution();
-    numberDataPerRow = sqrt(sensorResolution);
     myImager.startRanging();
   }
-  dataSend["distances"] = NULL;
+  dataSend["distance"] = NULL;
 }
 
 void measure_distance_laser(){
-  JsonArray distances = dataSend["distances"].to<JsonArray>();
-  for (int x = 0 ; x < sensorResolution; x += numberDataPerRow){
-    JsonArray data_0 = distances.add<JsonArray>();
-    for (int y = 0; y < numberDataPerRow; y++){
-      data_0.add(measurementData.distance_mm[x + y]);
+  for (int x = mapping_size; x < mapping_size * (mapping_size - 1); x += mapping_size){
+    for (int y = 1; y < mapping_size - 1; y++){
+      distance_data.add(measurementData.distance_mm[x + y]);
     }
   }
+  dataSend["distance"] = distance_data.getMedian();
+  distance_data.clear();
 }
 
 void measure_distance_sonic(){
@@ -77,7 +78,7 @@ void measure_distance_sonic(){
   delayMicroseconds(10);  
   digitalWrite(TRIGGER_PIN, LOW);  
   duration = pulseIn(ECHO_PIN, HIGH, 40000);
-  dataSend["distances"] = (duration * 0.343) / 2;  //2,91545 is the speed of sound in miliemeter per microseconds
+  dataSend["distance"] = (duration * 0.343) / 2;  //2,91545 is the speed of sound in miliemeter per microseconds
 }
 
 void setup() {
@@ -88,7 +89,7 @@ void setup() {
   check_button_connection();
   
   dataSend["take_picture"] = false;
-  dataSend["distances"] = NULL;
+  dataSend["distance"] = NULL;
   dataReceive["picture_taken"] = false;
 
   Wire.begin(); //This resets to 100kHz I2C
@@ -127,9 +128,8 @@ void loop(){
 
     if(!error && dataReceive["picture_taken"]){
         dataSend["take_picture"] = false;
-        dataSend["distances"] = NULL;
+        dataSend["distance"] = NULL;
         dataReceive["picture_taken"] = false;
     }
   }
-
 }
