@@ -13,6 +13,7 @@ VL53L5CX_ResultsData measurementData;
 JsonDocument data;
 int sensorResolution = 0;
 int numberDataPerRow = 0;
+int mapping_size = 8;
 
 void setup()
 {
@@ -28,7 +29,7 @@ void setup()
     while (1) ;
   }
   
-  myImager.setResolution(8*8); //Enable all 64 pads
+  myImager.setResolution(mapping_size*mapping_size); //Enable all 64 pads
 
   sensorResolution = myImager.getResolution();
   numberDataPerRow = sqrt(sensorResolution);
