@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-from core.models import Patient, Visit, Status
+from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart
 from utils.checks import group_and_super_user_checks
 
 import os
@@ -24,7 +24,47 @@ def patient_list(request):
     if request.headers.get('HX-Request'):
         patients = Patient.objects.all() 
         return render(request, 'partial/patient_list.html', {'patients': patients})
-    
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def doctor_list(request):
+    if request.headers.get('HX-Request'):
+        doctors = Doctor.objects.all()
+        return render(request, 'partial/doctor_list.html', {'doctors': doctors})
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def patient_profile(request):
+    patient = Patient.objects.get(pk=request.POST["id"])
+    return render(request, 'core/patient.html', {'patient': patient})
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def visit_status_change(request):
+    if request.method == "POST":
+        
+        status = request.POST['status']
+
+        visit = Visit.objects.get(pk = request.POST['id'])
+        
+        if status == "Started":
+            visit.is_patient_present = True
+            visit.status = Status.STARTED
+        
+        elif status == "Finished":
+            visit.is_patient_present = True
+            visit.status = Status.FINISHED
+            
+        else:
+            visit.is_patient_present = False
+            visit.status = Status.CANCELED
+            
+        visit.save(update_fields = ['status', 'is_patient_present'])
+        
+        visits = Visit.objects.select_related('doctor', 'patient').all()
+        
+        return render(request, 'partial/visit_list.html', {'visits': visits})
+
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def image_capture(request):
@@ -42,31 +82,7 @@ def visit_list(request):
             visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
 
         return render(request, 'partial/visit_list.html', {'visits': visits})
-
-@login_required(login_url='/')
-@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def visit_status_change(request):
-    if request.method == "POST":
-        
-        status = request.POST['status']
-
-        visit = Visit.objects.get(pk = request.POST['id'])
-        
-        if status == "Started":
-            visit.status = Status.STARTED
-        
-        elif status == "Finished":
-            visit.status = Status.FINISHED
-            
-        else:
-            visit.status = Status.CANCELED
-            
-        visit.save(update_fields = ['status'])
-        
-        visits = Visit.objects.select_related('doctor', 'patient').all()
-        
-        return render(request, 'partial/visit_list.html', {'visits': visits})
-
+    
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def visit_view(request):
@@ -75,43 +91,20 @@ def visit_view(request):
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def doctor_list(request):
-    if request.headers.get('HX-Request'):
-        doctors = Doctor.objects.all()
-        return render(request, 'partial/doctor_list.html', {'doctors': doctors})
+def list_visit_folders(request, visit_id):    
 
-@login_required(login_url='/')
-@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def patient_profile(request):
-    patient = Patient.objects.get(pk=request.POST["id"])
-    return render(request, 'core/patient.html', {'patient': patient})
+    folder_names = VisitBodyPart.objects.filter(visit_id=visit_id).values_list('body_part__name', flat=True).distinct()
 
-@login_required(login_url='/')
-@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def list_visit_folders(request, visit_id):
-    base_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit_id}")
-    folder_names = []
-
-    if os.path.exists(base_path):
-        for name in os.listdir(base_path):
-            full_path = os.path.join(base_path, name)
-            if os.path.isdir(full_path):
-                folder_names.append(name)
-    
-    return JsonResponse({"folders": folder_names})
+    return JsonResponse({"folders": list(folder_names)})
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def list_visit_folder_images(request, visit_id, body_part):
-    base_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit_id}", f"{body_part}")
-    image_names = []
 
-    if os.path.exists(base_path):
-        for name in os.listdir(base_path):
-            full_path = os.path.join(base_path, name)
-            if not os.path.isdir(full_path):
-                image_names.append(name)
-    
+    images_path = list(VisitBodyPart.objects.filter(visit_id = visit_id, body_part = BodyPart.objects.get(name = body_part).pk).values_list('image_path', flat=True))
+    image_names = [os.path.split(image_path)[-1] for image_path in list(images_path)]
+
     return JsonResponse({"images": image_names})
+
 
 

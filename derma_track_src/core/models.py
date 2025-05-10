@@ -1,11 +1,34 @@
 from django.db import models
 from login.models import Doctor
+from multiselectfield import MultiSelectField
 
 class Status(models.TextChoices):
     SCHEDULED = 'scheduled', 'Scheduled'
     STARTED   = 'started',   'Started'
     FINISHED  = 'finished',  'Finished'
     CANCELED  = 'canceled',  'Canceled'
+    
+class BloodGroup(models.TextChoices):
+    A_POSITIVE    = 'A+', 'A Positive'
+    A_NEGATIVE    = 'A-', 'A Negative'
+    B_POSITIVE    = 'B+', 'B Positive'
+    B_NEGATIVE    = 'B-', 'B Negative'
+    AB_POSITIVE   = 'AB+', 'AB Positive'
+    AB_NEGATIVE   = 'AB-', 'AB Negative'
+    O_POSITIVE    = 'O+', 'O Positive'
+    O_NEGATIVE    = 'O-', 'O Negative'
+    
+class Allergy(models.TextChoices):
+    PEANUTS     = 'peanuts', 'Peanuts'
+    DAIRY       = 'dairy', 'Dairy'
+    GLUTEN      = 'gluten', 'Gluten'
+    SHELLFISH   = 'shellfish', 'Shellfish'
+    SOY         = 'soy', 'Soy'
+    EGGS        = 'eggs', 'Eggs'
+    TREE_NUTS   = 'tree_nuts', 'Tree Nuts'
+    WHEAT       = 'wheat', 'Wheat'
+    FISH        = 'fish', 'Fish'
+    SESAME      = 'sesame', 'Sesame'
 
 # Create your models here.
 class Patient(models.Model):
@@ -14,6 +37,8 @@ class Patient(models.Model):
     name = models.CharField(max_length=255) 
     surname = models.CharField(max_length=255)
     date_of_birth = models.DateField()
+    blood_group = models.CharField(max_length=30, choices=BloodGroup.choices, default=BloodGroup.A_POSITIVE)
+    allergies = MultiSelectField(choices=Allergy.choices, max_length=200, blank=True, default = None)
     street = models.CharField(max_length=255)
     number = models.IntegerField()
     city = models.CharField(max_length=255)
@@ -22,7 +47,7 @@ class Patient(models.Model):
     other_phone_number = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
-        return str(self.national_number) + " - " + self.full_name()
+        return str(self.pk) + " - " + self.full_name()
     
     def full_name(self):
         return self.name + " " + self.surname
@@ -48,10 +73,10 @@ class BodyPart(models.Model):
         return str(self.pk) + " - " + self.name
     
 class VisitBodyPart(models.Model):
-    image_path = models.URLField()
+    image_path = models.TextField(unique=True)
+    comment = models.TextField(blank=True, null=True)
     body_part = models.ForeignKey(BodyPart, verbose_name=("body part"), on_delete=models.CASCADE)
     visit = models.ForeignKey(Visit, verbose_name=("visit"), on_delete=models.CASCADE)
-    comment = models.TextField(blank=True)
     
     def __str__(self):
         return str(self.pk) + " - " + self.visit.date + " - " + self.body_part.name
