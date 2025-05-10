@@ -7,9 +7,13 @@
 
     <div class="camera-container">
         <h1>Live Camera</h1>
-        <h2>Body Part: <span id ="body"></span></h2>
-        <h3>Don't Move: <span id ="countdown"></span></h3>
-    
+
+        <div class="form-group">
+            <label for="body-part">Select Body Part:</label>
+            <select id="body-part" class="form-control">
+            </select>
+        </div>
+
         <video id="stream" autoplay></video>
     
         <button id="start" class="btn btn-custom mt-3" onclick="stream()">Open Webcam</button>

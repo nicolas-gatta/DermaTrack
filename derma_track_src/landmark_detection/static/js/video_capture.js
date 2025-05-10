@@ -1,3 +1,12 @@
+async function getCameraDeviceIdByName(cameraName) {
+    await navigator.mediaDevices.getUserMedia({ video: true });
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devices.filter(device => device.kind === 'videoinput');
+    const targetCamera = cameras.find(camera => camera.label.includes(cameraName));
+    return targetCamera ? targetCamera.deviceId : null;
+}
+
+
 async function isCameraConnected(deviceId) {
 
     let devices = await navigator.mediaDevices.enumerateDevices();
@@ -7,23 +16,43 @@ async function isCameraConnected(deviceId) {
     return cameras.some(camera => camera.deviceId === deviceId);
 }
 
+function populateSelectBodyPart(){
+    fetch(`/landmark/get_body_parts/`, {
+        method: "GET",
+        headers: { 
+            "Content-Type": "application/json"
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const selector = document.getElementById('body-part');
+        selector.innerHTML = '<option value="" disabled selected>Select a body part...</option>'; 
+
+        data.forEach((bodyPart) => {
+            const option = document.createElement('option');
+            option.value = bodyPart[0];
+            option.textContent = bodyPart[1];
+            selector.appendChild(option);
+        });
+    })
+}
+
 async function stream() {
+    populateSelectBodyPart();
     localStorage.setItem("capturedImages", JSON.stringify([]));
+    localStorage.setItem("bodyPartImages", JSON.stringify([]));
     updateCarousel([]);
-    let deviceId = "5D9dGdRalU765KCrHr3EhQx0W6LlRWVCzBTGmHTxR/w="
-    if (true || await isCameraConnected(deviceId)){
+    let deviceId = await getCameraDeviceIdByName("Arducam IMX179 8MP Camera");
+    if (await isCameraConnected(deviceId)){
         let video = document.getElementById("stream");
         video.muted = true;
-        //navigator.mediaDevices.getUserMedia({video: { deviceId: { exact: deviceId} }})
         navigator.mediaDevices.getUserMedia({video: true, width: { ideal:  1920} , height: { ideal: 1080 }},)
             .then((stream) => {
                 video.srcObject = stream;
-                console.log(video);
             })
             .catch((error) => {
                 console.log("Error accessing the camera: ", error);
             })
-        detectBodyPart();
     }else{
         console.error("The camera of the special device is not connected, please connect it or contact the IT if it's connected but not detected.");
     }
@@ -81,43 +110,56 @@ function captureImage(isSaved){
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     let context = canvas.getContext("2d");
+    let bodyPart = document.getElementById("body-part").selectedOptions[0].value;
 
     context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
 
     imageUrl = canvas.toDataURL("image/png")
     if (isSaved){
-        saveImageToCache(imageUrl);
+        saveImageToCache(imageUrl, bodyPart);
     }else{
         return imageUrl.split(",")[1];
     }
 }
 
-function saveImageToCache(imageUrl) {
+
+function saveImageToCache(imageUrl, bodyPart) {
     let storedImages = JSON.parse(localStorage.getItem("capturedImages"));
+    let bodyPartImages = JSON.parse(localStorage.getItem("bodyPartImages"));
 
     storedImages.push(imageUrl);
+    bodyPartImages.push(bodyPart);
 
     localStorage.setItem("capturedImages", JSON.stringify(storedImages));
+    localStorage.setItem("bodyPartImages", JSON.stringify(bodyPartImages));
 
     updateCarousel(storedImages);
 }
 
 function saveImagesToServer(visitId) {
     const storedImages = JSON.parse(localStorage.getItem("capturedImages"));
+    const bodyPartImages = JSON.parse(localStorage.getItem("bodyPartImages"));
 
     if (!storedImages || storedImages.length === 0) {
         alert("No images to save!");
         return;
     }
 
+    if (!bodyPartImages || bodyPartImages.length === 0) {
+        alert("No Body Part Save!");
+        return;
+    }
+
+    alert('Image saving process initiated');
+    
     storedImages.forEach(async (imageUrl, index) => {
         try {
-            fetch(`/landmark/save_images/${visitId}/`, {
+            fetch(`/landmark/save_images/`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ image: imageUrl })
+                body: JSON.stringify({ visitId: visitId, image: imageUrl, bodyPartId: bodyPartImages[index]})
             })
             .then(response => response.json())
             .then(data => {
@@ -130,8 +172,6 @@ function saveImagesToServer(visitId) {
             console.error(`Error saving image ${index + 1}:`, error);
         }
     });
-
-    alert('Image saving process initiated. Check console for details.');
 }
 
 function updateCarousel(images) {
