@@ -200,7 +200,7 @@ function detectBodyPart(){
     //interval = setInterval(sendDetectionRequest, 1000)
 }
 
-function captureImage(isSaved, distance = null){
+async function captureImage(isSaved, distance = null){
     let video = document.getElementById("stream");
     let canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
@@ -212,7 +212,7 @@ function captureImage(isSaved, distance = null){
 
     imageUrl = canvas.toDataURL("image/png")
     if (isSaved){
-        saveImageToCache(imageUrl, bodyPart, distance);
+        await saveImageToCache(imageUrl, bodyPart, distance);
     }else{
         return imageUrl.split(",")[1];
     }
@@ -234,7 +234,7 @@ function saveImageToCache(imageUrl, bodyPart, distance) {
     updateCarousel(storedImages);
 }
 
-function saveImagesToServer(visitId) {
+async function saveImagesToServer(visitId) {
     const storedImages = JSON.parse(localStorage.getItem("capturedImages"));
     const bodyPartImages = JSON.parse(localStorage.getItem("bodyPartImages"));
     const distanceImages = JSON.parse(localStorage.getItem("distanceImages"));
@@ -258,12 +258,12 @@ function saveImagesToServer(visitId) {
     
     storedImages.forEach(async (imageUrl, index) => {
         try {
-            await fetch(`/landmark/save_images/`, {
+            var response = await fetch(`/landmark/save_images/`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ visitId: visitId, image: imageUrl, bodyPartId: bodyPartImages[index], distance: distanceImages[index]})
+                body: JSON.stringify({ visitId: visitId, image: imageUrl, bodyPartId: bodyPartImages[index], distance: distanceImages[index], index})
             })
             .then(response => response.json())
             .then(data => {

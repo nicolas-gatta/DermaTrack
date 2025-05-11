@@ -31,6 +31,7 @@ def save_images(request):
         body_part = BodyPart.objects.get(pk = data.get("bodyPartId", None))
         visit = Visit.objects.get(pk = data.get("visitId", None))
         distance = data.get("distance", None)
+        index = data.get("index", None)
         
         folder_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit.pk}", body_part.name)
         
@@ -42,23 +43,23 @@ def save_images(request):
         
         num_image = VisitBodyPart.objects.filter(visit=visit).count()
         
-        filename = f"image_{num_image + 1}.png"
+        filename = f"image_{num_image + 1 + index}.png"
         
         file_path = os.path.join(folder_path, filename)
-
-        print(num_image)
+        
         with open(file_path, "wb") as f:
             f.write(img_binary)
         
-        VisitBodyPart(
+        visit_body_part = VisitBodyPart(
             image_path = file_path,
             distance_from_subject = distance,
             comment = None,
             body_part = body_part,
             visit = visit
-        ).save()
-
-        print("image Saved !")
+        )
+        
+        visit_body_part.save()
+        
         return JsonResponse({"status": "success"})
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
