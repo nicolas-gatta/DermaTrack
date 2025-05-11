@@ -97,8 +97,8 @@ void setup() {
   
   check_sensor_connection();
 
-  Serial.println(F("Divice Ready to use and sending information at the COM port "));
-  Serial.print(Serial);
+  Serial.print(F("Divice Ready to use and sending information at the COM port "));
+  Serial.println(Serial);
 }
 
 void loop(){
@@ -118,7 +118,6 @@ void loop(){
   }
 
   serializeJson(dataSend, Serial);
-  Serial.println();
   Serial.println();
 
   previous = reading;

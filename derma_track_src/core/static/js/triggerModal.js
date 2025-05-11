@@ -1,5 +1,6 @@
-document.body.removeEventListener('htmx:afterSwap', handleModal);
-document.body.addEventListener('htmx:afterSwap', handleModal);
+function addEventListener(){
+    document.body.addEventListener('htmx:afterSwap', handleModal)
+}
 
 function handleModal(event){
     if (event.detail.target.id === 'pop-up') {
@@ -16,7 +17,6 @@ function handleModal(event){
         const visitId = modalElement.dataset.visitId;
 
         if (visitId){
-            console.log("hello");
             createFileExplorer(visitId);
         }
     }
@@ -130,4 +130,5 @@ function showPreview(src) {
     modalMain.toggle();
 }
 
+window.addEventListener("DOMContentLoaded", addEventListener, { once: true });
 

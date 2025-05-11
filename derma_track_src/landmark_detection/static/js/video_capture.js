@@ -1,3 +1,8 @@
+let port;
+let reader;
+let dataReading = false;
+let writer;
+
 async function getCameraDeviceIdByName(cameraName) {
     await navigator.mediaDevices.getUserMedia({ video: true });
     const devices = await navigator.mediaDevices.enumerateDevices();
@@ -41,6 +46,7 @@ async function stream() {
     populateSelectBodyPart();
     localStorage.setItem("capturedImages", JSON.stringify([]));
     localStorage.setItem("bodyPartImages", JSON.stringify([]));
+    localStorage.setItem("distanceImages", JSON.stringify([]));
     updateCarousel([]);
     let deviceId = await getCameraDeviceIdByName("Arducam IMX179 8MP Camera");
     if (await isCameraConnected(deviceId)){
@@ -53,8 +59,96 @@ async function stream() {
             .catch((error) => {
                 console.log("Error accessing the camera: ", error);
             })
+        dataReading = true;
+        connectToSerialPort();
     }else{
         console.error("The camera of the special device is not connected, please connect it or contact the IT if it's connected but not detected.");
+    }
+}
+
+async function connectToSerialPort(){
+    try {
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 }); 
+        console.log("Serial port connected.");
+        const textDecoder = new TextDecoderStream();
+        const textEncoder = new TextEncoderStream();
+        const readableStreamClosed = port.readable.pipeTo(textDecoder.writable);
+        const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
+        writer = textEncoder.writable.getWriter();
+        reader = textDecoder.readable.getReader();
+        listenToSerialPort();
+    } catch (error) {
+        console.error("Failed to connect to the serial port:", error);
+    }
+}
+
+async function sendDataToSerialPort(data) {
+
+    if (!writer) {
+        console.error("Serial port writer is not initialized");
+        return;
+    }
+
+    try {
+        const jsonData = JSON.stringify(data);
+        await writer.write(jsonData);
+    } catch (error) {
+        console.error("Failed to send data:", error);
+    }
+}
+
+async function disconnectedToSerialPort(){
+
+    dataReading = false;
+
+    if (reader) {
+        reader.releaseLock();
+        await reader.cancel();
+    }
+    if (port) {
+        await port.close();
+        console.log("Serial port closed.");
+    }
+}
+
+async function listenToSerialPort(){
+
+    console.log("Listening for serial data...");
+
+    buffer = "";
+
+    while (dataReading) {
+        const { value, done } = await reader.read();
+
+        if (done || !dataReading) {
+            reader.releaseLock();
+            break;
+        }
+
+        if (value) {
+
+            buffer += value;
+            
+            let lines = buffer.split("\n");
+
+            if(lines.length > 1){
+                lines = lines.filter(line => line && line.trim() !== "");
+                if (lines.length !=0) {
+                    try{
+                        data = JSON.parse(lines[0]);
+                        if (data["take_picture"]){
+                            sendDataToSerialPort({picture_taken: true})
+                            captureImage(true, data["distance"]);
+                        }
+                    }catch{
+                        console.log(lines[0])
+                    }
+                }
+                
+                buffer = lines.length >= 2 ? lines.pop() : "";
+            }
+        }
     }
 }
 
@@ -65,6 +159,8 @@ function stopStream() {
         tracks.forEach(track => track.stop());
         video.srcObject = null;
     }
+
+    disconnectedToSerialPort();
 }
 
 function detectBodyPart(){
@@ -104,7 +200,7 @@ function detectBodyPart(){
     //interval = setInterval(sendDetectionRequest, 1000)
 }
 
-function captureImage(isSaved){
+function captureImage(isSaved, distance = null){
     let video = document.getElementById("stream");
     let canvas = document.createElement("canvas");
     canvas.width = video.videoWidth;
@@ -116,22 +212,24 @@ function captureImage(isSaved){
 
     imageUrl = canvas.toDataURL("image/png")
     if (isSaved){
-        saveImageToCache(imageUrl, bodyPart);
+        saveImageToCache(imageUrl, bodyPart, distance);
     }else{
         return imageUrl.split(",")[1];
     }
 }
 
-
-function saveImageToCache(imageUrl, bodyPart) {
+function saveImageToCache(imageUrl, bodyPart, distance) {
     let storedImages = JSON.parse(localStorage.getItem("capturedImages"));
     let bodyPartImages = JSON.parse(localStorage.getItem("bodyPartImages"));
+    let distanceImages = JSON.parse(localStorage.getItem("distanceImages"));
 
     storedImages.push(imageUrl);
     bodyPartImages.push(bodyPart);
+    distanceImages.push(distance);
 
     localStorage.setItem("capturedImages", JSON.stringify(storedImages));
     localStorage.setItem("bodyPartImages", JSON.stringify(bodyPartImages));
+    localStorage.setItem("distanceImages", JSON.stringify(distanceImages));
 
     updateCarousel(storedImages);
 }
@@ -139,14 +237,20 @@ function saveImageToCache(imageUrl, bodyPart) {
 function saveImagesToServer(visitId) {
     const storedImages = JSON.parse(localStorage.getItem("capturedImages"));
     const bodyPartImages = JSON.parse(localStorage.getItem("bodyPartImages"));
+    const distanceImages = JSON.parse(localStorage.getItem("distanceImages"));
 
     if (!storedImages || storedImages.length === 0) {
-        alert("No images to save!");
+        alert("No images to Save !");
         return;
     }
 
     if (!bodyPartImages || bodyPartImages.length === 0) {
-        alert("No Body Part Save!");
+        alert("No Body Part Save !");
+        return;
+    }
+
+    if (!distanceImages || distanceImages.length === 0) {
+        alert("No Distance Save !");
         return;
     }
 
@@ -154,12 +258,12 @@ function saveImagesToServer(visitId) {
     
     storedImages.forEach(async (imageUrl, index) => {
         try {
-            fetch(`/landmark/save_images/`, {
+            await fetch(`/landmark/save_images/`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ visitId: visitId, image: imageUrl, bodyPartId: bodyPartImages[index]})
+                body: JSON.stringify({ visitId: visitId, image: imageUrl, bodyPartId: bodyPartImages[index], distance: distanceImages[index]})
             })
             .then(response => response.json())
             .then(data => {

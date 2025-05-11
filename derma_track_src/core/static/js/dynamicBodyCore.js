@@ -1,10 +1,5 @@
 let activeButton = null;
 
-/**
- * Function to load body content dynamically based on the state.
- * @param {HTMLElement} button - The button that was clicked.
- */
-
 async function loadBodyContentCore(button) {
 
     if (button.id === "patient_button") {
