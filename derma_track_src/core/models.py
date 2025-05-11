@@ -58,7 +58,7 @@ class Patient(models.Model):
 class Visit(models.Model):
     date = models.DateTimeField()
     note = models.TextField(blank = True)
-    is_patient_present = models.BooleanField(blank = True)
+    is_patient_present = models.BooleanField(blank = True, default=False)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.SCHEDULED)
     patient = models.ForeignKey(Patient, verbose_name=("patient"), on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, verbose_name=("doctor"), on_delete=models.CASCADE)
@@ -73,11 +73,12 @@ class BodyPart(models.Model):
         return str(self.pk) + " - " + self.name
     
 class VisitBodyPart(models.Model):
-    image_path = models.TextField(unique=True)
+    image_path = models.TextField(unique=True, null=False)
+    distance_from_subject = models.FloatField(null=True)
     comment = models.TextField(blank=True, null=True)
     body_part = models.ForeignKey(BodyPart, verbose_name=("body part"), on_delete=models.CASCADE)
     visit = models.ForeignKey(Visit, verbose_name=("visit"), on_delete=models.CASCADE)
     
     def __str__(self):
-        return str(self.pk) + " - " + self.visit.date + " - " + self.body_part.name
+        return str(self.pk) + " - " + "visit_"+str(self.visit.pk) + " - " + self.body_part.name
     

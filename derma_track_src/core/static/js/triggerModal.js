@@ -1,4 +1,7 @@
-document.body.addEventListener('htmx:afterSwap', function (event) {
+document.body.removeEventListener('htmx:afterSwap', handleModal);
+document.body.addEventListener('htmx:afterSwap', handleModal);
+
+function handleModal(event){
     if (event.detail.target.id === 'pop-up') {
 
         modalElement = document.querySelector("#mainModal");
@@ -13,10 +16,11 @@ document.body.addEventListener('htmx:afterSwap', function (event) {
         const visitId = modalElement.dataset.visitId;
 
         if (visitId){
-            createFileExplorer(visitId)
+            console.log("hello");
+            createFileExplorer(visitId);
         }
     }
-});
+}
 
 
 function clearPopUp() {
