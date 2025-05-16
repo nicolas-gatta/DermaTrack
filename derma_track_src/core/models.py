@@ -74,11 +74,12 @@ class BodyPart(models.Model):
     
 class VisitBodyPart(models.Model):
     image_path = models.TextField(unique=True, null=False)
+    image_name = models.CharField(null = False, max_length=255, default = "")
     image_height = models.IntegerField(default = 0)
     image_width = models.IntegerField(default = 0)
-    distance_from_subject = models.FloatField(null=True)
+    distance_from_subject = models.FloatField(blank=True, null=True)
+    pixel_size = models.FloatField(default = 0.0014)
     annotations = models.TextField(blank=True, null=True)
-    comment = models.TextField(blank=True, null=True)
     body_part = models.ForeignKey(BodyPart, verbose_name=("body part"), on_delete=models.CASCADE)
     visit = models.ForeignKey(Visit, verbose_name=("visit"), on_delete=models.CASCADE)
     

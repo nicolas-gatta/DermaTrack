@@ -3,7 +3,7 @@
 }
 
 #image-preview{
-    overflow: auto; 
+    overflow: hidden; 
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;

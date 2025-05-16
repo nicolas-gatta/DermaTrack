@@ -35,7 +35,9 @@ canvas.addEventListener('mouseup', (e) => {
 function toggleAnnotations() {
     annotationEnabled = !annotationEnabled;
     canvas.style.display = annotationEnabled ? "block" : "none";
-    drawAnnotations();
+    if(annotationEnabled){
+        drawAnnotations();  
+    } 
 }
 
 function drawLine(startX, startY, endX, endY, color) {

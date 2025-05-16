@@ -86,14 +86,16 @@ function createFileExplorerImage(id, body_part){
         .then(data => {
             const images = data.images;
 
-            images.forEach(imageName => {
+            images.forEach(image => {
                 const figure = document.createElement("figure");
                 const img = document.createElement("img");
                 const caption = document.createElement("figcaption");
                 
-                img.src = "/media/visits/visit_"+id+"/"+body_part+"/"+imageName;
+                img.src = "/media/visits/visit_"+id+"/"+body_part+"/"+image["image_name"];
+                img.dataset.pixelSize = image["pixel_size"]
+                img.dataset.distance = image["distance_from_subject"]
 
-                caption.textContent = imageName;
+                caption.textContent = image["image_name"];
 
                 figure.classList.add("file-item", "text-center", "svg-wrapper");
                 figure.appendChild(img);
@@ -138,8 +140,11 @@ function setBackgroundImage(url) {
 
     img.onload = () => {
         let init_canvas = document.getElementById('canvas-annotation');
+        let init_image = document.getElementById("image-preview");
         init_canvas.width = img.width;
         init_canvas.height = img.height;
+        init_image.style.width = img.width + "px";
+        init_image.style.height = img.height + "px";
     }
 
     img.src = url;

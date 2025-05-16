@@ -101,10 +101,9 @@ def list_visit_folders(request, visit_id):
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def list_visit_folder_images(request, visit_id, body_part):
 
-    images_path = list(VisitBodyPart.objects.filter(visit_id = visit_id, body_part = BodyPart.objects.get(name = body_part).pk).values_list('image_path', flat=True))
-    image_names = [os.path.split(image_path)[-1] for image_path in list(images_path)]
-
-    return JsonResponse({"images": image_names})
+    images = list(VisitBodyPart.objects.filter(visit_id = visit_id, body_part = BodyPart.objects.get(name = body_part).pk).values('image_name', 'distance_from_subject', 'pixel_size'))
+    
+    return JsonResponse({"images": images})
 
 
 
