@@ -1,7 +1,7 @@
-let port;
-let reader;
-let dataReading = false;
-let writer;
+var port;
+var reader;
+var dataReading = false;
+var writer;
 
 async function getCameraDeviceIdByName(cameraName) {
     await navigator.mediaDevices.getUserMedia({ video: true });
@@ -203,12 +203,12 @@ function detectBodyPart(){
 async function captureImage(isSaved, distance = null){
     let video = document.getElementById("stream");
     let canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = 1920;
+    canvas.height = 1080;
     let context = canvas.getContext("2d");
     let bodyPart = document.getElementById("body-part").selectedOptions[0].value;
 
-    context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     imageUrl = canvas.toDataURL("image/png")
     if (isSaved){
@@ -226,6 +226,8 @@ function saveImageToCache(imageUrl, bodyPart, distance) {
     storedImages.push(imageUrl);
     bodyPartImages.push(bodyPart);
     distanceImages.push(distance);
+
+    document.getElementById("save-picture").textContent = "Save all Pictures ("+storedImages.length+")";
 
     localStorage.setItem("capturedImages", JSON.stringify(storedImages));
     localStorage.setItem("bodyPartImages", JSON.stringify(bodyPartImages));
@@ -276,6 +278,8 @@ async function saveImagesToServer(visitId) {
             console.error(`Error saving image ${index + 1}:`, error);
         }
     });
+
+    document.getElementById("save-picture").textContent = "Save all Pictures";
 }
 
 function updateCarousel(images) {
