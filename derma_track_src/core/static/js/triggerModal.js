@@ -35,7 +35,7 @@ function createFileExplorer(id){
 
     fileContainer.innerHTML = ""
 
-    fetch(`visit_list/${id}/folders/`)
+    fetch(`/core/visit_list/${id}/folders/`)
         .then(response => response.json())
         .then(data => {
             const folders = data.folders;
@@ -81,7 +81,7 @@ function createFileExplorerImage(id, body_part){
 
     fileContainer.innerHTML = ""
 
-    fetch(`visit_list/${id}/${body_part}/images`)
+    fetch(`/core/visit_list/${id}/${body_part}/images`)
         .then(response => response.json())
         .then(data => {
             const images = data.images;
@@ -114,9 +114,11 @@ function createFileExplorerImage(id, body_part){
 
 function showPreview(src) {
 
-    const previewImage = document.getElementById("preview-image");
+    // const previewImage = document.getElementById("preview-image");
 
-    previewImage.src = src;
+    // previewImage.src = src;
+
+    setBackgroundImage(src);
 
     const modalImage = new bootstrap.Modal(document.querySelector("#imagePreviewModal"), {
         keyboard: false,
@@ -128,6 +130,19 @@ function showPreview(src) {
     modalImage.toggle();
 
     modalMain.toggle();
+}
+
+function setBackgroundImage(url) {
+    document.getElementById("image-preview").style.backgroundImage = `url('${url}')`;
+    const img = new Image();
+
+    img.onload = () => {
+        let init_canvas = document.getElementById('canvas-annotation');
+        init_canvas.width = img.width;
+        init_canvas.height = img.height;
+    }
+
+    img.src = url;
 }
 
 window.addEventListener("DOMContentLoaded", addEventListener, { once: true });

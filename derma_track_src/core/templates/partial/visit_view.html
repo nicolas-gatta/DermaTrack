@@ -1,8 +1,10 @@
 {% load static %}
 
 <script src="{% static 'js/video_capture.js' %}" defer></script>
+<script src="{% static 'js/annotation.js' %}" defer></script>
 
 <link href="{% static 'css/visit_modal.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'css/image_preview.css' %}" rel="stylesheet" type="text/css">
 
 <div class="modal fade" id="mainModal" tabindex="-1" role="dialog" data-visit-id="{{ visit.id }}">
     <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -60,8 +62,8 @@
 </div>
 
 
-<div class="modal fade modal-xl" id = "secondaryModal" tabindex="-1" role="dialog" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id = "secondaryModal" tabindex="-1" role="dialog" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Capture Image</h5>
@@ -78,14 +80,14 @@
                     <button id="capture-btn" class="btn btn-primary mt-3" onclick="captureImage(true)">Capture</button>
                 </div>
                 <div class = "row h-25 carousel slide p-3" id ="medicalCarousel"> 
-                    <div class="carousel-inner">
+                    <div class="carousel-inner" aria-hidden="true">
                       </div>
                       <button class="carousel-control-prev" type="button" data-bs-target="#medicalCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="carousel-control-prev-icon" ></span>
                         <span class="visually-hidden">Previous</span>
                       </button>
                       <button class="carousel-control-next" type="button" data-bs-target="#medicalCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="carousel-control-next-icon"></span>
                         <span class="visually-hidden">Next</span>
                       </button>
                 </div>
@@ -100,14 +102,24 @@
     </div>
 </div>
 
-<div class="modal fade modal-xl" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Image Preview</h5>
+                <div class="form-check form-switch annotation-toggle m-2">
+                    <input class="form-check-input" type="checkbox" id="annotationSwitch" onclick="toggleAnnotations()">
+                    <label class="form-check-label" for="annotationSwitch">Annotations</label>
+                </div>
+
             </div>
-            <div class="modal-body text-center">
-                <img id="preview-image" src="" alt="Preview" class="img-fluid rounded" style="overflow: auto; max-height: 80vh; max-width: 100%;">
+            <div class="modal-body position-relative">
+                <div id="image-preview" class="background-image position-absolute top-50 start-50 translate-middle">
+                    <canvas id="canvas-annotation"></canvas>
+                    <button id="trash-button" type="button" class="btn btn-danger" onclick = "deleteLine()"><i class="bi bi-trash-fill"></i></button>
+                    
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>

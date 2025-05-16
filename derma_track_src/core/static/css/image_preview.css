@@ -1,0 +1,17 @@
+#canvas-annotation {
+    cursor: crosshair;
+}
+
+#image-preview{
+    overflow: auto; 
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#trash-button {
+    position: absolute;
+    cursor: pointer;
+    display: none;
+    z-index: 0;
+}
