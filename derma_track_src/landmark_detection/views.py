@@ -27,11 +27,15 @@ def detect(request):
 def save_images(request):
     if request.method == "POST":
         data = json.loads(request.body)
+        
         image = data.get("image", None)
         body_part = BodyPart.objects.get(pk = data.get("bodyPartId", None))
         visit = Visit.objects.get(pk = data.get("visitId", None))
         distance = data.get("distance", None)
         index = data.get("index", None)
+        image_height = data.get("imageHeigth", None)
+        image_width = data.get("imageWidth", None)
+        pixel_size = data.get("pixelSize", None)
         
         folder_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit.pk}", body_part.name)
         
@@ -51,9 +55,12 @@ def save_images(request):
             f.write(img_binary)
         
         visit_body_part = VisitBodyPart(
+            image_name = filename,
             image_path = file_path,
+            image_height = image_height,
+            image_width = image_width,
             distance_from_subject = distance,
-            comment = None,
+            pixel_size = pixel_size,
             body_part = body_part,
             visit = visit
         )

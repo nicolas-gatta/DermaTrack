@@ -260,12 +260,13 @@ async function saveImagesToServer(visitId) {
     
     storedImages.forEach(async (imageUrl, index) => {
         try {
-            var response = await fetch(`/landmark/save_images/`, {
+            await fetch(`/landmark/save_images/`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ visitId: visitId, image: imageUrl, bodyPartId: bodyPartImages[index], distance: distanceImages[index], index})
+                body: JSON.stringify({ visitId: visitId, image: imageUrl, bodyPartId: bodyPartImages[index], distance: distanceImages[index], 
+                                        imageWidth: 1920, imageHeigth: 1080, pixelSize: 0.0014, index})
             })
             .then(response => response.json())
             .then(data => {
