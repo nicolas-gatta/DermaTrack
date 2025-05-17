@@ -1,7 +1,7 @@
 {% load static %}
 
-<script src="{% static 'js/video_capture.js' %}" defer></script>
-<script src="{% static 'js/annotation.js' %}" defer></script>
+<script src="{% static 'js/video_capture.js' %}"></script>
+<script src="{% static 'js/annotation.js' %}"></script>
 
 <link href="{% static 'css/visit_modal.css' %}" rel="stylesheet" type="text/css">
 <link href="{% static 'css/image_preview.css' %}" rel="stylesheet" type="text/css">
@@ -95,9 +95,6 @@
                 
             </div>
             <div class="modal-footer">
-                {% if true %}
-                    <button type="button" class="btn btn-success" id="save-picture" onclick = "saveImagesToServer({{ visit.id }})">Save all pictures</button>
-                {% endif %}
                 <button type="button" class="btn btn-danger" onclick="stopStream()" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
             </div>
         </div>
@@ -124,6 +121,7 @@
 
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="save-picture" onclick = "saveAnnotations()">Save Annotations</button>
                 <button type="button" class="btn btn-danger" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
             </div>
         </div>

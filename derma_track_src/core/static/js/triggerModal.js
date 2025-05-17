@@ -91,10 +91,7 @@ function createFileExplorerImage(id, body_part){
                 const img = document.createElement("img");
                 const caption = document.createElement("figcaption");
                 
-                img.src = "/media/visits/visit_"+id+"/"+body_part+"/"+image["image_name"];
-                img.dataset.pixelSize = image["pixel_size"]
-                img.dataset.distance = image["distance_from_subject"]
-
+                img.src = "/media/visits/visit_"+id+"/"+body_part+"/"+image["image_preview_name"];
                 caption.textContent = image["image_name"];
 
                 figure.classList.add("file-item", "text-center", "svg-wrapper");
@@ -102,7 +99,7 @@ function createFileExplorerImage(id, body_part){
                 figure.appendChild(caption);
 
                 figure.addEventListener("dblclick", () => {
-                    showPreview(img.src);
+                    showPreview(image["pk"]);
                 });
 
                 fileContainer.appendChild(figure);
@@ -114,13 +111,16 @@ function createFileExplorerImage(id, body_part){
         });
 }
 
-function showPreview(src) {
+function showPreview(id) {
 
-    // const previewImage = document.getElementById("preview-image");
-
-    // previewImage.src = src;
-
-    setBackgroundImage(src);
+    fetch(`/core/visit_list/get_image/${id}`)
+    .then(response => response.json())
+    .then(data => {
+        setBackgroundImage(id, data.image, data.pixel_size, data.distance, data.focal);
+    })
+    .catch(error => {
+        console.error("Error fetching folder list:", error);
+    });
 
     const modalImage = new bootstrap.Modal(document.querySelector("#imagePreviewModal"), {
         keyboard: false,
@@ -134,20 +134,24 @@ function showPreview(src) {
     modalMain.toggle();
 }
 
-function setBackgroundImage(url) {
-    document.getElementById("image-preview").style.backgroundImage = `url('${url}')`;
+function setBackgroundImage(id, url, pixel_size, distance, focal) {
+    document.getElementById("image-preview").style.backgroundImage = `url(data:image/png;base64,${url})`;
     const img = new Image();
 
     img.onload = () => {
         let init_canvas = document.getElementById('canvas-annotation');
         let init_image = document.getElementById("image-preview");
         init_canvas.width = img.width;
+        init_canvas.dataset.pixel_size = pixel_size;
+        init_canvas.dataset.distance = distance;
+        init_canvas.dataset.focal = focal;
+        canvas.dataset.id = id;
         init_canvas.height = img.height;
         init_image.style.width = img.width + "px";
         init_image.style.height = img.height + "px";
     }
 
-    img.src = url;
+    img.src = `data:image/png;base64,${url}`;
 }
 
 window.addEventListener("DOMContentLoaded", addEventListener, { once: true });

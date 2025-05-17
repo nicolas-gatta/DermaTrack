@@ -2,13 +2,13 @@ from django.shortcuts import render
 from login.models import Doctor
 from django.http import HttpResponse, HttpRequest, JsonResponse
 from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
 
 from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart
 from utils.checks import group_and_super_user_checks
-
-import os
+import base64
+import json
 
 
 # Create your views here.
@@ -101,9 +101,60 @@ def list_visit_folders(request, visit_id):
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def list_visit_folder_images(request, visit_id, body_part):
 
-    images = list(VisitBodyPart.objects.filter(visit_id = visit_id, body_part = BodyPart.objects.get(name = body_part).pk).values('image_name', 'distance_from_subject', 'pixel_size'))
+    images = list(VisitBodyPart.objects.filter(visit_id = visit_id, body_part = BodyPart.objects.get(name = body_part).pk).values('pk','image_name','image_preview_name'))
     
     return JsonResponse({"images": images})
 
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def get_image(request, id):
+    if request.method == "GET" :
+        image = VisitBodyPart.objects.get(pk = id)
+        
+        encoded_string = base64.b64encode(image.image_path.file.read()).decode('utf-8')
+            
+        return JsonResponse({"image": encoded_string, "distance": image.distance_from_subject, "pixel_size": image.pixel_size, "focal": image.focal})
 
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def get_annotations(request, id):
+    if request.method == "GET" :
+        try:
+            annotations = VisitBodyPart.objects.get(pk = id).annotations
+            
+            return JsonResponse({"annotations": annotations}, status=200)
+
+        except VisitBodyPart.DoesNotExist:
+            return JsonResponse({
+                "status": "error",
+                "message": f"No VisitBodyPart found with ID {id}"
+            }, status=404)
+
+@csrf_exempt
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def update_visit_body_part(request, id):
+    if request.method == "PUT" :
+        try:
+            visit_body_part = VisitBodyPart.objects.get(pk=id)
+
+            data = json.loads(request.body)
+            
+            for field, value in data.items():
+                if hasattr(visit_body_part, field):
+                    print(value)
+                    setattr(visit_body_part, field, value)
+
+            visit_body_part.save()
+
+            return JsonResponse({
+                "status": "success",
+                "message": f"Updated sucessfull on VisitBodyPart with ID {id} ."
+            }, status=200)
+
+        except VisitBodyPart.DoesNotExist:
+            return JsonResponse({
+                "status": "error",
+                "message": f"No VisitBodyPart found with ID {id}"
+            }, status=404)
 

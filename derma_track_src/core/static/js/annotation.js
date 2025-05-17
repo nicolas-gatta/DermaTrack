@@ -7,6 +7,7 @@ var ctx = canvas.getContext('2d');
 var startX, startY;
 var trashButton = document.getElementById("trash-button")
 var selectedAnnotation = -1;
+var first_time = true;
 
 canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
@@ -32,9 +33,37 @@ canvas.addEventListener('mouseup', (e) => {
 });
 
 
-function toggleAnnotations() {
+async function toggleAnnotations() {
     annotationEnabled = !annotationEnabled;
     canvas.style.display = annotationEnabled ? "block" : "none";
+    if(first_time){
+        try {
+            await fetch(`/core/visit_list/get_annotations/${canvas.dataset.id}`, {
+                method: "GET",
+                headers: { 
+                    "Content-Type": "application/json"
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'error') {
+                    console.error(`Failed to update the annotation ${canvas.dataset.id}: ${data.message}`);
+                }else{
+                    console.log(data.annotations);
+                    if (data.annotations){
+                        annotations = JSON.parse(data);
+                        console.log(annotations)
+                    }
+                }
+            })
+
+        } catch (error) {
+            console.error(`Error saving the annotation ${canvas.dataset.id}:`, error);
+        }
+
+        first_time = false;
+    }
+
     if(annotationEnabled){
         drawAnnotations();  
     } 
@@ -58,10 +87,18 @@ function drawLine(startX, startY, endX, endY, color) {
     ctx.fillStyle = color;
     ctx.fill();
 
-    const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)).toFixed(2);
+    const pixel_length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)).toFixed(2);
+
+    var length;
+
+    if (canvas.dataset.distance != "null"){
+        length = (((float(canvas.dataset.pixel_size) * pixel_length) * float(canvas.dataset.distance)) / float(canvas.dataset.focal)) + " mm"
+    }else{
+        length = pixel_length + " px"
+    }
     ctx.font = "14px Arial";
     ctx.fillStyle = color;
-    ctx.fillText(`${length}px`, ((startX + endX ) / 2) + 10, (startY + endY) / 2); 
+    ctx.fillText(length, ((startX + endX ) / 2) + 10, (startY + endY) / 2); 
 }
 
 function drawAnnotations() {
@@ -121,5 +158,27 @@ function deleteLine() {
             trashButton.style.opacity = '1';
             drawAnnotations();
         }, 200);
+    }
+}
+
+async function saveAnnotations(){
+    console.log(annotations);
+    try {
+        await fetch(`/core/visit_list/update_visit_body_part/${canvas.dataset.id}/`, {
+            method: "PUT",
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({annotations: annotations})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'error') {
+                console.error(`Failed to update the annotation ${canvas.dataset.id}: ${data.message}`);
+            }
+        })
+
+    } catch (error) {
+        console.error(`Error saving the annotation ${canvas.dataset.id}:`, error);
     }
 }

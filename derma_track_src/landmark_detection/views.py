@@ -67,8 +67,8 @@ def save_image(request):
             image_path = file_path,
             image_height = image_height,
             image_width = image_width,
-            image_preview_path = preview_path,
             image_preview_name = preview_filename,
+            image_preview_path = preview_path,
             image_preview_height = preview_height,
             image_preview_width = preview_width,
             distance_from_subject = distance,
@@ -78,10 +78,8 @@ def save_image(request):
         )
         
         visit_body_part.save()
-        
-        with open(file_path, 'rb') as image_file:
-            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-            return JsonResponse({"status": "success", "image": encoded_string}, status = 200)
+
+        return JsonResponse({"status": "success", "image": preview_filename, "visitId": visit.pk, "bodyPart": body_part.name}, status = 200)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status = 400)
 

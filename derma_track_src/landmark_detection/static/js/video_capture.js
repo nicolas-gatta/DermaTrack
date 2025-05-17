@@ -79,7 +79,7 @@ async function connectToSerialPort(){
         reader = textDecoder.readable.getReader();
         listenToSerialPort();
     } catch (error) {
-        console.error("Failed to connect to the serial port:", error);
+        console.error("Failed to connect to the serial port (Only Work on Chrome):", error);
     }
 }
 
@@ -212,33 +212,49 @@ async function captureImage(isSaved, distance = null){
 
     imageUrl = canvas.toDataURL("image/png");
     if (isSaved){
-        await saveImageToServer(imageUrl, bodyPart, distance);
+        await saveImageToServer(imageUrl, bodyPart, distance, 0);
     }else{
         return imageUrl.split(",")[1];
     }
 }
 
-function saveImageToCache(imageUrl, bodyPart, distance) {
-    let storedImages = JSON.parse(localStorage.getItem("capturedImages"));
-    let bodyPartImages = JSON.parse(localStorage.getItem("bodyPartImages"));
-    let distanceImages = JSON.parse(localStorage.getItem("distanceImages"));
+function updateCarousel(images) {
+    let carouselInner = document.querySelector("#medicalCarousel .carousel-inner");
+    carouselInner.innerHTML = ""; 
 
-    storedImages.push(imageUrl);
-    bodyPartImages.push(bodyPart);
-    distanceImages.push(distance);
+    let itemsPerSlide = 5;
+    let totalSlides = Math.ceil(images.length / itemsPerSlide);
 
-    document.getElementById("save-picture").textContent = "Save all Pictures ("+storedImages.length+")";
+    for (let i = 0; i < totalSlides; i++) {
+        let carouselItem = document.createElement("div");
+        carouselItem.classList.add("carousel-item");
 
-    localStorage.setItem("capturedImages", JSON.stringify(storedImages));
-    localStorage.setItem("bodyPartImages", JSON.stringify(bodyPartImages));
-    localStorage.setItem("distanceImages", JSON.stringify(distanceImages));
+        if (i === 0) carouselItem.classList.add("active");
 
-    updateCarousel(storedImages);
+        let container = document.createElement("div");
+        container.classList.add("container-fluid");
+        container.style.backgroundColor = "beige";
+
+        let row = document.createElement("div");
+        row.classList.add("row", "justify-content-center");
+
+        for (let j = i * itemsPerSlide; j < (i + 1) * itemsPerSlide && j < images.length; j++) {
+            let img = document.createElement("img");
+            img.classList.add("col-sm-2");
+            img.src = images[j];
+            img.alt = "Captured Image";
+            row.appendChild(img);
+        }
+
+        container.appendChild(row);
+        carouselItem.appendChild(container);
+        carouselInner.appendChild(carouselItem);
+    }
 }
 
 async function saveImageToServer(imageUrl, bodyPartId, distance, index){
     try {
-        await fetch(`/landmark/save_images/`, {
+        await fetch(`/landmark/save_image/`, {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json"
@@ -252,7 +268,7 @@ async function saveImageToServer(imageUrl, bodyPartId, distance, index){
                 console.error(`Failed to save image ${index + 1}: ${data.message}`);
             }else{
                 let storedImages = JSON.parse(localStorage.getItem("capturedImages"));
-                storedImages.push(data.image_data);
+                storedImages.push("/media/visits/visit_"+data.visitId+"/"+data.bodyPart+"/"+data.image);
                 updateCarousel(storedImages);
                 localStorage.setItem("capturedImages", JSON.stringify(storedImages));
             }
@@ -292,36 +308,24 @@ async function saveImagesToServer(visitId) {
     document.getElementById("save-picture").textContent = "Save all Pictures";
 }
 
-function updateCarousel(images) {
-    let carouselInner = document.querySelector("#medicalCarousel .carousel-inner");
-    carouselInner.innerHTML = ""; 
 
-    let itemsPerSlide = 5;
-    let totalSlides = Math.ceil(images.length / itemsPerSlide);
 
-    for (let i = 0; i < totalSlides; i++) {
-        let carouselItem = document.createElement("div");
-        carouselItem.classList.add("carousel-item");
+/*
+function saveImageToCache(imageUrl, bodyPart, distance) {
+    let storedImages = JSON.parse(localStorage.getItem("capturedImages"));
+    let bodyPartImages = JSON.parse(localStorage.getItem("bodyPartImages"));
+    let distanceImages = JSON.parse(localStorage.getItem("distanceImages"));
 
-        if (i === 0) carouselItem.classList.add("active");
+    storedImages.push(imageUrl);
+    bodyPartImages.push(bodyPart);
+    distanceImages.push(distance);
 
-        let container = document.createElement("div");
-        container.classList.add("container-fluid");
-        container.style.backgroundColor = "beige";
+    document.getElementById("save-picture").textContent = "Save all Pictures ("+storedImages.length+")";
 
-        let row = document.createElement("div");
-        row.classList.add("row", "justify-content-center");
+    localStorage.setItem("capturedImages", JSON.stringify(storedImages));
+    localStorage.setItem("bodyPartImages", JSON.stringify(bodyPartImages));
+    localStorage.setItem("distanceImages", JSON.stringify(distanceImages));
 
-        for (let j = i * itemsPerSlide; j < (i + 1) * itemsPerSlide && j < images.length; j++) {
-            let img = document.createElement("img");
-            img.classList.add("col-sm-2");
-            img.src = `data:image/png;base64,${images[j]}`;
-            img.alt = "Captured Image";
-            row.appendChild(img);
-        }
-
-        container.appendChild(row);
-        carouselItem.appendChild(container);
-        carouselInner.appendChild(carouselItem);
-    }
+    updateCarousel(storedImages);
 }
+*/
