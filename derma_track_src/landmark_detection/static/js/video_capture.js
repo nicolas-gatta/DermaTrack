@@ -2,6 +2,7 @@ var port;
 var reader;
 var dataReading = false;
 var writer;
+var visitId;
 
 async function getCameraDeviceIdByName(cameraName) {
     await navigator.mediaDevices.getUserMedia({ video: true });
@@ -44,9 +45,8 @@ function populateSelectBodyPart(){
 
 async function stream() {
     populateSelectBodyPart();
+    visitId = document.getElementById("mainModal").dataset.visitId;
     localStorage.setItem("capturedImages", JSON.stringify([]));
-    localStorage.setItem("bodyPartImages", JSON.stringify([]));
-    localStorage.setItem("distanceImages", JSON.stringify([]));
     updateCarousel([]);
     let deviceId = await getCameraDeviceIdByName("Arducam IMX179 8MP Camera");
     if (await isCameraConnected(deviceId)){
@@ -210,9 +210,9 @@ async function captureImage(isSaved, distance = null){
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    imageUrl = canvas.toDataURL("image/png")
+    imageUrl = canvas.toDataURL("image/png");
     if (isSaved){
-        await saveImageToCache(imageUrl, bodyPart, distance);
+        await saveImageToServer(imageUrl, bodyPart, distance);
     }else{
         return imageUrl.split(",")[1];
     }
@@ -234,6 +234,33 @@ function saveImageToCache(imageUrl, bodyPart, distance) {
     localStorage.setItem("distanceImages", JSON.stringify(distanceImages));
 
     updateCarousel(storedImages);
+}
+
+async function saveImageToServer(imageUrl, bodyPartId, distance, index){
+    try {
+        await fetch(`/landmark/save_images/`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({visitId: visitId, image: imageUrl, bodyPartId: bodyPartId, distance :distance, 
+                                    imageWidth: 1920, imageHeigth: 1080, pixelSize: 0.0014, index})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'error') {
+                console.error(`Failed to save image ${index + 1}: ${data.message}`);
+            }else{
+                let storedImages = JSON.parse(localStorage.getItem("capturedImages"));
+                storedImages.push(data.image_data);
+                updateCarousel(storedImages);
+                localStorage.setItem("capturedImages", JSON.stringify(storedImages));
+            }
+        })
+
+    } catch (error) {
+        console.error(`Error saving image ${index + 1}:`, error);
+    }
 }
 
 async function saveImagesToServer(visitId) {
@@ -259,25 +286,7 @@ async function saveImagesToServer(visitId) {
     alert('Image saving process initiated');
     
     storedImages.forEach(async (imageUrl, index) => {
-        try {
-            await fetch(`/landmark/save_images/`, {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ visitId: visitId, image: imageUrl, bodyPartId: bodyPartImages[index], distance: distanceImages[index], 
-                                        imageWidth: 1920, imageHeigth: 1080, pixelSize: 0.0014, index})
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'error') {
-                    console.error(`Failed to save image ${index + 1}: ${data.message}`);
-                }
-            })
-
-        } catch (error) {
-            console.error(`Error saving image ${index + 1}:`, error);
-        }
+        saveImageToServer(visitId, bodyPartImages[index], distanceImages[index], index);
     });
 
     document.getElementById("save-picture").textContent = "Save all Pictures";
@@ -306,7 +315,7 @@ function updateCarousel(images) {
         for (let j = i * itemsPerSlide; j < (i + 1) * itemsPerSlide && j < images.length; j++) {
             let img = document.createElement("img");
             img.classList.add("col-sm-2");
-            img.src = images[j];
+            img.src = `data:image/png;base64,${images[j]}`;
             img.alt = "Captured Image";
             row.appendChild(img);
         }

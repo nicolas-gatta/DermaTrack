@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 from landmark_detection.services.pose_estimator import detect_body_part
 from django.views.decorators.csrf import csrf_exempt
@@ -8,7 +8,8 @@ from core.models import BodyPart, VisitBodyPart, Visit
 import base64
 import json
 import os
-from pathlib import Path
+import cv2
+import numpy as np
 
 # Create your views here.
 
@@ -24,7 +25,7 @@ def detect(request):
     return JsonResponse({"body_part": detected_body_part})
 
 @csrf_exempt
-def save_images(request):
+def save_image(request):
     if request.method == "POST":
         data = json.loads(request.body)
         
@@ -36,6 +37,8 @@ def save_images(request):
         image_height = data.get("imageHeigth", None)
         image_width = data.get("imageWidth", None)
         pixel_size = data.get("pixelSize", None)
+        preview_height = 160
+        preview_width = 160
         
         folder_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit.pk}", body_part.name)
         
@@ -49,16 +52,25 @@ def save_images(request):
         
         filename = f"image_{num_image + 1 + index}.png"
         
-        file_path = os.path.join(folder_path, filename)
+        preview_filename = f"preview_image_{num_image + 1 + index}.png"
         
-        with open(file_path, "wb") as f:
-            f.write(img_binary)
+        file_path, preview_path = os.path.join(folder_path, filename), os.path.join(folder_path, preview_filename)
+        
+        image = cv2.imdecode(np.frombuffer(img_binary, dtype=np.uint8), cv2.IMREAD_COLOR)
+        
+        cv2.imwrite(file_path, image)
+        
+        cv2.imwrite(preview_path, cv2.resize(image, (preview_height, preview_width)))
         
         visit_body_part = VisitBodyPart(
             image_name = filename,
             image_path = file_path,
             image_height = image_height,
             image_width = image_width,
+            image_preview_path = preview_path,
+            image_preview_name = preview_filename,
+            image_preview_height = preview_height,
+            image_preview_width = preview_width,
             distance_from_subject = distance,
             pixel_size = pixel_size,
             body_part = body_part,
@@ -67,9 +79,11 @@ def save_images(request):
         
         visit_body_part.save()
         
-        return JsonResponse({"status": "success"})
+        with open(file_path, 'rb') as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+            return JsonResponse({"status": "success", "image": encoded_string}, status = 200)
 
-    return JsonResponse({"status": "error", "message": "Invalid request method"}, status=400)
+    return JsonResponse({"status": "error", "message": "Invalid request method"}, status = 400)
 
 def get_body_parts(request):
     if request.method == "GET":

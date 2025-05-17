@@ -95,7 +95,9 @@
                 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" id="save-picture" onclick = "saveImagesToServer({{ visit.id }})">Save all pictures</button>
+                {% if true %}
+                    <button type="button" class="btn btn-success" id="save-picture" onclick = "saveImagesToServer({{ visit.id }})">Save all pictures</button>
+                {% endif %}
                 <button type="button" class="btn btn-danger" onclick="stopStream()" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
             </div>
         </div>
