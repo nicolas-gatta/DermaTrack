@@ -33,17 +33,17 @@ class Allergy(models.TextChoices):
 # Create your models here.
 class Patient(models.Model):
     
-    national_number = models.CharField(max_length=11, unique=True)
-    name = models.CharField(max_length=255) 
-    surname = models.CharField(max_length=255)
-    date_of_birth = models.DateField()
-    blood_group = models.CharField(max_length=30, choices=BloodGroup.choices, default=BloodGroup.A_POSITIVE)
+    national_number = models.CharField(max_length=11, unique=True, blank=False)
+    name = models.CharField(max_length=255, blank=False) 
+    surname = models.CharField(max_length=255, blank=False)
+    date_of_birth = models.DateField(blank=False)
+    blood_group = models.CharField(max_length=30, choices=BloodGroup.choices, default=BloodGroup.A_POSITIVE, blank=False)
     allergies = MultiSelectField(choices=Allergy.choices, max_length=200, blank=True, default = None)
-    street = models.CharField(max_length=255)
-    number = models.IntegerField()
-    city = models.CharField(max_length=255)
-    zip_code = models.IntegerField()
-    phone_number = models.CharField(max_length=255)
+    street = models.CharField(max_length=255, blank=False)
+    number = models.IntegerField(blank=False)
+    city = models.CharField(max_length=255, blank=False)
+    zip_code = models.IntegerField(blank=False)
+    phone_number = models.CharField(max_length=255, blank=False)
     other_phone_number = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
@@ -56,12 +56,12 @@ class Patient(models.Model):
         return self.street + " " + str(self.number) + ", " + self.city + " (" + str(self.zip_code) + ")"
     
 class Visit(models.Model):
-    date = models.DateTimeField()
+    date = models.DateTimeField(blank = False)
     note = models.TextField(blank = True)
     is_patient_present = models.BooleanField(blank = True, default=False)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.SCHEDULED)
-    patient = models.ForeignKey(Patient, verbose_name=("patient"), on_delete=models.CASCADE)
-    doctor = models.ForeignKey(Doctor, verbose_name=("doctor"), on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, verbose_name=("patient"), on_delete=models.CASCADE, blank = False)
+    doctor = models.ForeignKey(Doctor, verbose_name=("doctor"), on_delete=models.CASCADE, blank = False)
     
     def __str__(self):
         return str(self.pk) + " - " + self.doctor.full_name() + " / " + self.patient.full_name() + " - "  + str(self.date)

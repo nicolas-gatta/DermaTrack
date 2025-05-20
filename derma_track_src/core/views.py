@@ -5,9 +5,9 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 import os
 from django.contrib.auth.decorators import login_required
-import copy
+from .forms import PatientForm, VisitForm
 
-from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart
+from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart, Doctor
 from utils.checks import group_and_super_user_checks
 import base64
 import json
@@ -36,9 +36,16 @@ def doctor_list(request):
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def patient_profile(request):
-    patient = Patient.objects.get(pk=request.POST["id"])
-    return render(request, 'core/patient.html', {'patient': patient})
+def patient_profile(request, id):
+    if request.method == "GET":
+        patient = Patient.objects.get(pk = id)
+
+        form = PatientForm(instance=patient)
+
+        for field in form.fields.values():
+            field.disabled = True
+
+        return render(request, "partial/patient_form.html", {"form": form, "is_form": False})
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -150,7 +157,6 @@ def update_visit_body_part(request, id):
             
             for field, value in data.items():
                 if hasattr(visit_body_part, field):
-                    print(value)
                     setattr(visit_body_part, field, value)
 
             visit_body_part.save()
@@ -200,3 +206,35 @@ def delete_image(request, id):
             
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def create_patient(request):
+    if request.method == "POST":
+        form = PatientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"success": True})
+        return render(request, "partial/patient_form.html", {"form": form, "is_form": True})
+    else:
+        form = PatientForm()
+        return render(request, "partial/patient_form.html", {"form": form, "is_form": True})
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def create_visit(request):
+    if request.method == "POST":
+        form = VisitForm(request.POST)
+        if form.is_valid():
+            visit = form.save(commit=False)
+            visit.doctor = Doctor.objects.get(user = request.user)
+            visit.status = Status.SCHEDULED
+            print(visit)
+            visit.save()
+            return JsonResponse({"success": True})
+        patients = Patient.objects.all()
+        return render(request, "partial/visit_form.html", {"form": form, "patients": patients})
+    else:
+        form = VisitForm()
+        patients = Patient.objects.all()
+        return render(request, "partial/visit_form.html", {"form": form, "patients": patients})

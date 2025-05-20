@@ -6,9 +6,11 @@
         <button class="btn btn-primary" onclick="filterPatients()">
             <i class="fas fa-search"></i> Search
         </button>
-        <button class="btn btn-success" hx-get="/core/create_patient_form/" hx-target="#pop-up" hx-swap="innerHTML">
-            <i class="fas fa-user-plus"></i> Add Patient
-        </button>
+        <form class="button-form" method ="GET" hx-get="/core/create_patient/" hx-target="#pop-up" hx-swap="innerHTML">
+            <button type="submit" class="btn btn-success" >
+                <i class="fas fa-user-plus"></i> Add Patient
+            </button>
+        </form>
     </div>
 </div>
 
@@ -41,9 +43,7 @@
                     <td>{{ patient.other_phone_number }}</td>
                     <td>       
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <form action='/core/patient_profile' method='POST' style="margin: 0; display: inline;">
-                                {% csrf_token %}
-                                <input type="hidden" name="id" class="form-control" value="{{ patient.pk }}" required=""> 
+                            <form hx-get="/core/patient_profile/{{ patient.pk }}/" hx-target="#pop-up" hx-swap="innerHTML" method='GET' style="margin: 0; display: inline;">
                                 <button type="submit" class="btn btn-success" data-mdb-ripple-color="dark">View</button>
                             </form>
                         </div>
@@ -116,3 +116,5 @@
         </ul> 
     </nav>
 </div>
+
+<div id="pop-up"></div>

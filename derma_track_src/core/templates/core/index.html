@@ -15,6 +15,7 @@
         <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
         <script src="{% static 'js/dynamicBodyCore.js' %}" defer></script>
         <script src="{% static 'js/triggerModal.js' %}" defer></script>
+        <script src="{% static 'js/addingInfo.js' %}" defer></script>
 
     </head>
 
@@ -35,9 +36,6 @@
                             <li class="nav-item">
                                 <a id="visit_button" class="nav-link" hx-get="{% url 'visit_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#"><i class="bi bi-clipboard2-pulse-fill px-1"></i>Visit</a>
                             </li>
-                            <li class="nav-item">
-                                <a id="doctor_button" class="nav-link" hx-get="{% url 'doctor_list' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onclick="changingButtonState(this)" href="#"><i class="bi bi-hospital-fill px-1"></i>Doctor</a>
-                            </li>
                         </ul>
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
@@ -53,8 +51,6 @@
             <div id = "dynamic-body" class = "container-fluid h-100" > 
             </div>
         </main>
-
-
 
         <footer class="mt-4 bg-dark text-light py-3">
             <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center">
