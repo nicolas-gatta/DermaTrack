@@ -78,8 +78,8 @@
                         </li>
 
                         <li>
-                            <a id = "body_button" class="nav-link text-white" href="#" onclick="changingAdminButtonState(this)">
-                            Body Part
+                            <a id = "body_button" class="nav-link text-white"  hx-get="{% url 'patient_list' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" href="#" onclick="changingAdminButtonState(this)">
+                            Patient
                             </a>
                         </li>
 
