@@ -48,8 +48,8 @@ async function stream() {
     visitId = document.getElementById("mainModal").dataset.visitId;
     localStorage.setItem("capturedImages", JSON.stringify([]));
     updateCarousel([]);
-    let deviceId = await getCameraDeviceIdByName("Arducam IMX179 8MP Camera");
-    if (await isCameraConnected(deviceId)){
+    //let deviceId = await getCameraDeviceIdByName("Arducam IMX179 8MP Camera");
+    if (true || await isCameraConnected(deviceId)){
         let video = document.getElementById("stream");
         video.muted = true;
         navigator.mediaDevices.getUserMedia({video: true, width: { ideal:  1920} , height: { ideal: 1080 }},)
@@ -89,7 +89,6 @@ async function sendDataToSerialPort(data) {
         console.error("Serial port writer is not initialized");
         return;
     }
-
     try {
         const jsonData = JSON.stringify(data);
         await writer.write(jsonData);
@@ -103,8 +102,13 @@ async function disconnectedToSerialPort(){
     dataReading = false;
 
     if (reader) {
+        try{
+            await reader.cancel();
+        }catch(e){
+            console.warn("Error while canceling reader:", e);
+        }
         reader.releaseLock();
-        await reader.cancel();
+        
     }
     if (port) {
         await port.close();
@@ -137,6 +141,7 @@ async function listenToSerialPort(){
                 if (lines.length !=0) {
                     try{
                         data = JSON.parse(lines[0]);
+                        console.log(data);
                         if (data["take_picture"]){
                             sendDataToSerialPort({picture_taken: true})
                             captureImage(true, data["distance"]);
@@ -307,25 +312,3 @@ async function saveImagesToServer(visitId) {
 
     document.getElementById("save-picture").textContent = "Save all Pictures";
 }
-
-
-
-/*
-function saveImageToCache(imageUrl, bodyPart, distance) {
-    let storedImages = JSON.parse(localStorage.getItem("capturedImages"));
-    let bodyPartImages = JSON.parse(localStorage.getItem("bodyPartImages"));
-    let distanceImages = JSON.parse(localStorage.getItem("distanceImages"));
-
-    storedImages.push(imageUrl);
-    bodyPartImages.push(bodyPart);
-    distanceImages.push(distance);
-
-    document.getElementById("save-picture").textContent = "Save all Pictures ("+storedImages.length+")";
-
-    localStorage.setItem("capturedImages", JSON.stringify(storedImages));
-    localStorage.setItem("bodyPartImages", JSON.stringify(bodyPartImages));
-    localStorage.setItem("distanceImages", JSON.stringify(distanceImages));
-
-    updateCarousel(storedImages);
-}
-*/

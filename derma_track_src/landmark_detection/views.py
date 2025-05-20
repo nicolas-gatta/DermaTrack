@@ -82,7 +82,8 @@ def save_image(request):
         return JsonResponse({"status": "success", "image": preview_filename, "visitId": visit.pk, "bodyPart": body_part.name}, status = 200)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status = 400)
-
+        
+        
 def get_body_parts(request):
     if request.method == "GET":
         body_part = list(BodyPart.objects.values_list("pk", "name"))
