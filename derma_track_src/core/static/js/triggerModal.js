@@ -1,3 +1,5 @@
+let selectedImageId = null;
+
 function addEventListener(){
     document.body.addEventListener('htmx:afterSwap', handleModal)
 }
@@ -27,9 +29,14 @@ function clearPopUp() {
     document.getElementById('pop-up').innerHTML = "";
 }
 
-function createFileExplorer(id){
+function createFileExplorer(id = null){
 
+    if (id == null){
+        id = document.querySelector("#mainModal").dataset.visitId;
+    }
+    
     document.getElementById("backButton").classList.add("d-none");
+    document.getElementById("delete-button-image").classList.add("d-none");
 
     var fileContainer = document.getElementById("file-container");
 
@@ -58,7 +65,7 @@ function createFileExplorer(id){
                 figure.appendChild(img_1);
                 figure.appendChild(img_2);
                 figure.appendChild(caption);
-
+                
                 figure.addEventListener("dblclick", () => {
                     createFileExplorerImage(id, folderName);
                   });
@@ -76,35 +83,58 @@ function createFileExplorer(id){
 function createFileExplorerImage(id, body_part){
 
     document.getElementById("backButton").classList.remove("d-none");
+    document.getElementById("delete-button-image").classList.remove("d-none");
 
     var fileContainer = document.getElementById("file-container");
+    var deleteButton = document.getElementById("delete-button-image");
+ 
 
     fileContainer.innerHTML = ""
+    deleteButton.disabled = true;
 
     fetch(`/core/visit_list/${id}/${body_part}/images`)
         .then(response => response.json())
         .then(data => {
             const images = data.images;
 
-            images.forEach(image => {
-                const figure = document.createElement("figure");
-                const img = document.createElement("img");
-                const caption = document.createElement("figcaption");
-                
-                img.src = "/media/visits/visit_"+id+"/"+body_part+"/"+image["image_preview_name"];
-                caption.textContent = image["image_name"];
+            if (images.length != 0){
+                images.forEach(image => {
+                    const figure = document.createElement("figure");
+                    const img = document.createElement("img");
+                    const caption = document.createElement("figcaption");
+                    
+                    img.src = "/media/visits/visit_"+id+"/"+body_part+"/"+image["image_preview_name"];
+                    caption.textContent = image["image_name"];
 
-                figure.classList.add("file-item", "text-center", "svg-wrapper");
-                figure.appendChild(img);
-                figure.appendChild(caption);
+                    figure.classList.add("file-item", "text-center", "svg-wrapper");
+                    figure.appendChild(img);
+                    figure.appendChild(caption);
+                    
+                    figure.addEventListener("click", () => {
+                        const allFigures = document.querySelectorAll(".file-item");
+                        allFigures.forEach(f => f.classList.remove("selected"));
 
-                figure.addEventListener("dblclick", () => {
-                    showPreview(image["pk"]);
+                        if (selectedImageId === image["pk"]) {
+                            selectedImageId = null;
+                            deleteButton.disabled = true;
+                        } else {
+                            selectedImageId = image["pk"];
+                            figure.classList.add("selected");
+                            deleteButton.disabled = false;
+                        }
+                    });
+
+                    figure.addEventListener("dblclick", () => {
+                        showPreview(image["pk"]);
+                    });
+
+                    fileContainer.appendChild(figure);
+
                 });
+            }else{
+                createFileExplorer(id);
+            }
 
-                fileContainer.appendChild(figure);
-
-            });
         })
         .catch(error => {
             console.error("Error fetching folder list:", error);
@@ -152,6 +182,24 @@ function setBackgroundImage(id, url, pixel_size, distance, focal) {
     }
 
     img.src = `data:image/png;base64,${url}`;
+}
+
+function deleteImage(){
+    if (!selectedImageId) return;
+
+    fetch(`/core/visit_list/delete_image/${selectedImageId}/`, {
+        method: "DELETE"
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            const visitId = data.visit_id;
+            const bodyPart = data.body_part;
+            createFileExplorerImage(visitId, bodyPart);
+        } else {
+            console.error("Failed to delete image");
+        }
+    });
 }
 
 window.addEventListener("DOMContentLoaded", addEventListener, { once: true });

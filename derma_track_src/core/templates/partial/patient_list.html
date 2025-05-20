@@ -6,6 +6,9 @@
         <button class="btn btn-primary" onclick="filterPatients()">
             <i class="fas fa-search"></i> Search
         </button>
+        <button class="btn btn-success" hx-get="/core/create_patient_form/" hx-target="#pop-up" hx-swap="innerHTML">
+            <i class="fas fa-user-plus"></i> Add Patient
+        </button>
     </div>
 </div>
 

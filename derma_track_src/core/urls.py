@@ -16,6 +16,7 @@ urlpatterns = [
     path('visit_list/get_image/<int:id>', views.get_image, name='get_image'),
     path('visit_list/update_visit_body_part/<int:id>/', views.update_visit_body_part, name = "update_visit_body_part"),
     path('visit_list/get_annotations/<int:id>/', views.get_annotations, name = "get_annotations"),
+    path('visit_list/delete_image/<int:id>/', views.delete_image,  name = "delete_image"),
     
     path('doctor_list', views.doctor_list, name = 'doctor_list')
 ]

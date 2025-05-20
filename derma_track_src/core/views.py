@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from login.models import Doctor
-from django.http import HttpResponse, HttpRequest, JsonResponse
+from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
+import os
 from django.contrib.auth.decorators import login_required
+import copy
 
 from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart
 from utils.checks import group_and_super_user_checks
@@ -101,9 +103,15 @@ def list_visit_folders(request, visit_id):
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def list_visit_folder_images(request, visit_id, body_part):
 
-    images = list(VisitBodyPart.objects.filter(visit_id = visit_id, body_part = BodyPart.objects.get(name = body_part).pk).values('pk','image_name','image_preview_name'))
+    try:
+        visit_body_part = VisitBodyPart.objects.filter(visit_id = visit_id, body_part = BodyPart.objects.get(name = body_part).pk)
+        
+        images = list(visit_body_part.values('pk','image_name','image_preview_name'))    
+        
+        return JsonResponse({"images": images})
     
-    return JsonResponse({"images": images})
+    except VisitBodyPart.DoesNotExist:
+        return JsonResponse({"images": {}})
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -158,3 +166,37 @@ def update_visit_body_part(request, id):
                 "message": f"No VisitBodyPart found with ID {id}"
             }, status=404)
 
+@csrf_exempt
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def delete_image(request, id):
+    if request.method == "DELETE":
+        try:
+            visit_body_part = VisitBodyPart.objects.get(pk = id)
+            
+            body_part_name = visit_body_part.body_part.name
+            visit_id = visit_body_part.visit.pk
+            
+            image_path = visit_body_part.image_path.path 
+            
+            preview_path = visit_body_part.image_preview_path.path
+
+            if os.path.exists(image_path):
+                os.remove(image_path)
+
+            if os.path.exists(preview_path):
+                os.remove(preview_path)
+
+            visit_body_part.delete()
+            
+            return JsonResponse({
+                "status": "success",
+                "body_part": body_part_name,
+                "visit_id": visit_id
+            })
+
+        except VisitBodyPart.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "VisitBodyPart not found"}, status=404)
+            
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)

@@ -36,7 +36,11 @@
     color: white;
 }
 
-.file-item:hover {
+.file-item:hover, .file-item.selected {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.file-item.selected {
     background-color: rgba(255, 255, 255, 0.5);
 }
 

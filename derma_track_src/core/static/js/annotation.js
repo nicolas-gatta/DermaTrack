@@ -52,7 +52,6 @@ async function toggleAnnotations() {
                     console.log(data.annotations);
                     if (data.annotations){
                         annotations = JSON.parse(data);
-                        console.log(annotations)
                     }
                 }
             })

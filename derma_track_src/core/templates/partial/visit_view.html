@@ -54,6 +54,7 @@
                 {% if visit.status != "canceled" and visit.status != "finished" %}
                     <button type="button" class="btn btn-success" data-bs-target="#secondaryModal" data-bs-toggle="modal" onclick="stream()">Adding Picture(s)</button>
                 {% endif %}
+                <button id = "delete-button-image" type="button" class="btn btn-warning d-none" onclick="deleteImage()">Delete Selected Image</button>
                 <button id = "backButton" type="button" class="btn btn-primary d-none" onclick="createFileExplorer({{visit.id}})">Back</button>
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="clearPopUp()">Close</button>
             </div>
@@ -95,7 +96,7 @@
                 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="stopStream()" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="stopStream(); createFileExplorer()" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
             </div>
         </div>
     </div>
