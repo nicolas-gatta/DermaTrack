@@ -48,11 +48,15 @@ def save_image(request):
         
         img_binary = base64.b64decode(encoded)
         
-        num_image = VisitBodyPart.objects.filter(visit=visit).count()
+        try:
+            last_visit_body_part = VisitBodyPart.objects.latest('pk')
+            num_image = last_visit_body_part.pk
+        except VisitBodyPart.DoesNotExist:
+            num_image = 1
         
-        filename = f"image_{num_image + 1 + index}.png"
+        filename = f"image_{num_image}.png"
         
-        preview_filename = f"preview_image_{num_image + 1 + index}.png"
+        preview_filename = f"preview_image_{num_image}.png"
         
         file_path, preview_path = os.path.join(folder_path, filename), os.path.join(folder_path, preview_filename)
         
