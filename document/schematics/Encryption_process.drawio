@@ -1,0 +1,195 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:138.0) Gecko/20100101 Firefox/138.0" version="27.0.6">
+  <diagram name="Page-1" id="bereAbJAszOg5s33X1vq">
+    <mxGraphModel dx="1469" dy="813" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-1" target="0f0OQ6aajqdspCZfgaVf-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-1" value="&lt;div&gt;Dermatologist&lt;/div&gt;" style="shape=actor;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=bottom;align=center;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="90" y="170" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-2" target="0f0OQ6aajqdspCZfgaVf-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-2" value="Server" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.traditional_server;" vertex="1" parent="1">
+          <mxGeometry x="369" y="161" width="45" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-3" target="0f0OQ6aajqdspCZfgaVf-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-3" value="Take a picture and upload it" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-8" value="File System" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=bottom;verticalAlign=top;align=center;fillColor=light-dark(#efc769, #bfd3ff);shape=mxgraph.mscae.enterprise.shared_folder" vertex="1" parent="1">
+          <mxGeometry x="620" y="175" width="43" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-10" value="Server encrypt the Image &lt;br&gt;using AES" style="verticalLabelPosition=top;html=1;verticalAlign=bottom;align=center;strokeColor=none;fillColor=light-dark(#000000, #0089b6);shape=mxgraph.azure.automation;pointerEvents=1;labelPosition=center;" vertex="1" parent="1">
+          <mxGeometry x="364" y="50" width="50" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-12" target="0f0OQ6aajqdspCZfgaVf-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-12" value="Send the encrypted image to be stored in the file system" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-16" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.006;entryY=0.507;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-2" target="0f0OQ6aajqdspCZfgaVf-10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="340" y="160" as="sourcePoint" />
+            <mxPoint x="320" y="320" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="300" y="93" />
+              <mxPoint x="300" y="73" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-19" value="Send the original&lt;br&gt;Image" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="0f0OQ6aajqdspCZfgaVf-16">
+          <mxGeometry x="0.0167" y="-2" relative="1" as="geometry">
+            <mxPoint x="23" y="21" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-20" value="" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0.533;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-2" target="0f0OQ6aajqdspCZfgaVf-10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="414" y="175" as="sourcePoint" />
+            <mxPoint x="419" y="74" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="483" y="94" />
+              <mxPoint x="483" y="74" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-21" value="&lt;div&gt;Receive Encrypted&lt;/div&gt;&lt;div&gt;Image&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="0f0OQ6aajqdspCZfgaVf-20">
+          <mxGeometry x="0.0167" y="-2" relative="1" as="geometry">
+            <mxPoint x="-20" y="21" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-23" target="0f0OQ6aajqdspCZfgaVf-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-23" value="&lt;div&gt;Dermatologist&lt;/div&gt;" style="shape=actor;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="90" y="430" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-25" target="0f0OQ6aajqdspCZfgaVf-31">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-51" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-25" target="0f0OQ6aajqdspCZfgaVf-23">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="392" y="540" />
+              <mxPoint x="110" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-25" value="Server" style="sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=#232F3D;strokeColor=none;dashed=0;verticalLabelPosition=top;verticalAlign=bottom;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.traditional_server;labelPosition=center;" vertex="1" parent="1">
+          <mxGeometry x="369" y="421" width="45" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-27" target="0f0OQ6aajqdspCZfgaVf-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-27" value="Want to view a picture" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="430" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-28" target="0f0OQ6aajqdspCZfgaVf-25">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="590" y="540" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="685" y="540" />
+              <mxPoint x="410" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-28" value="File System" style="sketch=0;aspect=fixed;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;align=center;fillColor=light-dark(#efc769, #bfd3ff);shape=mxgraph.mscae.enterprise.shared_folder" vertex="1" parent="1">
+          <mxGeometry x="663" y="435" width="43" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-29" value="Server decrypt the Image &lt;br&gt;using AES" style="verticalLabelPosition=top;html=1;verticalAlign=bottom;align=center;strokeColor=none;fillColor=light-dark(#000000, #0089b6);shape=mxgraph.azure.automation;pointerEvents=1;labelPosition=center;" vertex="1" parent="1">
+          <mxGeometry x="364" y="310" width="50" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-31" target="0f0OQ6aajqdspCZfgaVf-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-31" value="Retrieve the image in the file system" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="470" y="430" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-32" value="" style="endArrow=classic;html=1;rounded=0;entryX=0.006;entryY=0.507;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-25" target="0f0OQ6aajqdspCZfgaVf-29">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="340" y="420" as="sourcePoint" />
+            <mxPoint x="320" y="580" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="300" y="353" />
+              <mxPoint x="300" y="333" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-33" value="Send the encrypted &lt;br&gt;&lt;div&gt;Image&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="0f0OQ6aajqdspCZfgaVf-32">
+          <mxGeometry x="0.0167" y="-2" relative="1" as="geometry">
+            <mxPoint x="23" y="21" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-34" value="" style="endArrow=none;html=1;rounded=0;entryX=1;entryY=0.533;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=classic;startFill=1;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-25" target="0f0OQ6aajqdspCZfgaVf-29">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="414" y="435" as="sourcePoint" />
+            <mxPoint x="419" y="334" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="483" y="354" />
+              <mxPoint x="483" y="334" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-35" value="Receive the decrypted&lt;br&gt;Image" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="0f0OQ6aajqdspCZfgaVf-34">
+          <mxGeometry x="0.0167" y="-2" relative="1" as="geometry">
+            <mxPoint x="-20" y="21" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-36" value="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="210" y="140" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-37" value="2" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="40" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-38" value="3" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="420" y="40" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-39" value="4" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="490" y="140" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-40" value="1" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="210" y="400" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-41" value="2" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="500" y="400" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-44" value="Encrypted Image" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.encrypted_data;fillColor=#7D7C7C;gradientColor=none;" vertex="1" parent="1">
+          <mxGeometry x="508.25" y="550" width="43.5" height="55.5" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-45" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1" target="0f0OQ6aajqdspCZfgaVf-44">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="530" y="540" as="sourcePoint" />
+            <mxPoint x="440" y="330" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-46" value="3" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="500" y="510" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-48" value="4" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="300" y="300" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-50" value="5" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="420" y="300" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-52" value="Medical Picture" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn4.iconfinder.com/data/icons/evil-icons-user-interface/64/picture-128.png" vertex="1" parent="1">
+          <mxGeometry x="211" y="555" width="59" height="59" as="geometry" />
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-53" value="" style="endArrow=none;dashed=1;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="0f0OQ6aajqdspCZfgaVf-52">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="390" y="380" as="sourcePoint" />
+            <mxPoint x="241" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="0f0OQ6aajqdspCZfgaVf-54" value="6" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="210" y="510" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
