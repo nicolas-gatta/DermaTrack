@@ -1,0 +1,27 @@
+{% load static %}
+
+<script src="{% static 'js/video_capture.js' %}" defer></script>
+<link href="{% static 'css/video.css' %}" rel="stylesheet" type="text/css">
+
+<div class="container mt-5 bg-light p-3">
+
+    <div class="camera-container">
+        <h1>Live Camera</h1>
+
+        <div class="form-group">
+            <label for="body-part">Select Body Part:</label>
+            <select id="body-part" class="form-control">
+            </select>
+        </div>
+
+        <video id="stream" autoplay></video>
+    
+        <button id="start" class="btn btn-custom mt-3" onclick="stream()">Open Webcam</button>
+    </div>
+
+</div>
+
+{% csrf_token %}
+<script>
+    var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+</script>
