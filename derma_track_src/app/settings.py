@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "super_resolution.apps.SuperResolutionConfig",
     "core.apps.CoreConfig",
     "administrator.apps.AdministratorConfig",
-    "landmark_detection.apps.LandmarkDetectionConfig",
+    "camera.apps.CameraConfig",
     "image_encryption.apps.ImageEncryptionConfig",
     "django.contrib.admin",
     "django.contrib.auth",
