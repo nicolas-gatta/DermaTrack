@@ -9,6 +9,7 @@ from .forms import PatientForm, VisitForm
 
 from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart, Doctor
 from utils.checks import group_and_super_user_checks
+from image_encryption.services.advanced_encrypted_standard import AES
 import base64
 import json
 
@@ -126,7 +127,7 @@ def get_image(request, id):
     if request.method == "GET" :
         image = VisitBodyPart.objects.get(pk = id)
         
-        encoded_string = base64.b64encode(image.image_path.file.read()).decode('utf-8')
+        encoded_string = base64.b64encode(AES.decrypt_message(image.image_path.file.read())).decode('utf-8')
             
         return JsonResponse({"image": encoded_string, "distance": image.distance_from_subject, "pixel_size": image.pixel_size, "focal": image.focal})
 

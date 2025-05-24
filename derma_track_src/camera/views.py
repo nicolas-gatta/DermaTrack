@@ -4,6 +4,7 @@ from django.conf import settings
 from camera.services.pose_estimator import detect_body_part
 from django.views.decorators.csrf import csrf_exempt
 from core.models import BodyPart, VisitBodyPart, Visit
+from image_encryption.services.advanced_encrypted_standard import AES
 
 import base64
 import json
@@ -54,15 +55,16 @@ def save_image(request):
         except VisitBodyPart.DoesNotExist:
             num_image = 1
         
-        filename = f"image_{num_image}.png"
+        filename = f"image_{num_image}.enc"
         
         preview_filename = f"preview_image_{num_image}.png"
         
         file_path, preview_path = os.path.join(folder_path, filename), os.path.join(folder_path, preview_filename)
         
-        image = cv2.imdecode(np.frombuffer(img_binary, dtype=np.uint8), cv2.IMREAD_COLOR)
+        image = cv2.imdecode(np.frombuffer(img_binary, dtype=np.uint8), cv2.IMREAD_COLOR)    
         
-        cv2.imwrite(file_path, image)
+        with open(file_path, "wb") as f:
+            f.write(AES.encrypt_message(img_binary))
         
         cv2.imwrite(preview_path, cv2.resize(image, (preview_height, preview_width)))
         
