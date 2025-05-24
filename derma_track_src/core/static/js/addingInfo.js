@@ -13,6 +13,6 @@ function handleModalToggleOnPostSuccess(event) {
             document.querySelector("#pop-up").innerHTML = "";
         }
     } catch (error) {
-        console.log(error);
+        
     }
 }

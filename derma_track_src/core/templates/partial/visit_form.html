@@ -1,7 +1,7 @@
 <div class="modal fade" id="mainModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-            <form method="POST" hx-post="/core/create_visit/" hx-target="#pop-up" hx-swap="innerHTML">
+            <form method="POST" hx-post="/core/create_visit/">
                 {% csrf_token %}
 
                 <div class="modal-header bg-light border-bottom">
@@ -9,14 +9,17 @@
                 </div>
 
                 <div class="modal-body">
+
+                    {% if  form.doctor %}
+                    <div class="mb-3">
+                        <label for="id_doctor" class="form-label">Doctor</label>
+                        {{ form.doctor }}
+                    </div>
+                    {% endif %}
+
                     <div class="mb-3">
                         <label for="id_patient" class="form-label">Patient</label>
                         {{ form.patient }}
-                        {% comment %} <datalist id = "patients">
-                            {% for patient in patients %}
-                                <option value = "{{ patient }}"></option>
-                            {% endfor %}
-                        </datalist> {% endcomment %}
                     </div>
 
                     <div class="mb-3">

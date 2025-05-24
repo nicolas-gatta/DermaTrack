@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 import os
 from django.contrib.auth.decorators import login_required
-from .forms import PatientForm, VisitForm
+from .forms import PatientForm, VisitForm, VisitFormAdmin
 
 from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart, Doctor
 from utils.checks import group_and_super_user_checks
@@ -71,7 +71,11 @@ def visit_status_change(request):
             
         visit.save(update_fields = ['status', 'is_patient_present'])
         
-        visits = Visit.objects.select_related('doctor', 'patient').all()
+        visits = None
+        if request.user.is_superuser:
+            visits = Visit.objects.select_related('doctor', 'patient').all()
+        elif request.user.groups.filter(name__in=["Doctor"]).exists():
+            visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
         
         return render(request, 'partial/visit_list.html', {'visits': visits})
 
@@ -227,15 +231,15 @@ def create_visit(request):
     if request.method == "POST":
         form = VisitForm(request.POST)
         if form.is_valid():
-            visit = form.save(commit=False)
-            visit.doctor = Doctor.objects.get(user = request.user)
-            visit.status = Status.SCHEDULED
-            print(visit)
-            visit.save()
+            if request.user.is_superuser:
+                form.save()
+            else:
+                visit = form.save(commit=False)
+                visit.doctor = Doctor.objects.get(user = request.user)
+                visit.status = Status.SCHEDULED
+                visit.save()
             return JsonResponse({"success": True})
-        patients = Patient.objects.all()
-        return render(request, "partial/visit_form.html", {"form": form, "patients": patients})
+        return render(request, "partial/visit_form.html", {"form": form})
     else:
-        form = VisitForm()
-        patients = Patient.objects.all()
-        return render(request, "partial/visit_form.html", {"form": form, "patients": patients})
+        form =  VisitFormAdmin() if request.user.is_superuser else VisitForm()
+        return render(request, "partial/visit_form.html", {"form": form})

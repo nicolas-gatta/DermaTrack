@@ -40,5 +40,22 @@ class VisitForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        self.fields["patient"].widget.attrs.update({'class': 'form-control selectpicker', 'data-live-search': 'true'})
+        self.fields["patient"].widget.attrs.update({'class': 'form-control selectpicker'})
+        self.fields["date"].widget.attrs.update({"class":"form-control", 'min': now().strftime("%Y-%m-%dT%H:%M")})
+        
+class VisitFormAdmin(forms.ModelForm):
+    class Meta:
+        model = Visit
+        fields = ['patient', 'date', 'doctor']
+        widgets = {
+            'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'patient': forms.Select(),
+            'doctor': forms.Select()
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.fields["patient"].widget.attrs.update({'class': 'form-control selectpicker'})
+        self.fields["doctor"].widget.attrs.update({'class': 'form-control selectpicker'})
         self.fields["date"].widget.attrs.update({"class":"form-control", 'min': now().strftime("%Y-%m-%dT%H:%M")})
