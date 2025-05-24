@@ -17,7 +17,7 @@ class AES():
     @staticmethod
     def encrypt_message(data: bytes) -> bytes:
         
-        iv = os.urandom(16)  # 128-bits IV -> Add randomness to your encryption
+        iv = os.urandom(16)
     
         padder = padding.PKCS7(algorithms.AES.block_size).padder()
         padded_data = padder.update(data) + padder.finalize()
