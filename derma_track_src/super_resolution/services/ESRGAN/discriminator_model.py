@@ -6,8 +6,7 @@ class DiscriminatorBlock(nn.Module):
         super(DiscriminatorBlock, self).__init__()
         self.block = nn.Sequential(
             nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = stride, padding = 1),
-            nn.BatchNorm2d(num_features = out_channels),
-            nn.LeakyReLU(negative_slope = 0.2)
+            nn.LeakyReLU(negative_slope = 0.2, inplace = True)
         )
 
     def forward(self, x):
@@ -37,7 +36,7 @@ class ESRGANDiscriminator(nn.Module):
 
         self.fc = nn.Sequential(
             nn.Linear(in_features = int(512 * (crop_size / (2 ** num_down_sampling_layer)) ** 2), out_features = 1024),
-            nn.LeakyReLU(negative_slope = 0.2),
+            nn.LeakyReLU(negative_slope = 0.2, inplace = True),
             nn.Linear(in_features = 1024, out_features = 1),
             nn.Sigmoid()
         )

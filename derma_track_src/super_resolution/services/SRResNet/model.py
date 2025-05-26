@@ -18,6 +18,8 @@ class ResidualBlock(nn.Module):
         return x + self.block(x) 
 
 # Sub-Pixel Convolution Layers (Increase Image resolution) each block is 2x factor
+# We need to use the 256 for the out channels because the PixelShuffle will decrease the channels by scale factor^2
+# Since we need 64 channels as the ouput of the upsamble bloc, 64 * 4 = 256
 class UpsampleBlock(nn.Module):
     def __init__(self, in_channels = 64, out_channels = 256):
         super(UpsampleBlock, self).__init__()

@@ -10,7 +10,7 @@ class Interpolate(nn.Module):
         self.mode = mode
 
     def forward(self, x):
-        return F.interpolate(x, scale_factor=self.scale_factor, mode=self.mode)
+        return F.interpolate(x, scale_factor = self.scale_factor, mode=self.mode)
 
 # Dense Block 
 class ResidualDenseBlock(nn.Module):
