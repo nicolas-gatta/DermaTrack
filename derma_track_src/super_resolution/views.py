@@ -68,8 +68,9 @@ def training_model(request):
             resize_rule = "BIGGEST" if int(request.POST["resize-rule"]) == 1 else "SMALLEST"
             
         elif(request.POST["image-option"] == "subdivise"):
+            overlaying = float(request.POST["overlaying"])
             patch_size = int(request.POST["patch-size"])
-            stride = int(patch_size * (float(request.POST["overlaying"]) / 100.0))
+            stride = int(patch_size * (overlaying / 100.0)) if overlaying != 0.0 else None
     
     train_file, valid_file, eval_file = [dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
                                                                   patch_size = patch_size, stride = stride, resize_rule = resize_rule, 
@@ -80,9 +81,9 @@ def training_model(request):
                                         ]
     
     JsonManager.training_results_to_json(architecture = architecture, stride = stride, patch_size = patch_size, resize_rule = resize_rule, 
-                                                    model_name = model_name, train_file = train_dataset, valid_file = valid_dataset, 
-                                                    eval_file = eval_dataset, mode = mode, scale = scale, learning_rate = learning_rate, seed = seed, 
-                                                    batch_size = batch_size, num_epochs = num_epochs, num_workers = num_workers)
+                                        model_name = model_name, train_file = train_dataset, valid_file = valid_dataset, 
+                                        eval_file = eval_dataset, mode = mode, scale = scale, learning_rate = learning_rate, seed = seed, 
+                                        batch_size = batch_size, num_epochs = num_epochs, num_workers = num_workers)
     
     match(architecture):
         
