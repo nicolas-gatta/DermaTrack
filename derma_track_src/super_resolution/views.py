@@ -154,13 +154,9 @@ def evaluate_model(request):
     
     output_path = os.path.join(settings.BASE_DIR, "super_resolution","models")
     
-    model_name = request.POST["model-select"]
-    
-    model_path = os.path.join(output_path, model_name)
+    model_name = request.POST["model"]
     
     model_info = torch.load(os.path.join(output_path, model_name), weights_only=True)
-
-    architecture = model_info["architecture"]
     
     scale = model_info["scale"]
     
@@ -172,11 +168,11 @@ def evaluate_model(request):
     
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
      
-    eval_file = [dataset_exist_or_create(dataset = eval_dataset, mode = mode, scale = scale, category = "evaluation", 
+    eval_file = dataset_exist_or_create(dataset = eval_dataset, mode = mode, scale = scale, category = "evaluation", 
                                         patch_size = None, stride = None, resize_rule = None, 
-                                        resize_to_output = resize_to_output, base_dir = settings.BASE_DIR) ]
+                                        resize_to_output = resize_to_output, base_dir = settings.BASE_DIR)
     
-    ModelEvaluation.evaluate_model(model_name = model_name, path_to_model = model_path, device = device, eval_file = eval_file, eval_file_name = eval_dataset)
+    ModelEvaluation.evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file, eval_file_name = eval_dataset)
         
     return render(request, 'partial/evaluate_model_form.html', {"form": None})
 
@@ -292,8 +288,6 @@ def degrade_and_save_image(request, name, scale):
     image = cv2.imread(base_path)
     
     degraded_image = cv2.resize(image, (image.shape[1] // scale, image.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
-    
-    #degraded_image = cv2.resize(degraded_image, (image.shape[1], image.shape[0]), interpolation=cv2.INTER_NEAREST)
     
     cv2.imwrite(output_path, degraded_image)
 
