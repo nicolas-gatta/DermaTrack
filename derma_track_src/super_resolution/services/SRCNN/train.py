@@ -6,14 +6,13 @@ import os
 
 from torch import nn
 from tqdm import tqdm
-from super_resolution.services.utils.super_resolution import SuperResolution
 from super_resolution.services.SRCNN.model import SRCNN
 from super_resolution.services.utils.dataloader import H5ImagesDataset
 from super_resolution.services.utils.running_average import RunningAverage
 from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
-from super_resolution.services.utils.image_evaluator import ImageEvaluator
 from super_resolution.services.utils.early_stopping import EarlyStopping
+from super_resolution.services.utils.model_evaluation import ModelEvaluation
 
 from torch.utils.data.dataloader import DataLoader
 
@@ -138,32 +137,4 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                                                                              ModelField.TRAINING_LOSSES: epoch_train_loss.all_values, 
                                                                              ModelField.VALIDATION_LOSSES: epoch_val_loss.all_values})
     
-    evaluate_model(model_name = model_name, output_path = output_path, device = device, eval_file = eval_file)
-    
-def evaluate_model(model_name, output_path, device, eval_file):
-    
-    model = SuperResolution(model_path = os.path.join(output_path, model_name))
-    
-    eval_dataset = H5ImagesDataset(eval_file)
-    
-    eval_batch = SizeBasedImageBatch(image_sizes = eval_dataset.image_sizes, batch_size = 1, shuffle = False)
-
-    eval_loader = DataLoader(eval_dataset, batch_sampler = eval_batch, num_workers = 1, pin_memory = True, persistent_workers = True)
-    
-    evaluator = ImageEvaluator()
-    
-    with torch.no_grad():
-        with tqdm(total = len(eval_loader), desc="Evaluation", leave=True, dynamic_ncols=True) as pbar:
-            for lr, hr in eval_loader:
-                
-                lr, hr = lr.to(device), hr.to(device)
-                
-                output = model.process_image(lr)
-                
-                evaluator.evaluate(hr = hr, output = output)
-            
-                pbar.update(1)
-            
-    eval_dataset.close()
-    
-    JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.EVAL_METRICS: evaluator.get_average_metrics()})
+    ModelEvaluation.evaluate_model(model_name = model_name, output_path = output_path, device = device, eval_file = eval_file)

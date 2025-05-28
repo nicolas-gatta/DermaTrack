@@ -16,12 +16,11 @@ from torch.utils.data.dataloader import DataLoader
 
 from super_resolution.services.utils.running_average import RunningAverage
 from super_resolution.services.utils.dataloader import H5ImagesDataset
-from super_resolution.services.utils.image_evaluator import ImageEvaluator
 from super_resolution.services.utils.early_stopping import EarlyStopping
 from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
-from super_resolution.services.utils.super_resolution import SuperResolution
 from super_resolution.services.utils.string_extractor import extract_dataset_name
+from super_resolution.services.utils.model_evaluation import ModelEvaluation
 
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
                 mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-5, 
@@ -36,7 +35,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     if not os.path.exists(pretrained_model_path):
         pretrain_model(model_name = pretrained_model_name, train_dataset = extract_dataset_name(train_file), valid_dataset = extract_dataset_name(valid_file), 
                                    eval_dataset = extract_dataset_name(eval_file), output_path = output_path, mode = mode, scale = scale, invert_mode = invert_mode, 
-                                   patch_size = crop_size, stride = crop_size // 2, seed = seed, batch_size = 32, num_epochs = 1, num_workers = num_workers)
+                                   patch_size = crop_size, stride = 0, seed = seed, batch_size = 32, num_epochs = 1, num_workers = num_workers)
     
     
     generator = SRResNet(up_scale = scale).to(device)
@@ -193,34 +192,4 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                                                                              ModelField.TRAINING_LOSSES: epoch_train_loss.all_values, 
                                                                              ModelField.VALIDATION_LOSSES: epoch_val_loss.all_values})
     
-    evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file)
-
-
-
-def evaluate_model(model_name, path_to_model, device, eval_file):
-    
-    model = SuperResolution(model_path = os.path.join(path_to_model, model_name))
-    
-    eval_dataset = H5ImagesDataset(h5_path = eval_file)
-    
-    eval_batch = SizeBasedImageBatch(image_sizes = eval_dataset.image_sizes, batch_size = 1, shuffle = False)
-
-    eval_loader = DataLoader(eval_dataset, batch_sampler = eval_batch, num_workers = 1, pin_memory = True, persistent_workers = True)
-    
-    evaluator = ImageEvaluator()
-    
-    with torch.no_grad():
-        with tqdm(total = len(eval_loader), desc="Evaluation", leave=True, dynamic_ncols=True) as pbar:
-            for lr, hr in eval_loader:
-                
-                lr, hr = lr.to(device), hr.to(device)
-                
-                output = model.process_image(lr)
-                
-                evaluator.evaluate(hr = hr, output = output)
-            
-                pbar.update(1)
-            
-    eval_dataset.close()
-    
-    JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.EVAL_METRICS: evaluator.get_average_metrics()})
+    ModelEvaluation.evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file)

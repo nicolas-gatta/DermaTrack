@@ -1,0 +1,42 @@
+from super_resolution.services.utils.super_resolution import SuperResolution
+from super_resolution.services.utils.dataloader import H5ImagesDataset
+from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
+from super_resolution.services.utils.image_evaluator import ImageEvaluator
+from torch.utils.data.dataloader import DataLoader
+from super_resolution.services.utils.json_manager import JsonManager, ModelField
+
+import os
+import torch
+import tqdm
+
+
+class ModelEvaluation:
+    
+    @staticmethod
+    def evaluate_model(model_name, path_to_model, device, eval_file):
+    
+        model = SuperResolution(model_path = os.path.join(path_to_model, model_name))
+        
+        eval_dataset = H5ImagesDataset(h5_path = eval_file)
+        
+        eval_batch = SizeBasedImageBatch(image_sizes = eval_dataset.image_sizes, batch_size = 1, shuffle = False)
+
+        eval_loader = DataLoader(eval_dataset, batch_sampler = eval_batch, num_workers = 1, pin_memory = True, persistent_workers = True)
+        
+        evaluator = ImageEvaluator()
+        
+        with torch.no_grad():
+            with tqdm(total = len(eval_loader), desc="Evaluation", leave=True, dynamic_ncols=True) as pbar:
+                for lr, hr in eval_loader:
+                    
+                    lr, hr = lr.to(device), hr.to(device)
+                    
+                    output = model.process_image(lr)
+                    
+                    evaluator.evaluate(hr = hr, output = output)
+                
+                    pbar.update(1)
+                
+        eval_dataset.close()
+        
+        JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.EVAL_METRICS: evaluator.get_average_metrics()})
