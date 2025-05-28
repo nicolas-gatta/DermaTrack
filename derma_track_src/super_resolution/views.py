@@ -9,12 +9,14 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
 
+import torch
 from super_resolution.services.SRCNN import train as srcnn_train
 from super_resolution.services.ESRGAN import train as esrgan_train
 from super_resolution.services.SRGAN import train as srgan_train
 from super_resolution.services.utils.prepare_dataset import dataset_exist_or_create
 from super_resolution.services.utils.json_manager import JsonManager
 from super_resolution.services.utils.super_resolution import SuperResolution
+from super_resolution.services.utils.model_evaluation import ModelEvaluation
 from utils.unique_filename import get_unique_filename
 
 from utils.checks import group_and_super_user_checks
@@ -144,7 +146,40 @@ def training_model(request):
             pass
         
     return render(request, 'partial/model_form.html', {"form": None})
+
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=[""], redirect_url="/")
+def evaluate_model(request):
     
+    output_path = os.path.join(settings.BASE_DIR, "super_resolution","models")
+    
+    model_name = request.POST["model-select"]
+    
+    model_path = os.path.join(output_path, model_name)
+    
+    model_info = torch.load(os.path.join(output_path, model_name), weights_only=True)
+
+    architecture = model_info["architecture"]
+    
+    scale = model_info["scale"]
+    
+    mode = model_info["color_mode"]
+    
+    eval_dataset = request.POST["eval-dataset"]
+    
+    resize_to_output = model_info["need_resize"]
+    
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+     
+    eval_file = [dataset_exist_or_create(dataset = eval_dataset, mode = mode, scale = scale, category = "evaluation", 
+                                        patch_size = None, stride = None, resize_rule = None, 
+                                        resize_to_output = resize_to_output, base_dir = settings.BASE_DIR) ]
+    
+    ModelEvaluation.evaluate_model(model_name = model_name, path_to_model = model_path, device = device, eval_file = eval_file, eval_file_name = eval_dataset)
+        
+    return render(request, 'partial/evaluate_model_form.html', {"form": None})
+
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def show_models(request):
@@ -187,6 +222,13 @@ def dataset_form(request):
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/dataset_form.html', {"form": None})
+    
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=[""], redirect_url="/")
+def evaluation_form(request):
+    if request.headers.get('HX-Request'):
+        #form = TrainingForm()
+        return render(request, 'partial/evaluate_model_form.html', {"form": None})
     
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")

@@ -1,0 +1,32 @@
+{% load static %}
+
+<script src="{% static 'js/loadAllSelectDataset.js' %}" defer></script>
+<script src="{% static 'js/loadAllSelectModel.js' %}" defer></script>
+<link href="{% static 'css/model_form.css' %}" rel="stylesheet" type="text/css">
+
+<div class="container mt-5 bg-light p-3">
+  <h2 class="text-center mb-4">Model Evaluation Form</h2>
+  <form id="evaluation-form" method="POST" hx-post="{% url 'evaluate_model' %}" hx-target="#dynamic-body" hx-swap="innerHTML">
+    {% csrf_token %}
+
+    <fieldset class="border p-3 mb-4">
+      <legend class="w-auto text-primary">Evaluation Configuration</legend>
+
+      <div class="mb-3">
+        <label for="model-select" class="form-label">Model to Evaluate</label>
+        <select class="form-select" id="model-select" name="model" required>
+          <option value="">---Select Model---</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="eval-dataset" class="form-label">Evaluation Dataset</label>
+        <select class="form-select" id="eval-dataset-select" name="eval-dataset" required>
+            <option value="">---Select Evaluation Dataset---</option>
+        </select>
+      </div>
+    </fieldset>
+
+    <button type="submit" class="btn btn-primary mt-3">Evaluate</button>
+  </form>
+</div>

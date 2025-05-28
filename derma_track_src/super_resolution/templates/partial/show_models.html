@@ -4,96 +4,102 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <script src="{% static 'js/chart.js' %}" defer></script>
 
-<table class="table align-middle mb-0 bg-white">
+<div id = "table" class="container-fluid my-3 p-3 bg-light rounded shadow-sm d-flex flex-column">
+    <div class = "table-responsive">
+        <table class="table align-middle mb-0 bg-white">
 
-    <thead class="bg-light">
-        <tr>
-            <th>Name</th>
-            <th>Architecture</th>
-            <th>Pretrained Model</th>
-            <th>Patch Size</th>
-            <th>Stride</th>
-            <th>Resize Rule</th>
-            <th>Training Dataset</th>
-            <th>Validation Dataset</th>
-            <th>Eval Dataset</th>
-            <th>Learning Rate</th>
-            <th>Batch Size</th>
-            <th>Seed</th>
-            <th>Epochs</th>
-            <th>Eval Metric</th>
-            <th>Status</th>
-            <th>Training Time</th>
-            <th>Starting Data</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for model_name, data in models.items %}
-        <tr>
-            <td>{{ model_name }}</td>
-            <td>{{ data.architecture }}</td>
-            <td>{% if data.pretrained_model %}
-                    {{ data.pretrained_model }}
-                {% else %}
-                    <span> &#10060;</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if data.patch_size %}
-                    {{ data.patch_size }}
-                {% else %}
-                    <span> &#10060;</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if data.stride %}
-                    {{ data.stride }}                
-                {% else %}
-                    <span> &#10060;</span>
-                {% endif %}
-            </td>
-            <td>
-                {% if data.resize_rule %}
-                    {{ data.resize_rule }}              
-                {% else %}
-                    <span> &#10060; </span>
-                {% endif %}
+            <thead class="bg-light">
+                <tr>
+                    <th>Name</th>
+                    <th>Architecture</th>
+                    <th>Pretrained Model</th>
+                    <th>Patch Size</th>
+                    <th>Stride</th>
+                    <th>Resize Rule</th>
+                    <th>Training Dataset</th>
+                    <th>Validation Dataset</th>
+                    <th>Eval Dataset</th>
+                    <th>Learning Rate</th>
+                    <th>Batch Size</th>
+                    <th>Seed</th>
+                    <th>Epochs</th>
+                    <th>Eval Metric</th>
+                    <th>Status</th>
+                    <th>Training Time</th>
+                    <th>Starting Data</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for model_name, data in models.items %}
+                <tr>
+                    <td>{{ model_name }}</td>
+                    <td>{{ data.architecture }}</td>
+                    <td>{% if data.pretrained_model %}
+                            {{ data.pretrained_model }}
+                        {% else %}
+                            <span> &#10060;</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if data.patch_size %}
+                            {{ data.patch_size }}
+                        {% else %}
+                            <span> &#10060;</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if data.stride %}
+                            {{ data.stride }}                
+                        {% else %}
+                            <span> &#10060;</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if data.resize_rule %}
+                            {{ data.resize_rule }}              
+                        {% else %}
+                            <span> &#10060; </span>
+                        {% endif %}
 
-            </td>
-            <td>{{ data.train_file }}</td>
-            <td>{{ data.valid_file }}</td>
-            <td>{{ data.eval_file }}</td>
-            <td>{{ data.learning_rate }}</td>
-            <td>{{ data.batch_size }}</td>
-            <td>{{ data.seed }}</td>
-            <td>{{ data.num_epochs }}</td>
-            <td>
-                {% for key, value in  data.eval_metrics.items %}
-                    <span><strong>{{key}}</strong>: {{value}}</span></br>
+                    </td>
+                    <td>{{ data.train_file }}</td>
+                    <td>{{ data.valid_file }}</td>
+                    <td>{{ data.eval_file }}</td>
+                    <td>{{ data.learning_rate }}</td>
+                    <td>{{ data.batch_size }}</td>
+                    <td>{{ data.seed }}</td>
+                    <td>{{ data.num_epochs }}</td>
+                    <td>
+                        {% for key, value in  data.eval_metrics.items %}
+                            <span><strong>{{key}}</strong>: {{value}}</span></br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if  data.completion_status != "Completed"%}
+                            <span class = "badge text-bg-warning">
+                        {% else %}
+                            <span class = "badge text-bg-success">
+                        {% endif %}
+
+                        {{ data.completion_status }}
+                            </span>
+                    </td>
+                    <td>{{ data.completion_time }} sec</td>
+                    <td>{{ data.timestamp }}</td>
+                    
+                    <td>       
+                        {%if data.validation_losses %}
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <input type="hidden" name="validation_losses" class="form-control" value="{{ data.validation_losses|safe }}" required=""> 
+                                <input type="hidden" name="training_losses" class="form-control" value="{{ data.training_losses|safe }}" required="">
+                                <button type="button" class="btn btn-success view-chart-btn" data-modelname="{{ model_name }}">View Chart</button>
+                            </div>
+                        {%endif%}
+                    </td>
+                </tr>
                 {% endfor %}
-            </td>
-            <td>
-                {% if  data.completion_status != "Completed"%}
-                    <span class = "badge text-bg-warning">
-                {% else %}
-                    <span class = "badge text-bg-success">
-                {% endif %}
-
-                {{ data.completion_status }}
-                    </span>
-            </td>
-            <td>{{ data.completion_time }} sec</td>
-            <td>{{ data.timestamp }}</td>
-
-            <td>       
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <input type="hidden" name="validation_losses" class="form-control" value="{{ data.validation_losses|safe }}" required=""> 
-                    <input type="hidden" name="training_losses" class="form-control" value="{{ data.training_losses|safe }}" required="">
-                    <button type="button" class="btn btn-success view-chart-btn" data-modelname="{{ model_name }}">View Chart</button>
-                </div>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+            </tbody>
+        </table>
+    </div>
+</div>
