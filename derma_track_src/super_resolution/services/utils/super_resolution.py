@@ -26,7 +26,7 @@ class SuperResolution:
     
     def __load_model(self, model_path):
 
-        model_info = torch.load(model_path, weights_only=True)
+        model_info = torch.load(model_path, weights_only = True)
         
         model = None
         
@@ -63,7 +63,7 @@ class SuperResolution:
         image = self.__fetch_image(image_source = image_path)
         
         if isinstance(self.model, EDVR):
-            self.process_image(image = image)
+            postprocess_image = self.process_image(image = image)
         else:
             postprocess_image = self.process_image(image = image)
         
@@ -79,14 +79,14 @@ class SuperResolution:
             preprocess_image = image
             postprocess_required = False
 
-        height, width = preprocess_image.shape[:2]
+        height, width = preprocess_image.shape[2:]
         quadrant_image_parts = []
         
         if height >= 1600 or width >= 1200:
             quadrant_image_parts = self.__split_image(height = height, width = width, img = preprocess_image)
             sr_part = []
             with torch.no_grad():
-                for index, part in enumerate(quadrant_image_parts):
+                for part in quadrant_image_parts:
                     sr_part.append(self.model(part))
                 
                 sr_image = self.__merge_images(*sr_part)
@@ -110,7 +110,7 @@ class SuperResolution:
             preprocess_images = images
             postprocess_required = False
 
-        height, width = preprocess_images.shape[0][:2]
+        height, width = preprocess_images.shape[0][2:]
         quadrant_images_seq = [[] for _ in range(len(preprocess_images))]
         
         if height >= 1600 or width >= 1200:
@@ -133,19 +133,25 @@ class SuperResolution:
         sr_image = torch.clamp(sr_image, 0.0, 1.0)
         return self.__postprocess_image(sr_image) if postprocess_required else sr_image
     
-    def __split_image(self, height, width, img: torch.Tensor):
+    def __split_image(self, height, width, img: torch.Tensor, overlapping = 16):
         middle_height, middle_width = height // 2, width // 2
         return [
-            img[:middle_height, :middle_width],   # top-left
-            img[:middle_height, middle_width:],   # top-right
-            img[middle_height:, :middle_width],   # bottom-left
-            img[middle_height:, middle_width:]    # bottom-right
+            img[:, :, :middle_height + overlapping, :middle_width + overlapping],   # top-left
+            img[:, :, :middle_height + overlapping, middle_width - overlapping:],   # top-right
+            img[:, :, middle_height - overlapping:, :middle_width + overlapping],   # bottom-left
+            img[:, :, middle_height - overlapping:, middle_width - overlapping:]    # bottom-right
         ]
         
-    def __merge_images(self, top_left: torch.Tensor, top_right: torch.Tensor, bottom_left: torch.Tensor, bottom_right: torch.Tensor):
-        top = torch.cat((top_left, top_right), dim=-1)
-        bottom = torch.cat((bottom_left, bottom_right), dim=-1)
-        return torch.cat((top, bottom), dim=-2)
+    def __merge_images(self, top_left: torch.Tensor, top_right: torch.Tensor, bottom_left: torch.Tensor, bottom_right: torch.Tensor, overlapping = 16):
+        
+        overlapping = overlapping * self.model_info["scale"] if not self.model_info["need_resize"] else overlapping
+        top_left = top_left[:, :, :-overlapping, :-overlapping]
+        top_right = top_right[:, :, :-overlapping, overlapping:]
+        bottom_left = bottom_left[:, :, overlapping:, :-overlapping]
+        bottom_right = bottom_right[:, :, overlapping:, overlapping:]
+        top = torch.cat((top_left, top_right), dim = 3)
+        bottom = torch.cat((bottom_left, bottom_right), dim = 3)
+        return torch.cat((top, bottom), dim = 2)
 
         
     def __fetch_image(self, image_source: str):
@@ -174,6 +180,8 @@ class SuperResolution:
         return image
     
     def __preprocess_image(self, image: np.ndarray) -> torch.Tensor:
+        if self.model_info["need_resize"]:
+            image = cv2.resize(image, (image.shape[1] * self.model_info["scale"], image.shape[0] * self.model_info["scale"]), interpolation = cv2.INTER_CUBIC)
         convert_image = ImageConverter.convert_image(image, ImageColorConverter[self.model_info["color_mode"]])
         tensor_image = torch.from_numpy(convert_image).permute(2, 0, 1).float() / 255
         return tensor_image.unsqueeze(0).to(self.device)

@@ -5,10 +5,12 @@ from super_resolution.services.utils.image_evaluator import ImageEvaluator
 from torch.utils.data.dataloader import DataLoader
 from basicsr.archs.edvr_arch import EDVR
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
+from super_resolution.services.utils.running_average import RunningAverage
+from tqdm import tqdm
 
 import os
 import torch
-import tqdm
+import time
 
 
 class ModelEvaluation:
@@ -26,16 +28,24 @@ class ModelEvaluation:
         
         evaluator = ImageEvaluator()
         
+        timings = RunningAverage()
+        
         with torch.no_grad():
             with tqdm(total = len(eval_loader), desc="Evaluation", leave=True, dynamic_ncols=True) as pbar:
                 for lr, hr in eval_loader:
                     
                     lr, hr = lr.to(device), hr.to(device)
                     
+                    start_time = time.perf_counter()
+                     
                     if isinstance(model, EDVR):
                         output = model.process_images(lr)
                     else:
                         output = model.process_image(lr)
+                    
+                    end_time = time.perf_counter()
+                    
+                    timings.update(end_time - start_time)
                     
                     evaluator.evaluate(hr = hr, output = output)
                 
@@ -43,7 +53,7 @@ class ModelEvaluation:
                 
         eval_dataset.close()
         
-        updated_fields = {ModelField.EVAL_METRICS: evaluator.get_average_metrics()}
+        updated_fields = {ModelField.EVAL_METRICS: evaluator.get_average_metrics(), ModelField.EXECUTION_TIME: timings.rounded_average}
         
         if eval_file_name != None:
             updated_fields[ModelField.EVAL_FILE] = eval_file_name

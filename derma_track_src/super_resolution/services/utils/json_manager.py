@@ -29,7 +29,8 @@ class ModelField(str, Enum):
     PATCH_SIZE = "patch_size"
     RESIZE_RULE = "resize_rule"
     PRETRAINED_MODEL = "pretrained_model"
-
+    EXECUTION_TIME = "execution_time"
+    
 class JsonManager:
     
     _output_file = os.path.join(settings.BASE_DIR, "super_resolution", "static", "data", "training_results.json")
@@ -62,7 +63,8 @@ class JsonManager:
             ModelField.COMPLETION_TIME: 0,
             ModelField.COMPLETION_STATUS: "0 %",
             ModelField.TIMESTAMP: datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            ModelField.EVAL_METRICS: {}
+            ModelField.EVAL_METRICS: {},
+            ModelField.EXECUTION_TIME: None
         }
         
         existing_data = {}
