@@ -34,9 +34,9 @@ def add_missing_data(pth_path: str, values: dict):
 
                 if modified:
                     torch.save(data, pth_path)
-                    print(f"Updated .pth file saved: {pth_path}")
+                    print(f"Updated .pth file saved: {pth_path}\n")
                 else:
-                    print("File is up to date.")
+                    print("File is up to date.\n")
             else:
                print("The .pth file is not refactor to be use in the software") 
 
@@ -62,45 +62,44 @@ if __name__ == "__main__":
     basic_values[ModelFile.PATCH_SIZE] = 32
     basic_values[ModelFile.STRIDE] = 16
     basic_values[ModelFile.NEED_RESIZE] = True
+    basic_values[ModelFile.MODE]= "BGR2YCrCb"
+    basic_values[ModelFile.INVERT_MODE]= "YCrCb2BGR"
     add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\SRCNN_x2_BGR2YCrCb.pth", values = basic_values)
     
-    # basic_values[ModelFile.ARCHITECTURE] = "SRCNN"
-    # basic_values[ModelFile.SCALE] = 4
-    # basic_values[ModelFile.PATCH_SIZE] = 32
-    # basic_values[ModelFile.STRIDE] = 16
-    # basic_values[ModelFile.NEED_RESIZE] = True
-    # add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\SRCNN_x4_BGR2YCrCb.pth", values = basic_values)
+    basic_values[ModelFile.ARCHITECTURE] = "SRCNN"
+    basic_values[ModelFile.SCALE] = 4
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\SRCNN_x4_BGR2YCrCb.pth", values = basic_values)
     
-    # basic_values[ModelFile.ARCHITECTURE] = "RRDBNet"
-    # basic_values[ModelFile.SCALE] = 4
-    # basic_values[ModelFile.PATCH_SIZE] = 128
-    # basic_values[ModelFile.NEED_RESIZE] = False
-    # add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_RRDB_PSNR_x4_BGR2RGB.pth", values = basic_values)
+    basic_values[ModelFile.ARCHITECTURE] = "RRDBNet"
+    basic_values[ModelFile.SCALE] = 4
+    basic_values[ModelFile.PATCH_SIZE] = 128
+    basic_values[ModelFile.STRIDE] = None
+    basic_values[ModelFile.NEED_RESIZE] = False
+    basic_values[ModelFile.MODE] = "BGR2RGB"
+    basic_values[ModelFile.INVERT_MODE] = "RGB2BGR"
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_RRDB_PSNR_x4_BGR2RGB.pth", values = basic_values)
     
-    # basic_values[ModelFile.ARCHITECTURE] = "ESRGAN"
-    # basic_values[ModelFile.SCALE] = 4
-    # basic_values[ModelFile.PATCH_SIZE] = 128
-    # add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_ESRGAN_x4_BGR2RGB.pth", values = basic_values)
+    basic_values[ModelFile.ARCHITECTURE] = "ESRGAN"
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_ESRGAN_x4_BGR2RGB.pth", values = basic_values)
     
-    # basic_values[ModelFile.ARCHITECTURE] = "SRResNet"
-    # basic_values[ModelFile.SCALE] = 2
-    # basic_values[ModelFile.PATCH_SIZE] = 96
-    # add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_SRResNet_x2_BGR2RGB.pth", values = basic_values)
+    basic_values[ModelFile.ARCHITECTURE] = "SRResNet"
+    basic_values[ModelFile.SCALE] = 2
+    basic_values[ModelFile.PATCH_SIZE] = 96
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_SRResNet_x2_BGR2RGB.pth", values = basic_values)
     
-    # basic_values[ModelFile.SCALE] = 4
-    # add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_SRResNet_x4_BGR2RGB.pth", values = basic_values)
+    basic_values[ModelFile.SCALE] = 4
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_SRResNet_x4_BGR2RGB.pth", values = basic_values)
     
-    # basic_values[ModelFile.ARCHITECTURE] = "SRGAN"
-    # basic_values[ModelFile.SCALE] = 2
-    # basic_values[ModelFile.PATCH_SIZE] = 96
-    # add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_SRGAN_x2_BGR2RGB.pth", values = basic_values)
+    basic_values[ModelFile.ARCHITECTURE] = "SRGAN"
+    basic_values[ModelFile.SCALE] = 2
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_SRGAN_x2_BGR2RGB.pth", values = basic_values)
     
-    # basic_values[ModelFile.SCALE] = 4
-    # add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_SRGAN_x4_BGR2RGB.pth", values = basic_values)
+    basic_values[ModelFile.SCALE] = 4
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_SRGAN_x4_BGR2RGB.pth", values = basic_values)
     
-    # basic_values[ModelFile.SCALE] = 4
-    # basic_values[ModelFile.PATCH_SIZE] = 256
-    # basic_values[ModelFile.MULTI] = True
-    # add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_EDVR_x4_BGR2RGB.pth", values = basic_values)
+    basic_values[ModelFile.ARCHITECTURE] = "EDVR"
+    basic_values[ModelFile.PATCH_SIZE] = 256
+    basic_values[ModelFile.MULTI] = True
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_EDVR_x4_BGR2RGB.pth", values = basic_values)
     
     
