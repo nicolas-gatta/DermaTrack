@@ -28,11 +28,11 @@ async function loadBodyContentAdmin(button) {
     }else if (button.id === "dataset_button"){
         htmx.ajax("GET", "/super_resolution/dataset_form", "#dynamic-body");
     }
-    else if (button.id === "stream_button"){
-        htmx.ajax("GET", "/camera/video_stream", "#dynamic-body");
-    }
-    else if (button.id === "basic_encrypt_button"){
-        htmx.ajax("GET", "/encrypt/basic_encrypt", "#dynamic-body");
+    else if (button.id === "dataset_button"){
+        htmx.ajax("GET", "/super_resolution/dataset_form", "#dynamic-body");
+
+    }else if (button.id === "evaluation_button"){
+        htmx.ajax("GET", "/super_resolution/evaluation_form", "#dynamic-body");
     }
 }
 
