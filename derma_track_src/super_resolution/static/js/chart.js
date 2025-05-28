@@ -22,7 +22,7 @@ document.querySelectorAll(".view-chart-btn").forEach((button) => {
       chartRow.classList.add("chart-row");
   
       const chartCell = document.createElement("td");
-      chartCell.colSpan = 13;
+      chartCell.colSpan = 18;
   
       chartCell.innerHTML = `
         <div style="position: relative; margin: 1rem 0; height:20rem">

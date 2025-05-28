@@ -7,6 +7,7 @@ from super_resolution.services.utils.image_converter import ImageColorConverter,
 from super_resolution.services.SRCNN.model import SRCNN
 from super_resolution.services.SRResNet.model import SRResNet
 from super_resolution.services.RRDBNet.model import RRDBNet
+from basicsr.archs.edvr_arch import EDVR
 
 class SuperResolution:
     def __init__(self, model_path: str):
@@ -39,6 +40,9 @@ class SuperResolution:
             
             case "ESRGAN" | "RRDBNet":
                 model = RRDBNet(up_scale = model_info["scale"])
+                
+            case "EDVR":
+                model = EDVR(center_frame_idx = 2)
             
             case _:
                 raise ValueError(f"Unknown architecture: {model_info['architecture']}")
@@ -58,7 +62,10 @@ class SuperResolution:
         
         image = self.__fetch_image(image_source = image_path)
         
-        postprocess_image = self.process_image(image = image)
+        if isinstance(self.model, EDVR):
+            self.process_image(image = image)
+        else:
+            postprocess_image = self.process_image(image = image)
         
         return self.save_image(image = postprocess_image, output_path = output_path, filename = filename)
     
@@ -72,14 +79,74 @@ class SuperResolution:
             preprocess_image = image
             postprocess_required = False
 
-        # if self.model_info["patch_size"] not in [0, None] and self.model_info["stride"] not in [0, None]:
-        #    sr_image = self._special_processing(image_tensor=preprocess_image)
-        #else:
-        with torch.no_grad():
-            sr_image = self.model(preprocess_image)
+        height, width = preprocess_image.shape[:2]
+        quadrant_image_parts = []
+        
+        if height >= 1600 or width >= 1200:
+            quadrant_image_parts = self.__split_image(height = height, width = width, img = preprocess_image)
+            sr_part = []
+            with torch.no_grad():
+                for index, part in enumerate(quadrant_image_parts):
+                    sr_part.append(self.model(part))
+                
+                sr_image = self.__merge_images(*sr_part)
+        else:
+            with torch.no_grad():
+                sr_image = self.model(preprocess_image)
+
 
         sr_image = torch.clamp(sr_image, 0.0, 1.0)
         return self.__postprocess_image(sr_image) if postprocess_required else sr_image
+    
+    def process_images(self, images: list[np.ndarray] | list[torch.Tensor]) ->  list[np.ndarray] | list[torch.Tensor]:
+        
+        postprocess_required = True
+        preprocess_images = []
+        
+        if isinstance(images, list[np.ndarray]):  
+            preprocess_images = [self.__preprocess_image(image) for image in images]
+ 
+        else:
+            preprocess_images = images
+            postprocess_required = False
+
+        height, width = preprocess_images.shape[0][:2]
+        quadrant_images_seq = [[] for _ in range(len(preprocess_images))]
+        
+        if height >= 1600 or width >= 1200:
+            for index, image in enumerate(preprocess_images):
+                quadrant_images_seq = self.__split_image(height = height, width = width, img = image)
+                sr_part = []
+                with torch.no_grad():
+                    for index, seq in enumerate(quadrant_images_seq):
+                        tensor = torch.cat(seq, dim=0).to(self.device)
+                        sr_part.append(self.model(tensor))
+                    
+                    sr_image = self.__merge_images(*sr_part)
+        
+        else:
+            with torch.no_grad():
+                tensor = torch.cat(quadrant_images_seq, dim=0).to(self.device)
+                sr_image = self.model(tensor)
+
+
+        sr_image = torch.clamp(sr_image, 0.0, 1.0)
+        return self.__postprocess_image(sr_image) if postprocess_required else sr_image
+    
+    def __split_image(self, height, width, img: torch.Tensor):
+        middle_height, middle_width = height // 2, width // 2
+        return [
+            img[:middle_height, :middle_width],   # top-left
+            img[:middle_height, middle_width:],   # top-right
+            img[middle_height:, :middle_width],   # bottom-left
+            img[middle_height:, middle_width:]    # bottom-right
+        ]
+        
+    def __merge_images(self, top_left: torch.Tensor, top_right: torch.Tensor, bottom_left: torch.Tensor, bottom_right: torch.Tensor):
+        top = torch.cat((top_left, top_right), dim=-1)
+        bottom = torch.cat((bottom_left, bottom_right), dim=-1)
+        return torch.cat((top, bottom), dim=-2)
+
         
     def __fetch_image(self, image_source: str):
         
@@ -114,39 +181,7 @@ class SuperResolution:
     def __postprocess_image(self, sr_image: torch.Tensor) -> np.ndarray:
         tensor_image = sr_image.squeeze(0).permute(1, 2, 0) * 255
         numpy_image = tensor_image.cpu().detach().numpy().astype(np.uint8)
-        convert_image = ImageConverter.convert_image(numpy_image, ImageColorConverter[self.model_info["invert_color_mode"]])
-        return convert_image
-    
-    def _special_processing(self, image_tensor: torch.Tensor) -> torch.Tensor:
-        
-        _, c, h, w = image_tensor.shape
-        
-        output = torch.zeros((1, c, h, w), device = self.device)
-        weight = torch.zeros((1, c, h, w), device = self.device)
-        
-        y_positions = list(range(0, h - self.model_info["patch_size"] + 1, self.model_info["stride"]))
-        x_positions = list(range(0, w - self.model_info["patch_size"] + 1, self.model_info["stride"]))
-        
-        if h - self.model_info["patch_size"] % self.model_info["stride"] != 0:
-            y_positions.append(h - self.model_info["patch_size"])
-        if w - self.model_info["patch_size"] % self.model_info["stride"] != 0:
-            x_positions.append(w - self.model_info["patch_size"])
-
-        for y in y_positions:
-            for x in x_positions:
-                patch = image_tensor[:, :, y:y + self.model_info["patch_size"], x:x + self.model_info["patch_size"]]
-                
-                with torch.no_grad():
-                    sr_patch = self.model(patch)
-                
-                _, _, ph, pw = sr_patch.shape
-                output[:, :, y:y + ph, x:x + pw] += sr_patch
-                weight[:, :, y:y + ph, x:x + pw] += 1
-
-        weight[weight == 0] = 1
-        result = output / weight
-        
-        return result
+        return ImageConverter.convert_image(numpy_image, ImageColorConverter[self.model_info["invert_color_mode"]])
     
     def save_image(self, image, output_path="processed_images", filename="super_resolved.png"):
         

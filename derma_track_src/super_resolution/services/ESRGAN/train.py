@@ -27,8 +27,6 @@ from super_resolution.services.utils.model_evaluation import ModelEvaluation
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
                 mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-5, 
                 seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
-
-    crop_size = 128
         
     pretrained_model_name = f"SRResNet_x{scale}_{mode}.pth"
     
@@ -37,7 +35,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     if not os.path.exists(pretrained_model_path):
         pretrain_model(model_name = pretrained_model_name, train_dataset = extract_dataset_name(train_file), valid_dataset = extract_dataset_name(valid_file), 
                                    eval_dataset = extract_dataset_name(eval_file), output_path = output_path, mode = mode, scale = scale, invert_mode = invert_mode, 
-                                   patch_size = crop_size, stride = crop_size // 2, seed = seed, batch_size = 32, num_workers = num_workers)
+                                   patch_size = patch_size, stride = None, seed = seed, batch_size = 32, num_workers = num_workers)
     
     
     generator = RRDBNet(up_scale = scale).to(device)
@@ -59,8 +57,8 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
     
-    train_dataset = H5ImagesDataset(train_file, crop_size = crop_size, up_scale_factor = scale)
-    val_dataset = H5ImagesDataset(valid_file, crop_size = crop_size, up_scale_factor = scale)
+    train_dataset = H5ImagesDataset(train_file, crop_size = patch_size, up_scale_factor = scale)
+    val_dataset = H5ImagesDataset(valid_file, crop_size = patch_size, up_scale_factor = scale)
     
     train_batch = SizeBasedImageBatch(image_sizes = train_dataset.image_sizes, batch_size = batch_size)
     val_batch = SizeBasedImageBatch(image_sizes = val_dataset.image_sizes, batch_size = batch_size, shuffle = False)
@@ -74,7 +72,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     
     epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
     
-    discriminator = ESRGANDiscriminator(crop_size = crop_size).to(device)
+    discriminator = ESRGANDiscriminator(crop_size = patch_size).to(device)
     
     content_loss = VGGLoss().to(device)
     

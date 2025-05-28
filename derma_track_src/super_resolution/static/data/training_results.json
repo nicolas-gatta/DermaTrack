@@ -1,5 +1,5 @@
 {
-    "SRCNN_x2.pth": {
+    "SRCNN_x2_BGR2YCrCb.pth": {
         "architecture": "SRCNN",
         "pretrained_model": null,
         "stride": 16,
@@ -134,7 +134,7 @@
             "LPIPS": 0.059
         }
     },
-    "SRCNN_x4.pth": {
+    "SRCNN_x4_BGR2YCrCb.pth": {
         "architecture": "SRCNN",
         "pretrained_model": null,
         "stride": 16,
@@ -358,7 +358,7 @@
     "Pretrained_SRResNet_x2_BGR2RGB.pth": {
         "architecture": "SRResNet",
         "pretrained_model": null,
-        "stride": 48,
+        "stride": null,
         "patch_size": 96,
         "resize_rule": null,
         "train_file": "ImageNet_train_HR",
@@ -378,11 +378,11 @@
         "timestamp": "2025-04-25 10:24:41",
         "eval_metrics": {}
     },
-    "Pretrained_SRGAN_x2.pth": {
+    "Pretrained_SRGAN_x2_BGR2RGB.pth": {
         "architecture": "SRGAN",
         "pretrained_model": "Pretrained_SRResNet_x2_BGR2RGB.pth",
-        "stride": 0,
-        "patch_size": 0,
+        "stride": null,
+        "patch_size": 96,
         "resize_rule": null,
         "train_file": "ImageNet_train_HR",
         "valid_file": "ImageNet_valid_HR",
@@ -392,7 +392,7 @@
         "learning_rate": 0.0001,
         "seed": 1,
         "batch_size": 16,
-        "num_epochs": 90,
+        "num_epochs": 18,
         "num_workers": 4,
         "validation_losses": [],
         "training_losses": [],
@@ -404,7 +404,7 @@
     "Pretrained_SRResNet_x4_BGR2RGB.pth": {
         "architecture": "SRResNet",
         "pretrained_model": null,
-        "stride": 48,
+        "stride": null,
         "patch_size": 96,
         "resize_rule": null,
         "train_file": "ImageNet_train_HR",
@@ -424,11 +424,11 @@
         "timestamp": "2025-04-25 10:24:41",
         "eval_metrics": {}
     },
-    "Pretrained_SRGAN_x4.pth": {
+    "Pretrained_SRGAN_x4_BGR2RGB.pth": {
         "architecture": "SRGAN",
         "pretrained_model": "Pretrained_SRResNet_x4_BGR2RGB.pth",
-        "stride": 0,
-        "patch_size": 0,
+        "stride": null,
+        "patch_size": 96,
         "resize_rule": null,
         "train_file": "ImageNet_train_HR",
         "valid_file": "ImageNet_valid_HR",
@@ -438,7 +438,7 @@
         "learning_rate": 0.0001,
         "seed": 1,
         "batch_size": 16,
-        "num_epochs": 90,
+        "num_epochs": 18,
         "num_workers": 4,
         "validation_losses": [],
         "training_losses": [],
@@ -448,9 +448,9 @@
         "eval_metrics": {}
     },
     "Pretrained_RRDB_PSNR_x4_BGR2RGB.pth": {
-        "architecture": "RRDB",
-        "pretrained_model": "",
-        "stride": 96,
+        "architecture": "RRDBNet",
+        "pretrained_model": null,
+        "stride": null,
         "patch_size": 128,
         "resize_rule": null,
         "train_file": "DF2K_train_HR",
@@ -461,7 +461,7 @@
         "learning_rate": 0.0002,
         "seed": 1,
         "batch_size": 16,
-        "num_epochs": 100,
+        "num_epochs": 4651,
         "num_workers": 6,
         "validation_losses": [],
         "training_losses": [],
@@ -470,14 +470,37 @@
         "timestamp": "2025-04-25 10:24:41",
         "eval_metrics": {}
     },
-    "Pretrained_ESRGAN_x4.pth": {
+    "Pretrained_ESRGAN_x4_BGR2RGB.pth": {
         "architecture": "ESRGAN",
         "pretrained_model": "Pretrained_RRDB_PSNR_x4_BGR2RGB.pth",
-        "stride": 0,
-        "patch_size": 0,
+        "stride": null,
+        "patch_size": 128,
         "resize_rule": null,
         "train_file": "DF2K_train_HR",
         "valid_file": "DF2K_valid_HR",
+        "eval_file": "",
+        "scale": 4,
+        "mode": "BGR2RGB",
+        "learning_rate": 0.0001,
+        "seed": 1,
+        "batch_size": 16,
+        "num_epochs": 1860,
+        "num_workers": 6,
+        "validation_losses": [],
+        "training_losses": [],
+        "completion_time": 0,
+        "completion_status": "Completed",
+        "timestamp": "2025-04-25 10:24:41",
+        "eval_metrics": {}
+    },
+    "Pretrained_EDVR_x4_BGR2RGB.pth": {
+        "architecture": "EDVR",
+        "pretrained_model": null,
+        "stride": 0,
+        "patch_size": 256,
+        "resize_rule": null,
+        "train_file": "REDS_train_HR",
+        "valid_file": "REDS_valid_HR",
         "eval_file": "",
         "scale": 4,
         "mode": "BGR2RGB",

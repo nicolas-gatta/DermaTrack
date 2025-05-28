@@ -35,7 +35,7 @@ class H5ImagesDataset(Dataset):
 
             _, height, width = hr.shape
             
-            if self.crop_size != 0 and self.up_scale_factor != 0 and height >= self.crop_size and width > self.crop_size:
+            if self.crop_size != 0 and self.up_scale_factor != 0 and height > self.crop_size and width > self.crop_size:
                 _, h, w = hr.shape
                 top = random.randint(0, h - self.crop_size)
                 left = random.randint(0, w - self.crop_size)

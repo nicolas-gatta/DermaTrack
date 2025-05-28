@@ -3,6 +3,7 @@ from super_resolution.services.utils.dataloader import H5ImagesDataset
 from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.image_evaluator import ImageEvaluator
 from torch.utils.data.dataloader import DataLoader
+from basicsr.archs.edvr_arch import EDVR
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
 
 import os
@@ -13,7 +14,7 @@ import tqdm
 class ModelEvaluation:
     
     @staticmethod
-    def evaluate_model(model_name, path_to_model, device, eval_file):
+    def evaluate_model(model_name, path_to_model, device, eval_file, eval_file_name = None):
     
         model = SuperResolution(model_path = os.path.join(path_to_model, model_name))
         
@@ -31,7 +32,10 @@ class ModelEvaluation:
                     
                     lr, hr = lr.to(device), hr.to(device)
                     
-                    output = model.process_image(lr)
+                    if isinstance(model, EDVR):
+                        output = model.process_images(lr)
+                    else:
+                        output = model.process_image(lr)
                     
                     evaluator.evaluate(hr = hr, output = output)
                 
@@ -39,4 +43,9 @@ class ModelEvaluation:
                 
         eval_dataset.close()
         
-        JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.EVAL_METRICS: evaluator.get_average_metrics()})
+        updated_fields = {ModelField.EVAL_METRICS: evaluator.get_average_metrics()}
+        
+        if eval_file_name != None:
+            updated_fields[ModelField.EVAL_FILE] = eval_file_name
+            
+            JsonManager.update_model_data(model_name = model_name, updated_fields = updated_fields)

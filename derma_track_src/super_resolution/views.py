@@ -117,7 +117,7 @@ def training_model(request):
                 mode = mode,
                 scale = scale,
                 invert_mode = invert_mode,
-                patch_size= patch_size, 
+                patch_size = patch_size, 
                 stride = stride,
                 learning_rate = learning_rate,  
                 seed = seed, 
