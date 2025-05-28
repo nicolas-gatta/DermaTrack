@@ -7,7 +7,7 @@
         "resize_rule": null,
         "train_file": "BSD500_train_HR",
         "valid_file": "BSD500_val_HR",
-        "eval_file": "BSD500_eval_HR",
+        "eval_file": "derma_eval_HR",
         "scale": 2,
         "mode": "BGR2YCrCb",
         "learning_rate": 0.0001,
@@ -127,12 +127,13 @@
         "completion_status": "Completed",
         "timestamp": "2025-04-24 11:39:19",
         "eval_metrics": {
-            "MSE": 0.0005,
-            "PSNR": 33.8633,
-            "SSIM": 0.9574,
-            "MSSIM": 0.9972,
-            "LPIPS": 0.059
-        }
+            "MSE": 0.0,
+            "PSNR": 44.0472,
+            "SSIM": 0.987,
+            "MSSIM": 0.9991,
+            "LPIPS": 0.0277
+        },
+        "execution_time": 0.0172
     },
     "SRCNN_x4_BGR2YCrCb.pth": {
         "architecture": "SRCNN",
@@ -142,7 +143,7 @@
         "resize_rule": null,
         "train_file": "BSD500_train_HR",
         "valid_file": "BSD500_val_HR",
-        "eval_file": "BSD500_eval_HR",
+        "eval_file": "derma_eval_HR",
         "scale": 4,
         "mode": "BGR2YCrCb",
         "learning_rate": 0.0001,
@@ -348,12 +349,13 @@
         "completion_status": "Completed",
         "timestamp": "2025-04-24 13:58:15",
         "eval_metrics": {
-            "MSE": 0.0017,
-            "PSNR": 28.5324,
-            "SSIM": 0.8779,
-            "MSSIM": 0.9585,
-            "LPIPS": 0.2235
-        }
+            "MSE": 0.0002,
+            "PSNR": 37.9664,
+            "SSIM": 0.9483,
+            "MSSIM": 0.9764,
+            "LPIPS": 0.1755
+        },
+        "execution_time": 0.0046
     },
     "Pretrained_SRResNet_x2_BGR2RGB.pth": {
         "architecture": "SRResNet",
@@ -363,7 +365,7 @@
         "resize_rule": null,
         "train_file": "ImageNet_train_HR",
         "valid_file": "ImageNet_valid_HR",
-        "eval_file": "",
+        "eval_file": "derma_eval_HR",
         "scale": 2,
         "mode": "BGR2RGB",
         "learning_rate": 0.0001,
@@ -376,7 +378,14 @@
         "completion_time": 0,
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
-        "eval_metrics": {}
+        "eval_metrics": {
+            "MSE": 0.0057,
+            "PSNR": 24.0226,
+            "SSIM": 0.937,
+            "MSSIM": 0.9748,
+            "LPIPS": 0.1709
+        },
+        "execution_time": 0.0258
     },
     "Pretrained_SRGAN_x2_BGR2RGB.pth": {
         "architecture": "SRGAN",
@@ -386,7 +395,7 @@
         "resize_rule": null,
         "train_file": "ImageNet_train_HR",
         "valid_file": "ImageNet_valid_HR",
-        "eval_file": "",
+        "eval_file": "derma_eval_HR",
         "scale": 2,
         "mode": "BGR2RGB",
         "learning_rate": 0.0001,
@@ -399,7 +408,14 @@
         "completion_time": 0,
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
-        "eval_metrics": {}
+        "eval_metrics": {
+            "MSE": 0.0057,
+            "PSNR": 24.0809,
+            "SSIM": 0.937,
+            "MSSIM": 0.9746,
+            "LPIPS": 0.1706
+        },
+        "execution_time": 0.0249
     },
     "Pretrained_SRResNet_x4_BGR2RGB.pth": {
         "architecture": "SRResNet",
@@ -409,7 +425,7 @@
         "resize_rule": null,
         "train_file": "ImageNet_train_HR",
         "valid_file": "ImageNet_valid_HR",
-        "eval_file": "",
+        "eval_file": "derma_eval_HR",
         "scale": 4,
         "mode": "BGR2RGB",
         "learning_rate": 0.0001,
@@ -422,7 +438,14 @@
         "completion_time": 0,
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
-        "eval_metrics": {}
+        "eval_metrics": {
+            "MSE": 0.0063,
+            "PSNR": 23.3456,
+            "SSIM": 0.8422,
+            "MSSIM": 0.9314,
+            "LPIPS": 0.3667
+        },
+        "execution_time": 0.0648
     },
     "Pretrained_SRGAN_x4_BGR2RGB.pth": {
         "architecture": "SRGAN",
@@ -432,7 +455,7 @@
         "resize_rule": null,
         "train_file": "ImageNet_train_HR",
         "valid_file": "ImageNet_valid_HR",
-        "eval_file": "",
+        "eval_file": "derma_eval_HR",
         "scale": 4,
         "mode": "BGR2RGB",
         "learning_rate": 0.0001,
@@ -445,7 +468,14 @@
         "completion_time": 0,
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
-        "eval_metrics": {}
+        "eval_metrics": {
+            "MSE": 0.007,
+            "PSNR": 22.5162,
+            "SSIM": 0.6178,
+            "MSSIM": 0.886,
+            "LPIPS": 0.4004
+        },
+        "execution_time": 0.0696
     },
     "Pretrained_RRDB_PSNR_x4_BGR2RGB.pth": {
         "architecture": "RRDBNet",
@@ -455,7 +485,7 @@
         "resize_rule": null,
         "train_file": "DF2K_train_HR",
         "valid_file": "DF2K_valid_HR",
-        "eval_file": "",
+        "eval_file": "derma_eval_HR",
         "scale": 4,
         "mode": "BGR2RGB",
         "learning_rate": 0.0002,
@@ -468,7 +498,14 @@
         "completion_time": 0,
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
-        "eval_metrics": {}
+        "eval_metrics": {
+            "MSE": 0.0015,
+            "PSNR": 29.024,
+            "SSIM": 0.7957,
+            "MSSIM": 0.906,
+            "LPIPS": 0.4072
+        },
+        "execution_time": 1.1887
     },
     "Pretrained_ESRGAN_x4_BGR2RGB.pth": {
         "architecture": "ESRGAN",
@@ -478,7 +515,7 @@
         "resize_rule": null,
         "train_file": "DF2K_train_HR",
         "valid_file": "DF2K_valid_HR",
-        "eval_file": "",
+        "eval_file": "derma_eval_HR",
         "scale": 4,
         "mode": "BGR2RGB",
         "learning_rate": 0.0001,
@@ -491,7 +528,14 @@
         "completion_time": 0,
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
-        "eval_metrics": {}
+        "eval_metrics": {
+            "MSE": 0.007,
+            "PSNR": 22.1172,
+            "SSIM": 0.2928,
+            "MSSIM": 0.7258,
+            "LPIPS": 0.7315
+        },
+        "execution_time": 1.1362
     },
     "Pretrained_EDVR_x4_BGR2RGB.pth": {
         "architecture": "EDVR",
@@ -514,6 +558,7 @@
         "completion_time": 0,
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
-        "eval_metrics": {}
+        "eval_metrics": {},
+        "execution_time": null
     }
 }

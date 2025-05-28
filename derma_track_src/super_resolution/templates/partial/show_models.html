@@ -26,6 +26,7 @@
                     <th>Eval Metric</th>
                     <th>Status</th>
                     <th>Training Time</th>
+                    <th>Execution Time</th>
                     <th>Starting Data</th>
                     <th>Action</th>
                 </tr>
@@ -86,6 +87,13 @@
                             </span>
                     </td>
                     <td>{{ data.completion_time }} sec</td>
+                    <td>
+                        {% if data.execution_time %}
+                            {{ data.execution_time }} sec              
+                        {% else %}
+                            <span> &#10060; </span>
+                        {% endif %}
+                    </td>
                     <td>{{ data.timestamp }}</td>
                     
                     <td>       
