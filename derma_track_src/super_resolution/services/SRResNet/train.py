@@ -149,7 +149,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                 JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
     
     torch.save({"architecture": "SRResNet", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": False,
-                "patch_size": patch_size, "stride": stride, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))    
+                "patch_size": patch_size, "stride": stride, "multi_input": False,"model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))    
     
     JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: "Completed", 
                                                                             ModelField.COMPLETION_TIME: int(time.time() - starting_time),

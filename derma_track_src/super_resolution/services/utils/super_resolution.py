@@ -181,7 +181,7 @@ class SuperResolution:
     
     def __preprocess_image(self, image: np.ndarray) -> torch.Tensor:
         if self.model_info["need_resize"]:
-            image = cv2.resize(image, (image.shape[1] * self.model_info["scale"], image.shape[0] * self.model_info["scale"]), interpolation = cv2.INTER_CUBIC)
+            image = cv2.resize(image, (image.shape[1] * self.model_info["scale"], image.shape[0] * self.model_info["scale"]))
         convert_image = ImageConverter.convert_image(image, ImageColorConverter[self.model_info["color_mode"]])
         tensor_image = torch.from_numpy(convert_image).permute(2, 0, 1).float() / 255
         return tensor_image.unsqueeze(0).to(self.device)

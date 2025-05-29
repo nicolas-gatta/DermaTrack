@@ -20,6 +20,7 @@ from super_resolution.services.utils.model_evaluation import ModelEvaluation
 from utils.unique_filename import get_unique_filename
 
 from utils.checks import group_and_super_user_checks
+import numpy as np
 
 _model = None
 __test_model = None
@@ -64,6 +65,8 @@ def training_model(request):
     
     resize_to_output = architecture in ["SRCNN"]
     
+    multi_input = architecture in ["EDVR"]
+    
     if ("image-option" in request.POST):
         
         if(request.POST["image-option"] == "resize"):
@@ -76,7 +79,8 @@ def training_model(request):
     
     train_file, valid_file, eval_file = [dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
                                                                   patch_size = patch_size, stride = stride, resize_rule = resize_rule, 
-                                                                  resize_to_output = resize_to_output, base_dir = settings.BASE_DIR) 
+                                                                  resize_to_output = resize_to_output, base_dir = settings.BASE_DIR, 
+                                                                  multi_input = multi_input) 
                                          for dataset, category in [(train_dataset, "training"), 
                                                                    (valid_dataset, "validation"), 
                                                                    (eval_dataset, "evaluation")] 
@@ -166,11 +170,14 @@ def evaluate_model(request):
     
     resize_to_output = model_info["need_resize"]
     
+    multi_input = model_info["multi_input"]
+    
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
      
     eval_file = dataset_exist_or_create(dataset = eval_dataset, mode = mode, scale = scale, category = "evaluation", 
                                         patch_size = None, stride = None, resize_rule = None, 
-                                        resize_to_output = resize_to_output, base_dir = settings.BASE_DIR)
+                                        resize_to_output = resize_to_output, base_dir = settings.BASE_DIR,
+                                        multi_input = multi_input)
     
     ModelEvaluation.evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file, eval_file_name = eval_dataset)
         
@@ -287,8 +294,10 @@ def degrade_and_save_image(request, name, scale):
     
     image = cv2.imread(base_path)
     
-    degraded_image = cv2.resize(image, (image.shape[1] // scale, image.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
+    blur_image = cv2.GaussianBlur(image, (5, 5), 1.5)
     
+    degraded_image = cv2.resize(blur_image, (image.shape[1] // scale, image.shape[0] // scale))
+
     cv2.imwrite(output_path, degraded_image)
 
     return JsonResponse({'url': os.path.join(settings.MEDIA_URL, "output_test", "degraded_image.png")})

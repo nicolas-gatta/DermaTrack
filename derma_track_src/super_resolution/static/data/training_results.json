@@ -127,13 +127,13 @@
         "completion_status": "Completed",
         "timestamp": "2025-04-24 11:39:19",
         "eval_metrics": {
-            "MSE": 0.0,
-            "PSNR": 44.0472,
-            "SSIM": 0.987,
-            "MSSIM": 0.9991,
-            "LPIPS": 0.0277
+            "MSE": 0.0001,
+            "PSNR": 40.2059,
+            "SSIM": 0.9627,
+            "MSSIM": 0.9896,
+            "LPIPS": 0.1469
         },
-        "execution_time": 0.0172
+        "execution_time": 0.0179
     },
     "SRCNN_x4_BGR2YCrCb.pth": {
         "architecture": "SRCNN",
@@ -350,12 +350,12 @@
         "timestamp": "2025-04-24 13:58:15",
         "eval_metrics": {
             "MSE": 0.0002,
-            "PSNR": 37.9664,
-            "SSIM": 0.9483,
-            "MSSIM": 0.9764,
-            "LPIPS": 0.1755
+            "PSNR": 37.3236,
+            "SSIM": 0.9403,
+            "MSSIM": 0.9689,
+            "LPIPS": 0.2964
         },
-        "execution_time": 0.0046
+        "execution_time": 0.0059
     },
     "Pretrained_SRResNet_x2_BGR2RGB.pth": {
         "architecture": "SRResNet",
@@ -379,13 +379,13 @@
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
         "eval_metrics": {
-            "MSE": 0.0057,
-            "PSNR": 24.0226,
-            "SSIM": 0.937,
-            "MSSIM": 0.9748,
-            "LPIPS": 0.1709
+            "MSE": 0.0058,
+            "PSNR": 23.9037,
+            "SSIM": 0.8878,
+            "MSSIM": 0.9499,
+            "LPIPS": 0.3073
         },
-        "execution_time": 0.0258
+        "execution_time": 0.0227
     },
     "Pretrained_SRGAN_x2_BGR2RGB.pth": {
         "architecture": "SRGAN",
@@ -409,13 +409,13 @@
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
         "eval_metrics": {
-            "MSE": 0.0057,
-            "PSNR": 24.0809,
-            "SSIM": 0.937,
-            "MSSIM": 0.9746,
-            "LPIPS": 0.1706
+            "MSE": 0.0058,
+            "PSNR": 23.9498,
+            "SSIM": 0.8872,
+            "MSSIM": 0.9496,
+            "LPIPS": 0.3075
         },
-        "execution_time": 0.0249
+        "execution_time": 0.0149
     },
     "Pretrained_SRResNet_x4_BGR2RGB.pth": {
         "architecture": "SRResNet",
@@ -439,13 +439,13 @@
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
         "eval_metrics": {
-            "MSE": 0.0063,
-            "PSNR": 23.3456,
-            "SSIM": 0.8422,
-            "MSSIM": 0.9314,
-            "LPIPS": 0.3667
+            "MSE": 0.0059,
+            "PSNR": 23.7744,
+            "SSIM": 0.8718,
+            "MSSIM": 0.951,
+            "LPIPS": 0.3297
         },
-        "execution_time": 0.0648
+        "execution_time": 0.0769
     },
     "Pretrained_SRGAN_x4_BGR2RGB.pth": {
         "architecture": "SRGAN",
@@ -469,13 +469,13 @@
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
         "eval_metrics": {
-            "MSE": 0.007,
-            "PSNR": 22.5162,
-            "SSIM": 0.6178,
-            "MSSIM": 0.886,
-            "LPIPS": 0.4004
+            "MSE": 0.0056,
+            "PSNR": 23.9746,
+            "SSIM": 0.8259,
+            "MSSIM": 0.9452,
+            "LPIPS": 0.2212
         },
-        "execution_time": 0.0696
+        "execution_time": 0.0091
     },
     "Pretrained_RRDB_PSNR_x4_BGR2RGB.pth": {
         "architecture": "RRDBNet",
@@ -499,13 +499,13 @@
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
         "eval_metrics": {
-            "MSE": 0.0015,
-            "PSNR": 29.024,
-            "SSIM": 0.7957,
-            "MSSIM": 0.906,
-            "LPIPS": 0.4072
+            "MSE": 0.0006,
+            "PSNR": 32.7069,
+            "SSIM": 0.8877,
+            "MSSIM": 0.9732,
+            "LPIPS": 0.3354
         },
-        "execution_time": 1.1887
+        "execution_time": 1.2636
     },
     "Pretrained_ESRGAN_x4_BGR2RGB.pth": {
         "architecture": "ESRGAN",
@@ -529,13 +529,13 @@
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
         "eval_metrics": {
-            "MSE": 0.007,
-            "PSNR": 22.1172,
-            "SSIM": 0.2928,
-            "MSSIM": 0.7258,
-            "LPIPS": 0.7315
+            "MSE": 0.0006,
+            "PSNR": 32.7069,
+            "SSIM": 0.8877,
+            "MSSIM": 0.9732,
+            "LPIPS": 0.3354
         },
-        "execution_time": 1.1362
+        "execution_time": 1.2353
     },
     "Pretrained_EDVR_x4_BGR2RGB.pth": {
         "architecture": "EDVR",

@@ -38,10 +38,12 @@ def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConv
 
         hr = hr[:(hr.shape[0] // scale) * scale, :(hr.shape[1] // scale) * scale] 
         
-        lr = cv2.resize(hr, (hr.shape[1] // scale, hr.shape[0] // scale), interpolation = cv2.INTER_CUBIC)
+        blur_image = cv2.GaussianBlur(hr, (5, 5), 1.5)
+        
+        lr = cv2.resize(blur_image, (hr.shape[1] // scale, hr.shape[0] // scale))
 
         if resize_to_output:
-            lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]), interpolation = cv2.INTER_CUBIC)
+            lr = cv2.resize(lr, (hr.shape[1], hr.shape[0]))
         
         if preprocessing_required:
             if patch_size != None:
@@ -165,7 +167,7 @@ def create_h5_image_file(input_path: str, scale: int, output_path: str, mode: Im
                                  stride = stride, resize_rule = resize_rule, preprocessing_required = preprocessing_required,
                                  resize_to_output = resize_to_output)
 
-def dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: str, resize_to_output: bool, base_dir: str):
+def dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: str, resize_to_output: bool, base_dir: str, multi_input: bool):
 
     file_name = f"{dataset}_{mode}_x{scale}"
     
@@ -180,9 +182,10 @@ def dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, 
         elif resize_rule != None:
             file_name += f"_{resize_rule}"
             c_resize_rule = ResizeRule[resize_rule]
-            
+    if multi_input:
+        file_name += "_mi"
     if not resize_to_output:
-        file_name += f"_nrto"
+        file_name += "_nrto"
     
     output_path = os.path.join(base_dir, "super_resolution", "datasets", category, f"{file_name}.hdf5")
     
