@@ -6,6 +6,8 @@ from collections import OrderedDict
 from super_resolution.services.SRCNN.model import SRCNN
 from super_resolution.services.RRDBNet.model import RRDBNet
 from super_resolution.services.SRResNet.model import SRResNet
+from basicsr.archs.edvr_arch import EDVR
+
 import torch
 
 
@@ -23,6 +25,9 @@ def get_layers(architecture, scale: int = None):
           
           case "ESRGAN" | "RRDBNet":
                model = RRDBNet(up_scale=scale).state_dict()
+               
+          case "EDVR":
+               model = EDVR().state_dict()
           
           case _:
                raise ValueError(f"Unknown architecture: {architecture}")
@@ -48,14 +53,16 @@ def verify_model(architecture, model_path):
           
           case "ESRGAN" | "RRDBNet":
                model = RRDBNet(up_scale = model_info["scale"])
-          
+               
+          case "EDVR":
+               model = EDVR()
           case _:
                raise ValueError(f"Unknown architecture: {architecture}")
           
 
      model.load_state_dict(model_info["model_state_dict"])
 
-def main(inputs_model_path, output_model_path, architecture, scale, mode, invert_mode, patch_size, stride):
+def main(inputs_model_path, output_model_path, architecture, scale, mode, invert_mode, patch_size, stride ):
      
      print(f"Strating Transfer of the model {architecture} !")
      model_layers = get_layers(architecture = architecture, scale = scale)
@@ -68,6 +75,9 @@ def main(inputs_model_path, output_model_path, architecture, scale, mode, invert
      elif 'state_dict' in model_info:
           print("The .pth file contains 'state_dict':\n")
           state_dict = model_info['state_dict'].items()
+     elif 'params' in model_info:
+          print("The .pth file contains 'params':\n")
+          state_dict = model_info['params'].items()
      else:
           state_dict = model_info.items()
           
@@ -84,5 +94,9 @@ def main(inputs_model_path, output_model_path, architecture, scale, mode, invert
      print(f"End of the transfer for {architecture}, everything went smoothly !")
 
 if __name__ == "__main__":
-     main(inputs_model_path = "C:\\Users\\Utilisateur\\Downloads\\RRDB_PSNR_x4.pth", output_model_path = "C:\\Users\\Utilisateur\\Downloads\\Pretrained_RRDB_PSNR_x4_BGR2RGB.pth", 
-          architecture = "RRDBNet", scale = 4, mode = "BGR2RGB", invert_mode = "RGB2BGR", patch_size = None, stride = None)
+     
+     # main(inputs_model_path = "C:\\Users\\Utilisateur\\Desktop\\backup model\\Pretrained_EDVR_x4_BGR2RGB.pth", output_model_path = "C:\\Users\\Utilisateur\\Downloads\\Pretrained_EDVR_x4_BGR2RGB.pth", 
+     #      architecture = "EDVR", scale = 4, mode = "BGR2RGB", invert_mode = "RGB2BGR", patch_size = 256, stride = None)
+     
+     main(inputs_model_path = "C:\\Users\\Utilisateur\\Downloads\\ESRGAN_PSNR_SRx4_DF2K_official-150ff491.pth", output_model_path = "C:\\Users\\Utilisateur\\Downloads\\Pretrained_ESRGAN_x4_BGR2RGB.pth", 
+          architecture = "ESRGAN", scale = 4, mode = "BGR2RGB", invert_mode = "RGB2BGR", patch_size = 128, stride = None)
