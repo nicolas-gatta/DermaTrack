@@ -62,8 +62,8 @@ class SuperResolution:
         
         image = self.__fetch_image(image_source = image_path)
         
-        if isinstance(self.model, EDVR):
-            postprocess_image = self.process_image(image = image)
+        if self.model_info["multi_input"]:
+            postprocess_image = self.process_images(images = image)
         else:
             postprocess_image = self.process_image(image = image)
         
@@ -102,15 +102,15 @@ class SuperResolution:
         
         postprocess_required = True
         preprocess_images = []
-        
-        if isinstance(images, list[np.ndarray]):  
+
+        if isinstance(images[0], np.ndarray):  
             preprocess_images = [self.__preprocess_image(image) for image in images]
  
         else:
             preprocess_images = images
             postprocess_required = False
 
-        height, width = preprocess_images.shape[0][2:]
+        height, width = preprocess_images.shape[3:]
         quadrant_images_seq = [[] for _ in range(len(preprocess_images))]
         
         if height >= 1600 or width >= 1200:
@@ -126,8 +126,7 @@ class SuperResolution:
         
         else:
             with torch.no_grad():
-                tensor = torch.cat(quadrant_images_seq, dim=0).to(self.device)
-                sr_image = self.model(tensor)
+                sr_image = self.model(preprocess_images)
 
 
         sr_image = torch.clamp(sr_image, 0.0, 1.0)

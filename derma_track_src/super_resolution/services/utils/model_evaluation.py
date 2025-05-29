@@ -38,7 +38,7 @@ class ModelEvaluation:
                     
                     start_time = time.perf_counter()
                      
-                    if isinstance(model, EDVR):
+                    if model.model_info["multi_input"]:
                         output = model.process_images(lr)
                     else:
                         output = model.process_image(lr)

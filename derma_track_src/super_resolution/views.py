@@ -1,15 +1,13 @@
 import os
 import cv2
 import re
+import torch
 
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-
-
-import torch
 from super_resolution.services.SRCNN import train as srcnn_train
 from super_resolution.services.ESRGAN import train as esrgan_train
 from super_resolution.services.SRGAN import train as srgan_train
@@ -18,9 +16,7 @@ from super_resolution.services.utils.json_manager import JsonManager
 from super_resolution.services.utils.super_resolution import SuperResolution
 from super_resolution.services.utils.model_evaluation import ModelEvaluation
 from utils.unique_filename import get_unique_filename
-
 from utils.checks import group_and_super_user_checks
-import numpy as np
 
 _model = None
 __test_model = None

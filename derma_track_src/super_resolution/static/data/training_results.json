@@ -545,7 +545,7 @@
         "resize_rule": null,
         "train_file": "REDS_train_HR",
         "valid_file": "REDS_valid_HR",
-        "eval_file": "",
+        "eval_file": "derma_eval_HR",
         "scale": 4,
         "mode": "BGR2RGB",
         "learning_rate": 0.0001,
@@ -558,7 +558,13 @@
         "completion_time": 0,
         "completion_status": "Completed",
         "timestamp": "2025-04-25 10:24:41",
-        "eval_metrics": {},
-        "execution_time": null
+        "eval_metrics": {
+            "MSE": 0.0032,
+            "PSNR": 26.6596,
+            "SSIM": 0.6742,
+            "MSSIM": 0.6262,
+            "LPIPS": 0.3712
+        },
+        "execution_time": 1.3017
     }
 }
