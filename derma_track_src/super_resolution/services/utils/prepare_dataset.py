@@ -156,9 +156,13 @@ def __create_burst_image(lr: np.ndarray, burst_size: int = 5, max_translation: i
     cropped_height = height - max_translation
     cropped_width = width - max_translation
     
-    for i in range(burst_size):
+    translations = [step * i for i in range(burst_size)]
+    
+    translations[(len(translations) - 1) // 2] = max_translation // 2
+    
+    for translation in translations:
          
-        burst_lr.append(lr[:, (i * step): cropped_height + (i * step), (i * step): cropped_width + (i * step)])
+        burst_lr.append(lr[:, translation: cropped_height + translation, translation: cropped_width + translation])
     
     return np.stack(burst_lr)
     

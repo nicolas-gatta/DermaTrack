@@ -18,7 +18,7 @@ class VGGLoss(nn.Module):
             parameter.requires_grad = False
             
         self.feature_extractor.eval()
-        self.criterion = nn.MSELoss()
+        self.criterion = nn.L1Loss()
 
     def forward(self, sr: torch.Tensor, hr: torch.Tensor):
         

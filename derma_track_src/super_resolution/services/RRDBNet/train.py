@@ -156,7 +156,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                                                                             ModelField.TRAINING_LOSSES: epoch_train_loss.all_values, 
                                                                             ModelField.VALIDATION_LOSSES: epoch_val_loss.all_values})
     
-    print(f"Trained Model saved as '{output_path}'")
+    print(f"Model saved as '{os.path.join(output_path, model_name)}'")
     
     ModelEvaluation.evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file)
     

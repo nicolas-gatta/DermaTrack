@@ -6,7 +6,7 @@ import os
 
 from torch import nn
 from tqdm import tqdm
-from super_resolution.services.SRCNN.model import SRCNN
+from basicsr.archs.edvr_arch import EDVR
 from super_resolution.services.utils.dataloader import H5ImagesDataset
 from super_resolution.services.utils.running_average import RunningAverage
 from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
@@ -20,7 +20,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
                 mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-4, 
                 seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
     
-    early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
+    early_stopping = EarlyStopping(patience = 20, delta = 0, verbose = False)
     
     cudnn.benchmark = True
     
@@ -46,9 +46,9 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     
     epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
 
-    model = SRCNN().to(device)
+    model = EDVR().to(device)
     
-    criterion = nn.MSELoss()  
+    criterion = nn.L1Loss()  
     
     optimizer = optim.Adam([
         {'params': model.conv1.parameters(), 'lr': learning_rate},
@@ -123,7 +123,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
             JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
 
         
-    torch.save({"architecture": "SRCNN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": True,
+    torch.save({"architecture": "EDVR", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": True,
                 "patch_size": patch_size, "stride": stride, "multi_input": False, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
     
     print(f"Model saved as '{os.path.join(output_path, model_name)}'")

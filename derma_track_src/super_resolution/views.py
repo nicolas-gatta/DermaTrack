@@ -11,6 +11,7 @@ from django.conf import settings
 from super_resolution.services.SRCNN import train as srcnn_train
 from super_resolution.services.ESRGAN import train as esrgan_train
 from super_resolution.services.SRGAN import train as srgan_train
+from super_resolution.services.EDVR import train as edvr_train
 from super_resolution.services.utils.prepare_dataset import dataset_exist_or_create
 from super_resolution.services.utils.json_manager import JsonManager
 from super_resolution.services.utils.super_resolution import SuperResolution
@@ -53,6 +54,12 @@ def training_model(request):
     
     eval_dataset = request.POST["eval-dataset"]
     
+    pretrain_model = request.POST["pretrain-model"]
+    
+    max_angle_rotation = None
+    
+    angle_rotation_step = None 
+    
     resize_rule = None
     
     patch_size = None
@@ -73,6 +80,10 @@ def training_model(request):
             patch_size = int(request.POST["patch-size"])
             stride = int(patch_size * (overlaying / 100.0)) if overlaying != 0.0 else None
     
+    if ("image-option-angle" in request.POST):
+        max_angle_rotation = request.POST["degree"]
+        angle_rotation_step = request.POST["step-degree"]
+
     train_file, valid_file, eval_file = [dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
                                                                   patch_size = patch_size, stride = stride, resize_rule = resize_rule, 
                                                                   resize_to_output = resize_to_output, base_dir = settings.BASE_DIR, 
@@ -127,6 +138,24 @@ def training_model(request):
                         
         case "ESRGAN":
             esrgan_train.train_model(
+                model_name = model_name,
+                train_file = train_file, 
+                valid_file = valid_file,
+                eval_file = eval_file, 
+                output_path = output_path,
+                mode = mode,
+                scale = scale,
+                invert_mode = invert_mode,
+                patch_size= patch_size, 
+                stride = stride,
+                learning_rate = learning_rate,  
+                seed = seed, 
+                batch_size = batch_size,
+                num_epochs = num_epochs,
+                num_workers = num_workers)
+            
+        case "EDVR":
+            edvr_train.train_model(
                 model_name = model_name,
                 train_file = train_file, 
                 valid_file = valid_file,
