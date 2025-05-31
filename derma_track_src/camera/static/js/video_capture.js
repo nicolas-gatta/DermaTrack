@@ -206,18 +206,28 @@ function detectBodyPart(){
 }
 
 async function captureImage(isSaved, distance = null){
+    let selectBodyPart = document.getElementById("body-part");
+    let bodyPart = selectBodyPart.selectedOptions[0].value;
+
+    if (!bodyPart) {
+        alert("Please select a body part before capturing the image.");
+        selectBodyPart.classList.add("is-invalid");
+        return;
+    } else {
+        selectBodyPart.classList.remove("is-invalid");
+    }
     let video = document.getElementById("stream");
     let canvas = document.createElement("canvas");
     canvas.width = 1920;
     canvas.height = 1080;
     let context = canvas.getContext("2d");
-    let bodyPart = document.getElementById("body-part").selectedOptions[0].value;
+    
 
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     imageUrl = canvas.toDataURL("image/png");
     if (isSaved){
-        await saveImageToServer(imageUrl, bodyPart, distance, 0);
+        await saveImageToServer(imageUrl, bodyPart, distance);
     }else{
         return imageUrl.split(",")[1];
     }
@@ -257,20 +267,64 @@ function updateCarousel(images) {
     }
 }
 
-async function saveImageToServer(imageUrl, bodyPartId, distance, index){
-    try {
-        await fetch(`/camera/save_image/`, {
+async function createVisitBodyPart(bodyPartId, distance){
+    try{
+        const response = await fetch(`/camera/create_visit_body_part/`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({visitId: visitId, bodyPartId: bodyPartId, distance :distance, pixelSize: 0.0014})
+        })
+
+        data = response.json();
+
+        if (data.status === 'error') {
+            console.error(`Failed to create the visit body part: ${data.message}`);
+        }else{
+            return data;
+        }
+    }catch (error) {
+        console.error(`Error create the visit body part :`, error);
+        return null;
+    }
+}
+
+async function saveImageWithoutUpdate(visit_body_part_id, visitId, bodyPart, imageUrl, imageWidth, imageHeigth, index){
+    try{
+        await fetch(`/camera/save_image_without_db_update/`, {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({visitId: visitId, image: imageUrl, bodyPartId: bodyPartId, distance :distance, 
-                                    imageWidth: 1920, imageHeigth: 1080, pixelSize: 0.0014, index})
+            body: JSON.stringify({visit_body_part_id: visit_body_part_id, visit: visitId, body_part: bodyPart, image: imageUrl, imageWidth: imageWidth, imageHeigth: imageHeigth, index})
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'error') {
-                console.error(`Failed to save image ${index + 1}: ${data.message}`);
+                console.error(`Failed to save image ${index}: ${data.message}`);
+            }
+        });
+    } catch (error) {
+        console.error(`Error saving image ${index + 1}:`, error);
+        return null;
+    }
+}
+
+
+async function saveImageWithUpdate(visit_body_part_id, imageUrl, imageWidth, imageHeigth, index){
+    try{
+        await fetch(`/camera/save_image_with_db_update/`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({visit_body_part_id: visit_body_part_id, image: imageUrl, imageWidth: imageWidth, imageHeigth: imageHeigth, index})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'error') {
+                console.error(`Failed to save image ${index}: ${data.message}`);
             }else{
                 let storedImages = JSON.parse(localStorage.getItem("capturedImages"));
                 storedImages.push("/media/visits/visit_"+data.visitId+"/"+data.bodyPart+"/"+data.image);
@@ -278,9 +332,21 @@ async function saveImageToServer(imageUrl, bodyPartId, distance, index){
                 localStorage.setItem("capturedImages", JSON.stringify(storedImages));
             }
         })
-
     } catch (error) {
         console.error(`Error saving image ${index + 1}:`, error);
+    }
+}
+
+async function saveImageToServer(imageUrl, bodyPartId, distance){
+    
+    var data = await createVisitBodyPart(bodyPartId, distance); 
+
+    for (let index = 0; index < 5; index++){
+        if (index !== 2){
+            saveImageWithoutUpdate(data.visit_body_part_id, data.visitId, data.bodyPart, imageUrl, 1920, 1080, index);
+        }else{
+            saveImageWithUpdate(data.visit_body_part_id, imageUrl, 1920, 1080, index);
+        }
     }
 }
 

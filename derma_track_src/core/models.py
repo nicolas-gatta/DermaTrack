@@ -73,14 +73,19 @@ class BodyPart(models.Model):
         return str(self.pk) + " - " + self.name
     
 class VisitBodyPart(models.Model):
-    image_path = models.ImageField(unique=True, null=False)
-    image_name = models.CharField(null = False, max_length=255, default = "")
+    image_path = models.ImageField(null = True, blank = True)
+    image_name = models.CharField(null = True, blank = True, max_length=255)
     image_height = models.IntegerField(default = 0)
     image_width = models.IntegerField(default = 0)
-    image_preview_path = models.ImageField(unique=True, null=False)
-    image_preview_name = models.CharField(null = False, max_length=255, default = "")
+    image_preview_path = models.ImageField(null = True, blank = True)
+    image_preview_name = models.CharField(null = True, blank = True, max_length=255)
     image_preview_height = models.IntegerField(default = 0)
     image_preview_width = models.IntegerField(default = 0)
+    image_super_path = models.ImageField(null = True, blank = True)
+    image_super_name = models.CharField(null = True, blank = True, max_length=255, default = "")
+    image_super_height = models.IntegerField(default = 0)
+    image_super_width = models.IntegerField(default = 0)
+    multi_image_path = models.CharField(null = True, blank = True, max_length=255, default = "")
     distance_from_subject = models.FloatField(blank = True, null = True)
     focal = models.FloatField(default = 3.543)
     pixel_size = models.FloatField(default = 0.0014)

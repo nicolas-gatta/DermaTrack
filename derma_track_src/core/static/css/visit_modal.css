@@ -61,3 +61,15 @@
     top: 2.5rem;
     pointer-events: none;
 }
+
+.carousel-control-prev-icon{
+    background-color: black;
+}
+
+.carousel-control-next-icon{
+    background-color: black;
+}
+
+#medicalCarousel {
+    min-height: 5vh;
+}

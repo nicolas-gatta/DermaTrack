@@ -186,18 +186,25 @@ def delete_image(request, id):
             visit_body_part = VisitBodyPart.objects.get(pk = id)
             
             body_part_name = visit_body_part.body_part.name
+            
             visit_id = visit_body_part.visit.pk
             
             image_path = visit_body_part.image_path.path 
             
             preview_path = visit_body_part.image_preview_path.path
+            
+            multi_path = visit_body_part.multi_image_path
 
-            if os.path.exists(image_path):
-                os.remove(image_path)
-
-            if os.path.exists(preview_path):
-                os.remove(preview_path)
-
+            for internal_path in [image_path, preview_path, multi_path]:
+                
+                if os.path.exists(internal_path):
+                    if os.path.isfile(internal_path):
+                        os.remove(internal_path)
+                    else:
+                        for filename in os.listdir(internal_path):
+                            os.remove(os.path.join(internal_path, filename))
+                        os.rmdir(internal_path)
+                    
             visit_body_part.delete()
             
             return JsonResponse({
