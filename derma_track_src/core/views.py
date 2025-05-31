@@ -129,11 +129,27 @@ def list_visit_folder_images(request, visit_id, body_part):
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def get_image(request, id):
     if request.method == "GET" :
-        image = VisitBodyPart.objects.get(pk = id)
+        visit_body_part = VisitBodyPart.objects.get(pk = id)
         
-        encoded_string = base64.b64encode(AES.decrypt_message(image.image_path.file.read())).decode('utf-8')
-            
-        return JsonResponse({"image": encoded_string, "distance": image.distance_from_subject, "pixel_size": image.pixel_size, "focal": image.focal})
+        encoded_string = base64.b64encode(AES.decrypt_message(visit_body_part.image_path.file.read())).decode('utf-8')
+        
+        has_super = len(visit_body_part.image_super_name) != 0
+        
+        return JsonResponse({"image": encoded_string, "distance": visit_body_part.distance_from_subject, "pixel_size": visit_body_part.pixel_size, "focal": visit_body_part.focal, 
+                             "has_super": has_super})
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def get_enchanced_image(request, id):
+    if request.method == "GET" :
+        visit_body_part = VisitBodyPart.objects.get(pk = id)
+        
+        encoded_string = base64.b64encode(AES.decrypt_message(visit_body_part.image_super_path.file.read())).decode('utf-8')
+        
+        has_super = len(visit_body_part.image_super_name) != 0
+        
+        return JsonResponse({"image": encoded_string, "distance": visit_body_part.distance_from_subject, "pixel_size": visit_body_part.pixel_size, "focal": visit_body_part.focal, 
+                             "has_super": has_super})
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -194,8 +210,10 @@ def delete_image(request, id):
             preview_path = visit_body_part.image_preview_path.path
             
             multi_path = visit_body_part.multi_image_path
+            
+            super_path = visit_body_part.image_super_path.path
 
-            for internal_path in [image_path, preview_path, multi_path]:
+            for internal_path in [image_path, preview_path, multi_path, super_path]:
                 
                 if os.path.exists(internal_path):
                     if os.path.isfile(internal_path):

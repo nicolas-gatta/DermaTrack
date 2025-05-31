@@ -1,5 +1,5 @@
 {
-        "SRCNN_x2_BGR2YCrCb.pth": {
+    "SRCNN_x2_BGR2YCrCb.pth": {
         "architecture": "SRCNN",
         "pretrained_model": null,
         "stride": 16,

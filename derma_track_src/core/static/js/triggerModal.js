@@ -29,7 +29,7 @@ function clearPopUp() {
     document.getElementById('pop-up').innerHTML = "";
 }
 
-function createFileExplorer(id = null){
+async function createFileExplorer(id = null){
 
     if (id == null){
         id = document.querySelector("#mainModal").dataset.visitId;
@@ -41,8 +41,8 @@ function createFileExplorer(id = null){
     var fileContainer = document.getElementById("file-container");
 
     fileContainer.innerHTML = ""
-
-    fetch(`/core/visit_list/${id}/folders/`)
+    try{
+        await fetch(`/core/visit_list/${id}/folders/`)
         .then(response => response.json())
         .then(data => {
             const folders = data.folders;
@@ -74,13 +74,13 @@ function createFileExplorer(id = null){
 
             });
         })
-        .catch(error => {
-            console.error("Error fetching folder list:", error);
-        });
-
+    }catch (error) {
+        console.error("Error fetching folder list:", error);
+        return null;
+    }
 }
 
-function createFileExplorerImage(id, body_part){
+async function createFileExplorerImage(id, body_part){
 
     document.getElementById("backButton").classList.remove("d-none");
     document.getElementById("delete-button-image").classList.remove("d-none");
@@ -92,7 +92,8 @@ function createFileExplorerImage(id, body_part){
     fileContainer.innerHTML = ""
     deleteButton.disabled = true;
 
-    fetch(`/core/visit_list/${id}/${body_part}/images`)
+    try{
+        await fetch(`/core/visit_list/${id}/${body_part}/images`)
         .then(response => response.json())
         .then(data => {
             const images = data.images;
@@ -134,34 +135,38 @@ function createFileExplorerImage(id, body_part){
             }else{
                 createFileExplorer(id);
             }
-
-        })
-        .catch(error => {
-            console.error("Error fetching folder list:", error);
         });
+    }catch (error) {
+        console.error("Error fetching Images list:", error);
+        return null;
+    }
 }
 
-function showPreview(id) {
+async function showPreview(id) {
 
-    fetch(`/core/visit_list/get_image/${id}`)
-    .then(response => response.json())
-    .then(data => {
-        setBackgroundImage(id, data.image, data.pixel_size, data.distance, data.focal);
-    })
-    .catch(error => {
-        console.error("Error fetching folder list:", error);
-    });
+    try{
+        await fetch(`/core/visit_list/get_image/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            setBackgroundImage(id, data.image, data.pixel_size, data.distance, data.focal);
+            document.getElementById("superSwitch").disabled = !data.has_super;
+        });
 
-    const modalImage = new bootstrap.Modal(document.querySelector("#imagePreviewModal"), {
-        keyboard: false,
-        backdrop: "static"
-    });
+        const modalImage = new bootstrap.Modal(document.querySelector("#imagePreviewModal"), {
+            keyboard: false,
+            backdrop: "static"
+        });
 
-    const modalMain = bootstrap.Modal.getInstance(document.querySelector("#mainModal"));
+        const modalMain = bootstrap.Modal.getInstance(document.querySelector("#mainModal"));
 
-    modalImage.toggle();
+        modalImage.toggle();
 
-    modalMain.toggle();
+        modalMain.toggle();
+
+    } catch (error) {
+        console.error("Error fetching the Image:", error);
+        return null;
+    }
 }
 
 function setBackgroundImage(id, url, pixel_size, distance, focal) {
@@ -169,37 +174,43 @@ function setBackgroundImage(id, url, pixel_size, distance, focal) {
     const img = new Image();
 
     img.onload = () => {
-        let init_canvas = document.getElementById('canvas-annotation');
-        let init_image = document.getElementById("image-preview");
-        init_canvas.width = img.width;
-        init_canvas.dataset.pixel_size = pixel_size;
-        init_canvas.dataset.distance = distance;
-        init_canvas.dataset.focal = focal;
+        let canvas = document.getElementById('canvas-annotation');
+        let image = document.getElementById("image-preview");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.dataset.pixel_size = pixel_size;
+        canvas.dataset.distance = distance;
+        canvas.dataset.focal = focal;
         canvas.dataset.id = id;
-        init_canvas.height = img.height;
-        init_image.style.width = img.width + "px";
-        init_image.style.height = img.height + "px";
+        canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+        image.style.width = img.width + "px";
+        image.style.height = img.height + "px";
     }
 
     img.src = `data:image/png;base64,${url}`;
 }
 
-function deleteImage(){
+async function deleteImage(){
     if (!selectedImageId) return;
 
-    fetch(`/core/visit_list/delete_image/${selectedImageId}/`, {
-        method: "DELETE"
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === "success") {
-            const visitId = data.visit_id;
-            const bodyPart = data.body_part;
-            createFileExplorerImage(visitId, bodyPart);
-        } else {
-            console.error("Failed to delete image");
-        }
-    });
+    try{
+        await fetch(`/core/visit_list/delete_image/${selectedImageId}/`, {
+            method: "DELETE"
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                const visitId = data.visit_id;
+                const bodyPart = data.body_part;
+                createFileExplorerImage(visitId, bodyPart);
+            } else {
+                console.error("Failed to delete image");
+            }
+        });
+    } catch (error) {
+        console.error("Failed to delete image:", error);
+        return null;
+    }
 }
 
 window.addEventListener("DOMContentLoaded", addEventListener, { once: true });

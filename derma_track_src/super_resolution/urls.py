@@ -7,6 +7,7 @@ urlpatterns = [
     path("model_form", views.model_form, name = "model_form"),
     path("test_model", views.test_model_view, name = "test_model"),
     path("apply_test_sr/<str:image_name>", views.apply_test_sr, name = "apply_test_sr"),
+    path("apply_sr/", views.apply_sr, name = "apply_sr"),
     path("load_test_model/<str:model_name>", views.load_test_model,  name = "load_test_model"),
     path("training_model", views.training_model, name = "training_model"),
     path("dataset_form", views.dataset_form, name = "dataset_form"),

@@ -8,12 +8,15 @@ from super_resolution.services.SRCNN.model import SRCNN
 from super_resolution.services.SRResNet.model import SRResNet
 from super_resolution.services.RRDBNet.model import RRDBNet
 from basicsr.archs.edvr_arch import EDVR
+from image_encryption.services.advanced_encrypted_standard import AES
 
 class SuperResolution:
     def __init__(self, model_path: str):
         
         if not os.path.exists(model_path):
             raise FileNotFoundError(f"Model file not found: {model_path}")
+        
+        self.path = model_path
         
         self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
                 
@@ -52,7 +55,7 @@ class SuperResolution:
         return model, model_info
 
     
-    def apply_super_resolution(self, image_path, output_path, filename):
+    def apply_super_resolution(self, image_path, output_path, filename, folder_path: str = None, is_encrypted: bool = False):
         """
         Apply the super-resolution model to an image.
 
@@ -60,14 +63,12 @@ class SuperResolution:
             image_source (str): The source of the image
         """
         
-        image = self.__fetch_image(image_source = image_path)
-        
         if self.model_info["multi_input"]:
-            postprocess_image = self.process_images(images = image)
+            postprocess_image = self.process_images(images = self.__fetch_image(image_source = folder_path, is_encrypted = is_encrypted))
         else:
-            postprocess_image = self.process_image(image = image)
+            postprocess_image = self.process_image(image = self.__fetch_image(image_source = image_path, is_encrypted = is_encrypted))
         
-        return self.save_image(image = postprocess_image, output_path = output_path, filename = filename)
+        return self.save_image(image = postprocess_image, output_path = output_path, filename = filename, is_encrypted = is_encrypted)
     
     def process_image(self, image: np.ndarray | torch.Tensor) -> np.ndarray | torch.Tensor:
         
@@ -114,11 +115,11 @@ class SuperResolution:
         quadrant_images_seq = [[] for _ in range(len(preprocess_images))]
         
         if height >= 1600 or width >= 1200:
-            for index, image in enumerate(preprocess_images):
+            for _, image in enumerate(preprocess_images):
                 quadrant_images_seq = self.__split_image(height = height, width = width, img = image)
                 sr_part = []
                 with torch.no_grad():
-                    for index, seq in enumerate(quadrant_images_seq):
+                    for _, seq in enumerate(quadrant_images_seq):
                         tensor = torch.cat(seq, dim=0).to(self.device)
                         sr_part.append(self.model(tensor))
                     
@@ -153,13 +154,13 @@ class SuperResolution:
         return torch.cat((top, bottom), dim = 2)
 
         
-    def __fetch_image(self, image_source: str):
+    def __fetch_image(self, image_source: str, is_encrypted: bool = False):
         
         """
         Fetch an image from a local file path
 
         Args:
-            image_source (str): The source of the image
+            image_source (str): The source of the image or a folder containing multiple image
             
         Raises:
             ValueError: Failed to load image from path
@@ -168,14 +169,28 @@ class SuperResolution:
         Returns:
             MatLike: The loaded image
         """
+        images = []
         if os.path.exists(image_source):
-            image = cv2.imread(image_source)
-            if image is None:
-                raise ValueError(f"Failed to load image from path: {image_source}")
-        
+            if os.path.isdir(image_source):
+                for file in os.listdir(image_source):
+                    images.append(self.__decrypt_or_get_image(file_path = os.path.join(image_source, file), is_encrypted = is_encrypted))
+                return images
+            
+            else:
+                return self.__decrypt_or_get_image(file_path = image_source, is_encrypted = is_encrypted)
         else:
             raise ValueError(f"Invalid image source: {image_source}")
-        
+    
+    def __decrypt_or_get_image(self, file_path, is_encrypted):
+        if is_encrypted:
+            with open(file_path, "rb") as file:
+                decrypted_data = AES.decrypt_message(file.read())
+                image_array = np.frombuffer(decrypted_data, dtype=np.uint8)
+                image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+        else:
+            image = cv2.imread(file_path)
+            if image is None:
+                raise ValueError(f"Failed to load image from path: {file_path}")
         return image
     
     def __preprocess_image(self, image: np.ndarray) -> torch.Tensor:
@@ -190,14 +205,18 @@ class SuperResolution:
         numpy_image = tensor_image.cpu().detach().numpy().astype(np.uint8)
         return ImageConverter.convert_image(numpy_image, ImageColorConverter[self.model_info["invert_color_mode"]])
     
-    def save_image(self, image, output_path="processed_images", filename="super_resolved.png"):
+    def save_image(self, image, output_path="processed_images", filename="super_resolved.png", is_encrypted = False):
         
         os.makedirs(output_path, exist_ok=True)
         
         output_path = os.path.join(output_path, filename)
+                
+        height, width = image.shape[:2]
         
-        cv2.imwrite(output_path, image)
-        
-        print(f"Saved image to: {output_path}")
-        
-        return output_path
+        if is_encrypted:
+            with open(output_path, "wb") as im:
+                im.write(AES.encrypt_message((cv2.imencode('.png', image)[1]).tobytes()))
+        else:
+            cv2.imwrite(output_path, image)
+
+        return output_path, height, width 

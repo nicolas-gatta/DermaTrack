@@ -49,7 +49,6 @@ async function toggleAnnotations() {
                 if (data.status === 'error') {
                     console.error(`Failed to update the annotation ${canvas.dataset.id}: ${data.message}`);
                 }else{
-                    console.log(data.annotations);
                     if (data.annotations){
                         annotations = JSON.parse(data);
                     }
@@ -161,7 +160,6 @@ function deleteLine() {
 }
 
 async function saveAnnotations(){
-    console.log(annotations);
     try {
         await fetch(`/core/visit_list/update_visit_body_part/${canvas.dataset.id}/`, {
             method: "PUT",

@@ -2,6 +2,7 @@ import os
 import cv2
 import re
 import torch
+import json
 
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect
@@ -16,10 +17,12 @@ from super_resolution.services.utils.prepare_dataset import dataset_exist_or_cre
 from super_resolution.services.utils.json_manager import JsonManager
 from super_resolution.services.utils.super_resolution import SuperResolution
 from super_resolution.services.utils.model_evaluation import ModelEvaluation
+from core.models import VisitBodyPart
 from utils.unique_filename import get_unique_filename
 from utils.checks import group_and_super_user_checks
+from django.views.decorators.csrf import csrf_exempt
 
-_model = None
+__model = None
 __test_model = None
 
 @login_required(login_url='/')
@@ -341,3 +344,49 @@ def get_models(request):
         models = []
     
     return JsonResponse({'models': models})
+
+def load_model() -> SuperResolution:
+    global __model
+    
+    json_path = os.path.join(settings.BASE_DIR, "super_resolution", "static", "data", "model_selection.json")
+    
+    with open(json_path, "r") as f:
+        model_info = json.load(f)
+        model_name = model_info["model_name"]
+    
+    if __model != None and model_name in __model.path:
+        return __model
+    else:
+        model_path = os.path.join(settings.BASE_DIR, "super_resolution", "models", f"{model_name}")
+        return SuperResolution(model_path = model_path)
+    
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def apply_sr(request):
+    if request.method == "POST" :
+        
+        model = load_model()
+        
+        data = json.loads(request.body)
+        
+        visit_body_part = VisitBodyPart.objects.get(pk = data.get("visit_body_part_id", None))
+        
+        output_path = os.path.join(settings.MEDIA_ROOT, "visits", f"visit_{visit_body_part.visit.pk}", visit_body_part.body_part.name)
+        
+        filename = f"enchanced_image_{visit_body_part.pk}.enc"
+                    
+        if model.model_info["multi_input"]:
+            output_path, height, width = model.apply_super_resolution(output_path = output_path, filename = filename, folder_path = visit_body_part.image_super_path.path, is_encrypted = True)
+        else:
+            image_path = visit_body_part.image_path.path
+            output_path, height, width = model.apply_super_resolution(image_path = image_path, output_path = output_path, filename = filename, is_encrypted = True)
+            
+        visit_body_part.image_super_height = height
+        visit_body_part.image_super_width = width
+        visit_body_part.image_super_name = filename
+        visit_body_part.image_super_path = output_path
+        
+        visit_body_part.save()
+        
+        return JsonResponse({"message": "Enhanced Sucessful"}, status=200)

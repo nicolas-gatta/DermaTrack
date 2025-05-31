@@ -2,6 +2,7 @@
 
 <script src="{% static 'js/video_capture.js' %}"></script>
 <script src="{% static 'js/annotation.js' %}"></script>
+<script src="{% static 'js/enchanceImage.js' %}"></script>
 
 <link href="{% static 'css/visit_modal.css' %}" rel="stylesheet" type="text/css">
 <link href="{% static 'css/image_preview.css' %}" rel="stylesheet" type="text/css">
@@ -109,21 +110,29 @@
                     <input class="form-check-input" type="checkbox" id="annotationSwitch" onclick="toggleAnnotations()">
                     <label class="form-check-label" for="annotationSwitch">Annotations</label>
                 </div>
+                <div class="form-check form-switch annotation-toggle m-2">
+                    <input class="form-check-input" type="checkbox" id="superSwitch" onclick="toggleEnchancedImage()" disabled >
+                    <label class="form-check-label" for="superSwitch">Enchanced Image</label>
+                </div>
 
             </div>
             <div class="modal-body position-relative">
                 <div id="image-preview" class="background-image position-absolute top-50 start-50 translate-middle">
                     <canvas id="canvas-annotation"></canvas>
                     <button id="trash-button" type="button" class="btn btn-danger" onclick = "deleteLine()"><i class="bi bi-trash-fill"></i></button>
-                    
                 </div>
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-success" id="save-picture" onclick = "saveAnnotations()">Save Annotations</button>
+                <button type="button" class="btn btn-info" id="create-super-image" onclick = "enchancedImage()">Enchanced Image</button>
                 <button type="button" class="btn btn-danger" data-bs-target="#mainModal" data-bs-toggle="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-  
+
+{% csrf_token %}
+<script>
+    var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+</script>
