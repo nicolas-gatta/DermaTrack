@@ -69,7 +69,7 @@
         </div>
         <div class="col-md-6">
           <label for="model-select" class="form-label">Use trained model ? (optional)</label>
-          <select class="form-select" id="model-select" name="pretrain-model" required>
+          <select class="form-select" id="model-select" name="pretrain-model">
             <option value="">---Select Model---</option>
           </select>
         </div>
@@ -150,7 +150,7 @@
             </select>
             <label for="overlaying" class="form-label">Select Overlaying pourcentage</label>
             <div class="input-group">
-              <input type="number" min="0" max="100" class="form-control" id="overlaying-select" name = "overlaying" placeholder="Pourcentage here">
+              <input type="number" min="0" max="100" step="1" class="form-control" id="overlaying-select" name = "overlaying" placeholder="Pourcentage here">
               <span class="input-group-text">%</span>
             </div>
           </div>
@@ -185,12 +185,12 @@
           <div id="angleOptions" class="d-none w-100 px-3">
             <label for="overlaying" class="form-label">Select maximum and minimum rotation degree</label>
             <div class="input-group">
-              <input type="number" min="0" max="100" class="form-control" id="degree-select" name = "degree" placeholder="Degree Here">
+              <input type="number" min="1" max="10" step="1" class="form-control" id="degree-select" name = "degree" placeholder="Degree Here">
               <span class="input-group-text">°</span>
             </div>
             <label for="overlaying" class="form-label">Select the step</label>
             <div class="input-group">
-              <input type="number" min="0" max="100" class="form-control" id="step-select" name = "step-degree" placeholder="Step here">
+              <input type="number" min="1" max="2" step="1" class="form-control" id="step-select" name = "step-degree" placeholder="Step here">
               <span class="input-group-text">°</span>
             </div>
           </div>

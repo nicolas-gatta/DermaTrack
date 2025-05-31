@@ -81,13 +81,14 @@ def training_model(request):
             stride = int(patch_size * (overlaying / 100.0)) if overlaying != 0.0 else None
     
     if ("image-option-angle" in request.POST):
-        max_angle_rotation = request.POST["degree"]
-        angle_rotation_step = request.POST["step-degree"]
+        max_angle_rotation = int(request.POST["degree"])
+        angle_rotation_step = int(request.POST["step-degree"])
 
     train_file, valid_file, eval_file = [dataset_exist_or_create(dataset = dataset, mode = mode, scale = scale, category = category, 
                                                                   patch_size = patch_size, stride = stride, resize_rule = resize_rule, 
                                                                   resize_to_output = resize_to_output, base_dir = settings.BASE_DIR, 
-                                                                  multi_input = multi_input) 
+                                                                  multi_input = multi_input, max_angle_rotation = max_angle_rotation, 
+                                                                  angle_rotation_step = angle_rotation_step) 
                                          for dataset, category in [(train_dataset, "training"), 
                                                                    (valid_dataset, "validation"), 
                                                                    (eval_dataset, "evaluation")] 
