@@ -26,21 +26,23 @@ from super_resolution.services.utils.model_evaluation import ModelEvaluation
 
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
                 mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-5, 
-                seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+                seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8, pretrain_model: str = None):
+
+    if not pretrain_model:
+        pretrained_model_name = f"SRResNet_x{scale}_{mode}.pth"
         
-    pretrained_model_name = f"SRResNet_x{scale}_{mode}.pth"
-    
-    pretrained_model_path = os.path.join(output_path, pretrained_model_name)
-    
-    if not os.path.exists(pretrained_model_path):
-        pretrain_model(model_name = pretrained_model_name, train_dataset = extract_dataset_name(train_file), valid_dataset = extract_dataset_name(valid_file), 
-                                   eval_dataset = extract_dataset_name(eval_file), output_path = output_path, mode = mode, scale = scale, invert_mode = invert_mode, 
-                                   patch_size = patch_size, stride = None, seed = seed, batch_size = 32, num_workers = num_workers)
-    
+        pretrained_model_path = os.path.join(output_path, pretrained_model_name)
+        
+        if not os.path.exists(pretrained_model_path):
+            pretrain_model(model_name = pretrained_model_name, train_dataset = extract_dataset_name(train_file), valid_dataset = extract_dataset_name(valid_file), 
+                                    eval_dataset = extract_dataset_name(eval_file), output_path = output_path, mode = mode, scale = scale, invert_mode = invert_mode, 
+                                    patch_size = patch_size, stride = None, seed = seed, batch_size = 32, num_workers = num_workers)
+    else:
+        pretrained_model_path = os.path.join(output_path, pretrain_model)
     
     generator = RRDBNet(up_scale = scale).to(device)
     
-    model_info = torch.load(f = pretrained_model_path, map_location = device)
+    model_info = torch.load(f = pretrained_model_path, map_location = device, weights_only = True)
     
     generator.load_state_dict(model_info['model_state_dict'])
     

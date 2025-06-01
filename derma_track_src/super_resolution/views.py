@@ -57,7 +57,7 @@ def training_model(request):
     
     eval_dataset = request.POST["eval-dataset"]
     
-    pretrain_model = request.POST["pretrain-model"]
+    pretrain_model = None
     
     max_angle_rotation = None
     
@@ -73,8 +73,10 @@ def training_model(request):
     
     multi_input = architecture in ["EDVR"]
     
-    if pretrain_model != "" and architecture not in pretrain_model:
+    if request.POST["pretrain-model"] != "" and architecture not in pretrain_model:
         render(request, 'partial/model_form.html', {"form": None})
+    else:
+        pretrain_model = request.POST["pretrain-model"]
     
     if ("image-option" in request.POST):
         
@@ -123,7 +125,8 @@ def training_model(request):
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
-                num_workers = num_workers)
+                num_workers = num_workers,
+                pretrain_model = pretrain_model)
                 
         case "SRGAN":
             srgan_train.train_model(
@@ -141,7 +144,8 @@ def training_model(request):
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
-                num_workers = num_workers)
+                num_workers = num_workers,
+                pretrain_model = pretrain_model)
                         
         case "ESRGAN":
             esrgan_train.train_model(
@@ -159,7 +163,8 @@ def training_model(request):
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
-                num_workers = num_workers)
+                num_workers = num_workers,
+                pretrain_model = pretrain_model)
             
         case "EDVR":
             edvr_train.train_model(
@@ -177,7 +182,8 @@ def training_model(request):
                 seed = seed, 
                 batch_size = batch_size,
                 num_epochs = num_epochs,
-                num_workers = num_workers)
+                num_workers = num_workers,
+                pretrain_model = pretrain_model)
         case _:
             pass
         

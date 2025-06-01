@@ -18,7 +18,7 @@ from torch.utils.data.dataloader import DataLoader
 
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
                 mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-4, 
-                seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8):
+                seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8,  pretrain_model: str = None):
     
     early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
     
@@ -47,6 +47,9 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     epoch_train_loss, epoch_val_loss = RunningAverage(), RunningAverage()
 
     model = SRCNN().to(device)
+    
+    if pretrain_model:
+        model.load_state_dict(f = os.path.join(output_path, pretrain_model), map_location = device, weights_only = True)
     
     criterion = nn.MSELoss()  
     

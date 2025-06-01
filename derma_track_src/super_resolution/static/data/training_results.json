@@ -207,7 +207,7 @@
             "MSSIM": 0.9955,
             "LPIPS": 0.0353
         },
-        "execution_time": 0.0168
+        "execution_time": 0.0056
     },
     "SRCNN_x4_BGR2YCrCb.pth": {
         "architecture": "SRCNN",
