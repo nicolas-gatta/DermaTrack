@@ -77,6 +77,11 @@ def training_model(request):
         render(request, 'partial/model_form.html', {"form": None})
     else:
         pretrain_model = request.POST["pretrain-model"]
+        model_info = torch.load(os.path.join(output_path, pretrain_model), weights_only=True)
+        architecture = model_info["architecture"]
+        scale = model_info["scale"]
+        mode = model_info["color_mode"]
+            
     
     if ("image-option" in request.POST):
         
