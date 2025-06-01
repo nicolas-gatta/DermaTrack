@@ -1,7 +1,8 @@
 <div class="modal fade" id="mainModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-            <form method="POST" hx-post="/core/create_visit/">
+            
+            <form id = "visit-form" method="POST" hx-post="/core/create_visit/" hx-target="#dynamic-body" hx-swap="innerHTML" onsubmit="dismissModal()">
                 {% csrf_token %}
 
                 <div class="modal-header bg-light border-bottom">
@@ -29,11 +30,10 @@
                 </div>
 
                 <div class="modal-footer border-top">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary"> Save</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="clearPopUp()">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-

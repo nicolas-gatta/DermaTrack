@@ -1,5 +1,11 @@
 let selectedImageId = null;
 
+function dismissModal() {
+    const modalElement = document.getElementById('mainModal');
+    const modal = bootstrap.Modal.getInstance(modalElement) || new bootstrap.Modal(modalElement);
+    modal.hide();
+}
+
 function addEventListener(){
     document.body.addEventListener('htmx:afterSwap', handleModal)
 }

@@ -26,8 +26,10 @@ canvas.addEventListener('mouseup', (e) => {
         var endX = e.clientX - rect.left;
         var endY = e.clientY - rect.top;
 
-        annotations.push({ startX, startY, endX, endY });
-        drawAnnotations();
+        if (Math.abs(endX - startX) >= 0.1 && Math.abs(endY - startY) >= 0.1){
+            annotations.push({ startX, startY, endX, endY });
+            drawAnnotations();
+        }
         drawing = false;
     }
 });
@@ -36,30 +38,28 @@ canvas.addEventListener('mouseup', (e) => {
 async function toggleAnnotations() {
     annotationEnabled = !annotationEnabled;
     canvas.style.display = annotationEnabled ? "block" : "none";
-    if(first_time){
-        try {
-            await fetch(`/core/visit_list/get_annotations/${canvas.dataset.id}`, {
-                method: "GET",
-                headers: { 
-                    "Content-Type": "application/json"
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'error') {
-                    console.error(`Failed to update the annotation ${canvas.dataset.id}: ${data.message}`);
+    try {
+        await fetch(`/core/visit_list/get_annotations/${canvas.dataset.id}`, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json"
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'error') {
+                console.error(`Failed to update the annotation ${canvas.dataset.id}: ${data.message}`);
+            }else{
+                if (data.annotations){
+                    annotations = data.annotations;
                 }else{
-                    if (data.annotations){
-                        annotations = JSON.parse(data);
-                    }
+                    annotations = [];
                 }
-            })
+            }
+        })
 
-        } catch (error) {
-            console.error(`Error saving the annotation ${canvas.dataset.id}:`, error);
-        }
-
-        first_time = false;
+    } catch (error) {
+        console.error(`Error Loading the annotation ${canvas.dataset.id}:`, error);
     }
 
     if(annotationEnabled){
@@ -90,7 +90,7 @@ function drawLine(startX, startY, endX, endY, color) {
     var length;
 
     if (canvas.dataset.distance != "null"){
-        length = (((float(canvas.dataset.pixel_size) * pixel_length) * float(canvas.dataset.distance)) / float(canvas.dataset.focal)) + " mm"
+        length = (((parseFloat(canvas.dataset.pixel_size) * pixel_length) * parseFloat(canvas.dataset.distance)) / parseFloat(canvas.dataset.focal)).toFixed(2) + " mm"
     }else{
         length = pixel_length + " px"
     }

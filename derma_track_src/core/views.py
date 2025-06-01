@@ -133,7 +133,7 @@ def get_image(request, id):
         
         encoded_string = base64.b64encode(AES.decrypt_message(visit_body_part.image_path.file.read())).decode('utf-8')
         
-        has_super = len(visit_body_part.image_super_name) != 0
+        has_super = visit_body_part.image_super_name != None and len(visit_body_part.image_super_name) != 0
         
         return JsonResponse({"image": encoded_string, "distance": visit_body_part.distance_from_subject, "pixel_size": visit_body_part.pixel_size, "focal": visit_body_part.focal, 
                              "has_super": has_super})
@@ -244,7 +244,8 @@ def create_patient(request):
         form = PatientForm(request.POST)
         if form.is_valid():
             form.save()
-            return JsonResponse({"success": True})
+            patients = Patient.objects.all() 
+            return render(request, 'partial/patient_list.html', {'patients': patients})
         return render(request, "partial/patient_form.html", {"form": form, "is_form": True})
     else:
         form = PatientForm()
@@ -254,7 +255,7 @@ def create_patient(request):
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def create_visit(request):
     if request.method == "POST":
-        form = VisitForm(request.POST)
+        form = VisitFormAdmin(request.POST) if request.user.is_superuser else VisitForm(request.POST)
         if form.is_valid():
             if request.user.is_superuser:
                 form.save()
@@ -263,8 +264,13 @@ def create_visit(request):
                 visit.doctor = Doctor.objects.get(user = request.user)
                 visit.status = Status.SCHEDULED
                 visit.save()
-            return JsonResponse({"success": True})
+            if request.user.is_superuser:
+                visits = Visit.objects.select_related('doctor', 'patient').all()
+            elif request.user.groups.filter(name__in=["Doctor"]).exists():
+                visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
+            
+            return render(request, 'partial/visit_list.html', {'visits': visits})
         return render(request, "partial/visit_form.html", {"form": form})
     else:
-        form =  VisitFormAdmin() if request.user.is_superuser else VisitForm()
+        form = VisitFormAdmin() if request.user.is_superuser else VisitForm()
         return render(request, "partial/visit_form.html", {"form": form})
