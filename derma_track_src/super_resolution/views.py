@@ -73,6 +73,9 @@ def training_model(request):
     
     multi_input = architecture in ["EDVR"]
     
+    if pretrain_model != "" and architecture not in pretrain_model:
+        render(request, 'partial/model_form.html', {"form": None})
+    
     if ("image-option" in request.POST):
         
         if(request.POST["image-option"] == "resize"):
@@ -201,12 +204,20 @@ def evaluate_model(request):
     
     multi_input = model_info["multi_input"]
     
+    max_angle_rotation = None
+    
+    angle_rotation_step = None
+
+    if request.POST["degree"] != "" and request.POST["step-degree"] != "":
+        max_angle_rotation = int(request.POST["degree"])
+        angle_rotation_step = int(request.POST["step-degree"])
+    
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
      
     eval_file = dataset_exist_or_create(dataset = eval_dataset, mode = mode, scale = scale, category = "evaluation", 
                                         patch_size = None, stride = None, resize_rule = None, 
                                         resize_to_output = resize_to_output, base_dir = settings.BASE_DIR,
-                                        multi_input = multi_input)
+                                        multi_input = multi_input, max_angle_rotation = max_angle_rotation, angle_rotation_step = angle_rotation_step)
     
     ModelEvaluation.evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file, eval_file_name = eval_dataset)
         
@@ -377,7 +388,7 @@ def apply_sr(request):
         filename = f"enchanced_image_{visit_body_part.pk}.enc"
                     
         if model.model_info["multi_input"]:
-            output_path, height, width = model.apply_super_resolution(output_path = output_path, filename = filename, folder_path = visit_body_part.image_super_path.path, is_encrypted = True)
+            output_path, height, width = model.apply_super_resolution(image_path = None, output_path = output_path, filename = filename, folder_path = visit_body_part.multi_image_path, is_encrypted = True)
         else:
             image_path = visit_body_part.image_path.path
             output_path, height, width = model.apply_super_resolution(image_path = image_path, output_path = output_path, filename = filename, is_encrypted = True)
@@ -390,3 +401,26 @@ def apply_sr(request):
         visit_body_part.save()
         
         return JsonResponse({"message": "Enhanced Sucessful"}, status=200)
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def select_model(request):
+    if request.method == "POST" :
+        
+        output_file = os.path.join(settings.BASE_DIR, "super_resolution", "static", "data", "model_selection.json")
+            
+        selector_model = {
+            "model_name": request.POST["model"]
+        }
+
+        with open(output_file, "w") as f:
+            json.dump(selector_model, f, indent = 4)
+        
+        return render(request, 'partial/model_selection_form.html', {"form": None})
+        
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def model_selection_form(request):
+    if request.headers.get('HX-Request'):
+        #form = TrainingForm()
+        return render(request, 'partial/model_selection_form.html', {"form": None})

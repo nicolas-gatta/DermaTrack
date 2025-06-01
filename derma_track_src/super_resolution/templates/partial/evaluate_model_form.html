@@ -25,6 +25,23 @@
             <option value="">---Select Evaluation Dataset---</option>
         </select>
       </div>
+
+      <div class="col-md-12 pt-2">
+          <label for="overlaying" class="form-label">Select maximum and minimum rotation degree</label>
+          <div class="input-group">
+            <input type="number" min="1" max="10" step="1" class="form-control" id="degree-select" name = "degree" placeholder="Degree Here">
+            <span class="input-group-text">°</span>
+          </div>
+      </div>
+
+      <div class="col-md-12 pt-2">
+        <label for="overlaying" class="form-label">Select the step</label>
+        <div class="input-group">
+          <input type="number" min="1" max="2" step="1" class="form-control" id="step-select" name = "step-degree" placeholder="Step here">
+          <span class="input-group-text">°</span>
+        </div>
+      </div>
+
     </fieldset>
 
     <button type="submit" class="btn btn-primary mt-3">Evaluate</button>

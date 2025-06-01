@@ -105,22 +105,22 @@ class SuperResolution:
         preprocess_images = []
 
         if isinstance(images[0], np.ndarray):  
-            preprocess_images = [self.__preprocess_image(image) for image in images]
+            preprocess_images = torch.stack([self.__preprocess_image(image).squeeze(0) for image in images]).unsqueeze(0).to(self.device)
  
         else:
             preprocess_images = images
             postprocess_required = False
-
+        
         height, width = preprocess_images.shape[3:]
         quadrant_images_seq = [[] for _ in range(len(preprocess_images))]
         
         if height >= 1600 or width >= 1200:
-            for _, image in enumerate(preprocess_images):
+            for image in preprocess_images:
                 quadrant_images_seq = self.__split_image(height = height, width = width, img = image)
                 sr_part = []
                 with torch.no_grad():
-                    for _, seq in enumerate(quadrant_images_seq):
-                        tensor = torch.cat(seq, dim=0).to(self.device)
+                    for seq in quadrant_images_seq:
+                        tensor = seq.unsqueeze(0).to(self.device)
                         sr_part.append(self.model(tensor))
                     
                     sr_image = self.__merge_images(*sr_part)
