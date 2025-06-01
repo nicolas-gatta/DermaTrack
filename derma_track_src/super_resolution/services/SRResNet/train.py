@@ -73,7 +73,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     model = SRResNet(up_scale = scale).to(device)
     
     if pretrain_model:
-        model.load_state_dict(f = os.path.join(output_path, pretrain_model), map_location = device, weights_only = True)
+        model.load_state_dict(torch.load(f = os.path.join(output_path, pretrain_model), map_location = device, weights_only = True)["model_state_dict"])
     
     optimizer = optim.Adam(model.parameters(), lr = learning_rate)
     

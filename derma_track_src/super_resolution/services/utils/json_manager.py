@@ -37,14 +37,14 @@ class JsonManager:
 
     @staticmethod
     def training_results_to_json(architecture: str, stride: int, patch_size: int, resize_rule: ResizeRule, model_name: str, train_file: str, valid_file: str, eval_file: str, 
-                                mode: str, scale: int, learning_rate: float, seed: int, batch_size: int, num_epochs: int, num_workers: int):
+                                mode: str, scale: int, learning_rate: float, seed: int, batch_size: int, num_epochs: int, num_workers: int, pretrain_model: str = None):
         """
         Save or update the training results in a JSON file using `model_name` 
         as the key.
         """
         model_data = {
             ModelField.ARCHITECTURE: architecture,
-            ModelField.PRETRAINED_MODEL: None,
+            ModelField.PRETRAINED_MODEL: pretrain_model,
             ModelField.STRIDE: stride, 
             ModelField.PATCH_SIZE: patch_size,
             ModelField.RESIZE_RULE: resize_rule,

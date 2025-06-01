@@ -33,14 +33,6 @@ def training_model(request):
     
     model_name = get_unique_filename(model_name = f"{request.POST['name']}.pth", output_path = output_path)
     
-    architecture = request.POST["architecture"]
-    
-    scale = int(request.POST["scale"])
-    
-    mode = request.POST["mode"]
-    
-    invert_mode = re.sub(r"^(.*)2(.*)$", r"\2here\1", mode).replace("here","2")
-    
     learning_rate = float(request.POST["learning-rate"])
     
     batch_size = int(request.POST["batch-size"])
@@ -68,31 +60,37 @@ def training_model(request):
     patch_size = None
     
     stride = None
-    
-    resize_to_output = architecture in ["SRCNN"]
-    
-    multi_input = architecture in ["EDVR"]
-    
-    if request.POST["pretrain-model"] != "" and architecture not in pretrain_model:
-        render(request, 'partial/model_form.html', {"form": None})
-    else:
+        
+    if request.POST["pretrain-model"] != "":
         pretrain_model = request.POST["pretrain-model"]
         model_info = torch.load(os.path.join(output_path, pretrain_model), weights_only=True)
         architecture = model_info["architecture"]
         scale = model_info["scale"]
         mode = model_info["color_mode"]
+        invert_mode = model_info["invert_color_mode"]
+        patch_size = model_info["patch_size"]
+        stride = model_info["stride"]
+        multi_input = model_info["multi_input"]
+        resize_to_output = model_info["need_resize"]
+    else:
+        architecture = request.POST["architecture"]
+        scale = int(request.POST["scale"])
+        mode = request.POST["mode"]
+        invert_mode = re.sub(r"^(.*)2(.*)$", r"\2here\1", mode).replace("here","2")
+        mode = request.POST["mode"]
+        resize_to_output = architecture in ["SRCNN"]
+        multi_input = architecture in ["EDVR"]
+
+        if ("image-option" in request.POST):
             
-    
-    if ("image-option" in request.POST):
+            if(request.POST["image-option"] == "resize"):
+                resize_rule = "BIGGEST" if int(request.POST["resize-rule"]) == 1 else "SMALLEST"
+                
+            elif(request.POST["image-option"] == "subdivise"):
+                overlaying = float(request.POST["overlaying"])
+                patch_size = int(request.POST["patch-size"])
+                stride = int(patch_size * (overlaying / 100.0)) if overlaying != 0.0 else None
         
-        if(request.POST["image-option"] == "resize"):
-            resize_rule = "BIGGEST" if int(request.POST["resize-rule"]) == 1 else "SMALLEST"
-            
-        elif(request.POST["image-option"] == "subdivise"):
-            overlaying = float(request.POST["overlaying"])
-            patch_size = int(request.POST["patch-size"])
-            stride = int(patch_size * (overlaying / 100.0)) if overlaying != 0.0 else None
-    
     if ("image-option-angle" in request.POST):
         max_angle_rotation = int(request.POST["degree"])
         angle_rotation_step = int(request.POST["step-degree"])
@@ -110,7 +108,7 @@ def training_model(request):
     JsonManager.training_results_to_json(architecture = architecture, stride = stride, patch_size = patch_size, resize_rule = resize_rule, 
                                         model_name = model_name, train_file = train_dataset, valid_file = valid_dataset, 
                                         eval_file = eval_dataset, mode = mode, scale = scale, learning_rate = learning_rate, seed = seed, 
-                                        batch_size = batch_size, num_epochs = num_epochs, num_workers = num_workers)
+                                        batch_size = batch_size, num_epochs = num_epochs, num_workers = num_workers, pretrain_model = pretrain_model)
     
     match(architecture):
         

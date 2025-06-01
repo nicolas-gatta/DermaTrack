@@ -8,9 +8,6 @@ var resizeRadio = document.getElementById("resize-radio");
 var patchSelect = document.getElementById("patch-size-select");
 var overlayingSelect = document.getElementById("overlaying-select");
 var resizeInput = document.getElementById("resize-rule-input");
-var angleRadio = document.getElementById("angle-radio");
-var degreeSelect = document.getElementById("degree-select");
-var stepSelect = document.getElementById("step-select");
 
 
 function toggleFields(){
@@ -20,7 +17,7 @@ function toggleFields(){
         select.required = !isPretrain;
     });
 
-    [subdiviseRadio, resizeRadio, patchSelect, overlayingSelect, resizeInput, angleRadio, degreeSelect, stepSelect].forEach( field => {
+    [subdiviseRadio, resizeRadio, patchSelect, overlayingSelect, resizeInput].forEach( field => {
         field.disabled = isPretrain;
     });
 }

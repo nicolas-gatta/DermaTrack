@@ -114,7 +114,7 @@ def __crop_rectangle(w, h, angle):
 
     return int(wr), int(hr)
 
-def __rotate_and_crop_image(image, angle):
+def __rotate_and_crop_image(image, angle, scale):
     
     (h, w) = image.shape[:2]
     
@@ -125,7 +125,10 @@ def __rotate_and_crop_image(image, angle):
     rotated = cv2.warpAffine(image, matrix, (w, h))
 
     new_width, new_height = __crop_rectangle(w = w, h = h, angle = angle)
-        
+    
+    new_width = ((new_width // 2) // 2) * 2 * 2
+    new_height = ((new_height // 2) // 2) * 2 * 2
+    
     return __crop_or_pad_image(image = rotated, target_width=new_width, target_height=new_height)    
 
 def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConverter, hi_res_images: h5py.Group, low_res_images: h5py.Group, image_info: h5py.Group,
@@ -162,7 +165,7 @@ def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConv
             
             for angle in angles:
                 
-                rotated_image = __rotate_and_crop_image(image = hr, angle = angle)
+                rotated_image = __rotate_and_crop_image(image = hr, angle = angle, scale = scale)
                 
                 image_info_list, count = __prepare_image(file = file, hr = rotated_image, scale = scale, hi_res_images = hi_res_images, low_res_images = low_res_images, patch_size = patch_size,
                                                         stride = stride, resize_rule = resize_rule, preprocessing_required = preprocessing_required, resize_to_output = resize_to_output,

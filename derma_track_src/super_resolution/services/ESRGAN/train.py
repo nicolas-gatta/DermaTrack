@@ -37,8 +37,12 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
             pretrain_model(model_name = pretrained_model_name, train_dataset = extract_dataset_name(train_file), valid_dataset = extract_dataset_name(valid_file), 
                                     eval_dataset = extract_dataset_name(eval_file), output_path = output_path, mode = mode, scale = scale, invert_mode = invert_mode, 
                                     patch_size = patch_size, stride = None, seed = seed, batch_size = 32, num_workers = num_workers)
+            
+        JsonManager.update_model_data(model_name=model_name, updated_fields={ModelField.PRETRAINED_MODEL: pretrained_model_name})
     else:
         pretrained_model_path = os.path.join(output_path, pretrain_model)
+        
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     
     generator = RRDBNet(up_scale = scale).to(device)
     
@@ -51,8 +55,6 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     cudnn.benchmark = True
     
     scaler = torch.amp.GradScaler()
-    
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     torch.manual_seed(seed)
     
@@ -67,8 +69,6 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
 
     train_loader = DataLoader(train_dataset, batch_sampler = train_batch, num_workers = num_workers, pin_memory = True, persistent_workers = True)
     val_loader = DataLoader(val_dataset, batch_sampler = val_batch, num_workers = num_workers, pin_memory = True, persistent_workers = True)
-    
-    JsonManager.update_model_data(model_name=model_name, updated_fields={ModelField.PRETRAINED_MODEL: pretrained_model_name})
     
     train_loss, val_loss = RunningAverage(), RunningAverage()
     
