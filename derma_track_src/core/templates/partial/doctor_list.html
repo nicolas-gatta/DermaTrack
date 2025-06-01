@@ -37,10 +37,10 @@
                     <td>{{ doctor.other_phone_number }}</td>
                     <td>       
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <form action='doctor' method='POST' style="margin: 0; display: inline;">
+                            <form action='doctor' style="margin: 0; display: inline;">
                                 {% csrf_token %}
                                 <input type="hidden" name="id" class="form-control" value="{{ doctor.pk }}" required=""> 
-                                <button type="submit" class="btn btn-success" data-mdb-ripple-color="dark">View</button>
+                                <button type="submit" class="btn btn-success" data-mdb-ripple-color="dark" disabled>View</button>
                             </form>
                         </div>
                     </td>
