@@ -2,8 +2,8 @@ var showEnchancedImage = false;
 var canvas = document.getElementById('canvas-annotation');
 
 async function enchancedImage(){
-
     try {
+        showLoading("Enchancing of the image, please wait...", "Feel free to grab a coffee or a nice cup of tea just like our British mates would!");
         await fetch(`/super_resolution/apply_sr/`, {
             method: "POST",
             headers: { 
@@ -23,6 +23,8 @@ async function enchancedImage(){
 
     } catch (error) {
         console.error(`Failed to enchanced the image ${canvas.dataset.id}:`, error);
+    } finally {
+      hideLoading();
     }
 }
 

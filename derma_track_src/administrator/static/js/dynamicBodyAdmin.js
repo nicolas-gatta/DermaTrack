@@ -30,6 +30,9 @@ async function loadBodyContentAdmin(button) {
 
     }else if (button.id === "evaluation_button"){
         htmx.ajax("GET", "/super_resolution/evaluation_form", "#dynamic-body");
+
+    }else if(button.id === "model_selection_button"){
+        htmx.ajax("GET", "/super_resolution/model_selection_form", "#dynamic-body");
     }
 }
 
