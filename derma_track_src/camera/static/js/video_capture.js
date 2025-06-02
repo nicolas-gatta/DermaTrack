@@ -52,12 +52,8 @@ async function stream() {
     if (true || await isCameraConnected(deviceId)){
         let video = document.getElementById("stream");
         video.muted = true;
-        navigator.mediaDevices.getUserMedia({video: {width: { exact:  1080} , height: { exact: 1920 }}})
+        navigator.mediaDevices.getUserMedia({video: {width: { exact:  1920} , height: { exact: 1080 }}})
             .then((stream) => {
-                console.log('Actual width of the camera video: '
-                    + stream.getVideoTracks()[0].getSettings().width + 'px');
-                console.log('Actual height of the camera video:'
-                    + stream.getVideoTracks()[0].getSettings().height + 'px');
                 video.srcObject = stream;
             })
             .catch((error) => {

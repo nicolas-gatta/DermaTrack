@@ -38,32 +38,30 @@ canvas.addEventListener('mouseup', (e) => {
 async function toggleAnnotations() {
     annotationEnabled = !annotationEnabled;
     canvas.style.display = annotationEnabled ? "block" : "none";
-    try {
-        await fetch(`/core/visit_list/get_annotations/${canvas.dataset.id}`, {
-            method: "GET",
-            headers: { 
-                "Content-Type": "application/json"
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'error') {
-                console.error(`Failed to update the annotation ${canvas.dataset.id}: ${data.message}`);
-            }else{
-                if (data.annotations){
-                    annotations = data.annotations;
+    if(annotationEnabled){
+        try {
+            await fetch(`/core/visit_list/get_annotations/${canvas.dataset.id}`, {
+                method: "GET",
+                headers: { 
+                    "Content-Type": "application/json"
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'error') {
+                    console.error(`Failed to update the annotation ${canvas.dataset.id}: ${data.message}`);
                 }else{
                     annotations = [];
+                    if (data.annotations){
+                        annotations = data.annotations;
+                        drawAnnotations();  
+                    }
                 }
-            }
-        })
+            })
 
-    } catch (error) {
-        console.error(`Error Loading the annotation ${canvas.dataset.id}:`, error);
-    }
-
-    if(annotationEnabled){
-        drawAnnotations();  
+        } catch (error) {
+            console.error(`Error Loading the annotation ${canvas.dataset.id}:`, error);
+        }
     } 
 }
 
@@ -72,7 +70,7 @@ function drawLine(startX, startY, endX, endY, color) {
     ctx.moveTo(startX, startY);
     ctx.lineTo(endX, endY);
     ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 3;
     ctx.stroke();
 
     ctx.beginPath();
@@ -94,7 +92,7 @@ function drawLine(startX, startY, endX, endY, color) {
     }else{
         length = pixel_length + " px"
     }
-    ctx.font = "14px Arial";
+    ctx.font = "20px Arial";
     ctx.fillStyle = color;
     ctx.fillText(length, ((startX + endX ) / 2) + 10, (startY + endY) / 2); 
 }

@@ -205,17 +205,17 @@ def delete_image(request, id):
             
             visit_id = visit_body_part.visit.pk
             
-            image_path = visit_body_part.image_path.path 
+            image_path = visit_body_part.image_path.path if visit_body_part.image_path else None
             
-            preview_path = visit_body_part.image_preview_path.path
+            preview_path = visit_body_part.image_preview_path.path if visit_body_part.image_preview_path else None
             
-            multi_path = visit_body_part.multi_image_path
+            multi_path = visit_body_part.multi_image_path if visit_body_part.multi_image_path else None
             
-            super_path = visit_body_part.image_super_path.path
+            super_path = visit_body_part.image_super_path.path if visit_body_part.image_super_path else None
 
             for internal_path in [image_path, preview_path, multi_path, super_path]:
                 
-                if os.path.exists(internal_path):
+                if internal_path != None and os.path.exists(internal_path):
                     if os.path.isfile(internal_path):
                         os.remove(internal_path)
                     else:
