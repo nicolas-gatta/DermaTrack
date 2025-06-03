@@ -82,6 +82,9 @@ if __name__ == "__main__":
     basic_values[ModelFile.ARCHITECTURE] = "ESRGAN"
     add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_ESRGAN_x4_BGR2RGB.pth", values = basic_values)
     
+    basic_values[ModelFile.ARCHITECTURE] = "ESRGAN"
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Medical_ESRGAN_x4_BGR2RGB.pth", values = basic_values)
+    
     basic_values[ModelFile.ARCHITECTURE] = "SRResNet"
     basic_values[ModelFile.SCALE] = 2
     basic_values[ModelFile.PATCH_SIZE] = 96

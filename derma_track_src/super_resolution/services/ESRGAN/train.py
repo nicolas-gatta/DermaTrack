@@ -180,7 +180,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
             JsonManager.update_model_data(model_name = model_name, updated_fields = {ModelField.COMPLETION_STATUS: f"{round(((epoch + 1)/num_epochs)*100)} %"})
 
         
-    torch.save({"architecture": "SRGAN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": False,
+    torch.save({"architecture": "ESRGAN", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": False,
                 "patch_size": patch_size, "stride": stride, "multi_input": False, "model_state_dict": generator.state_dict()}, os.path.join(output_path, model_name))    
     
     print(f"Model saved as '{os.path.join(output_path, model_name)}'")
