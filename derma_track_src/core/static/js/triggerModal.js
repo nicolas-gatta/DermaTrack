@@ -156,6 +156,8 @@ async function showPreview(id) {
         .then(data => {
             setBackgroundImage(id, data.image, data.pixel_size, data.distance, data.focal);
             document.getElementById("superSwitch").disabled = !data.has_super;
+            cleanAnnotations();
+            cleanEnchanced();
         });
 
         const modalImage = new bootstrap.Modal(document.querySelector("#imagePreviewModal"), {

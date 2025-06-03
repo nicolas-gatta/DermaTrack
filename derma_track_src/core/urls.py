@@ -21,6 +21,8 @@ urlpatterns = [
     path('visit_list/update_visit_body_part/<int:id>/', views.update_visit_body_part, name = "update_visit_body_part"),
     path('visit_list/get_annotations/<int:id>/', views.get_annotations, name = "get_annotations"),
     path('visit_list/delete_image/<int:id>/', views.delete_image,  name = "delete_image"),
-    
+    path('get_visit_by_patient_name/', views.get_visit_by_patient_name, name = "get_visit_by_patient_name"),
+    path('get_patient_by_name/', views.get_patient_by_name, name = "get_patient_by_name"),
+    path('get_doctor_by_name/', views.get_doctor_by_name, name = "get_doctor_by_name"),
     path('doctor_list', views.doctor_list, name = 'doctor_list')
 ]

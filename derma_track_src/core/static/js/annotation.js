@@ -34,6 +34,12 @@ canvas.addEventListener('mouseup', (e) => {
     }
 });
 
+function cleanAnnotations(){
+    annotations = [];
+    document.getElementById("annotationSwitch").checked = false; 
+    annotationEnabled = false;
+}
+
 
 async function toggleAnnotations() {
     annotationEnabled = !annotationEnabled;
@@ -94,7 +100,7 @@ function drawLine(startX, startY, endX, endY, color) {
     }
     ctx.font = "20px Arial";
     ctx.fillStyle = color;
-    ctx.fillText(length, ((startX + endX ) / 2) + 10, (startY + endY) / 2); 
+    ctx.fillText(length, startX, startY ); 
 }
 
 function drawAnnotations() {

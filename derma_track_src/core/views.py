@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from login.models import Doctor
 from django.http import JsonResponse
-from django.template.loader import render_to_string
+from django.db.models.functions import Concat
+from django.db.models import Value
 from django.views.decorators.csrf import csrf_exempt
 import os
 from django.contrib.auth.decorators import login_required
@@ -274,3 +275,51 @@ def create_visit(request):
     else:
         form = VisitFormAdmin() if request.user.is_superuser else VisitForm()
         return render(request, "partial/visit_form.html", {"form": form})
+    
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def get_visit_by_patient_name(request):
+    if request.method == "GET":
+        
+        patient_name = request.GET['name']
+        
+        visits = Visit.objects.select_related('doctor', 'patient').all()
+        
+        visits = visits.annotate(full_name = Concat('patient__name', Value(' '), 'patient__surname'))
+        
+        visits = visits.filter(full_name__icontains = patient_name)
+        
+        if not request.user.is_superuser and request.user.groups.filter(name__in=["Doctor"]).exists():
+            visits = Visit.objects.filter(doctor__user=request.user)
+
+        return render(request, 'partial/visit_list.html', {'visits': visits})
+    
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def get_patient_by_name(request):
+    if request.method == "GET":
+        
+        patient_name = request.GET['name']
+        
+        patients = Patient.objects.all()
+        
+        patients = patients.annotate(full_name = Concat('name', Value(' '), 'surname'))
+        
+        patients = patients.filter(full_name__icontains = patient_name)
+
+        return render(request, 'partial/patient_list.html', {'patients': patients})
+    
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def get_doctor_by_name(request):
+    if request.method == "GET":
+        
+        doctor_name = request.GET['name']
+        
+        doctors = Doctor.objects.all()
+        
+        doctors = doctors.annotate(full_name = Concat('name', Value(' '), 'surname'))
+        
+        doctors = doctors.filter(full_name__icontains = doctor_name)
+
+        return render(request, 'partial/doctor_list.html', {'doctors': doctors})

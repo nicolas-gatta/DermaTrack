@@ -1,6 +1,12 @@
 var showEnchancedImage = false;
 var canvas = document.getElementById('canvas-annotation');
 
+
+function cleanEnchanced(){
+    document.getElementById("superSwitch").checked = false;
+    showEnchancedImage = false;
+}
+
 async function enchancedImage(){
     try {
         showLoading("Enchancing of the image, please wait...", "Feel free to grab a coffee or a nice cup of tea just like our British mates would!");

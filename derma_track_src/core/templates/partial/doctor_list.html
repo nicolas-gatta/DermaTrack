@@ -1,10 +1,12 @@
 
 <div class="container-fluid p-3 bg-light rounded shadow-sm">
-    <div class="input-group">
-        <input type="text" id="search-patient" class="form-control rounded-start" placeholder="Search by Name or Surname..." onkeyup="filterPatients()">
-        <button class="btn btn-primary" onclick="filterPatients()">
-            <i class="fas fa-search"></i> Search
-        </button>
+    <div class="d-flex gap-2">
+        <form class="d-flex flex-grow-1" method ="GET" hx-get="/core/get_doctor_by_name/" hx-target="#dynamic-body" hx-swap="innerHTML">
+            <input type="text" id="search-doctor" name = "name" class="form-control rounded-start" placeholder="Search by Name or Surname...">
+            <button type = "submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Search
+            </button>
+        </form>
     </div>
 </div>
 
