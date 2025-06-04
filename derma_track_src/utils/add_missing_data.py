@@ -104,5 +104,7 @@ if __name__ == "__main__":
     basic_values[ModelFile.PATCH_SIZE] = 256
     basic_values[ModelFile.MULTI] = True
     add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Pretrained_EDVR_x4_BGR2RGB.pth", values = basic_values)
+
+    add_missing_data("C:\\Users\\Utilisateur\\Desktop\\Projet\\DermaTrack\\derma_track_src\\super_resolution\\models\\Medical_EDVR_x4_BGR2RGB.pth", values = basic_values)
     
     

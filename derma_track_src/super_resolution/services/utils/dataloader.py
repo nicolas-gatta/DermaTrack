@@ -44,7 +44,10 @@ class H5ImagesDataset(Dataset):
                 left_lr = left // self.up_scale_factor
                 
                 hr_crop = hr[:, top:top + self.crop_size, left:left + self.crop_size]
-                lr_crop = lr[:, top_lr:top_lr + self.crop_size_lr, left_lr:left_lr + self.crop_size_lr]
+                if lr.ndim == 3:
+                    lr_crop = lr[:, top_lr:top_lr + self.crop_size_lr, left_lr:left_lr + self.crop_size_lr]
+                elif lr.ndim == 4:
+                    lr_crop = lr[:, :, top_lr:top_lr + self.crop_size_lr, left_lr:left_lr + self.crop_size_lr]
                 return lr_crop, hr_crop
             
             return lr, hr

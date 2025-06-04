@@ -126,8 +126,8 @@ def __rotate_and_crop_image(image, angle, scale):
 
     new_width, new_height = __crop_rectangle(w = w, h = h, angle = angle)
     
-    new_width = ((new_width // 2) // 2) * 2 * 2
-    new_height = ((new_height // 2) // 2) * 2 * 2
+    new_width = ((new_width // scale) // scale) * scale * scale
+    new_height = ((new_height // scale) // scale) * scale * scale
     
     return __crop_or_pad_image(image = rotated, target_width=new_width, target_height=new_height)    
 

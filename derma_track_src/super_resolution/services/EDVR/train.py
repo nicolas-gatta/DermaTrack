@@ -34,8 +34,8 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     if torch.cuda.is_available():
         torch.cuda.manual_seed(seed)
     
-    train_dataset = H5ImagesDataset(train_file)
-    val_dataset = H5ImagesDataset(valid_file)
+    train_dataset = H5ImagesDataset(train_file, crop_size = patch_size, up_scale_factor = scale)
+    val_dataset = H5ImagesDataset(valid_file, crop_size = patch_size, up_scale_factor = scale)
     
     train_batch = SizeBasedImageBatch(image_sizes = train_dataset.image_sizes, batch_size = batch_size)
     val_batch = SizeBasedImageBatch(image_sizes = val_dataset.image_sizes, batch_size = batch_size, shuffle = False)
@@ -124,7 +124,7 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
 
         
     torch.save({"architecture": "EDVR", "scale": scale, "color_mode": mode, "invert_color_mode": invert_mode, "need_resize": True,
-                "patch_size": patch_size, "stride": stride, "multi_input": False, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
+                "patch_size": patch_size, "stride": stride, "multi_input": True, "model_state_dict": model.state_dict()}, os.path.join(output_path, model_name))
     
     print(f"Model saved as '{os.path.join(output_path, model_name)}'")
 
