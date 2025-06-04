@@ -622,7 +622,7 @@
         "eval_file": "derma_eval_HR",
         "scale": 4,
         "mode": "BGR2RGB",
-        "learning_rate": 0.0001,
+        "learning_rate": 0.0004,
         "seed": 1,
         "batch_size": 16,
         "num_epochs": 50,

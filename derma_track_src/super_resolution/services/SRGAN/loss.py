@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 
 from torchvision import models, transforms
-from torchvision.models.feature_extraction import create_feature_extractor
 
 class VGGLoss(nn.Module):
     def __init__(self):

@@ -13,14 +13,15 @@ from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
 from super_resolution.services.utils.early_stopping import EarlyStopping
 from super_resolution.services.utils.model_evaluation import ModelEvaluation
+from super_resolution.services.EDVR.loss import L1_Charbonnier_loss
 
 from torch.utils.data.dataloader import DataLoader
 
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
-                mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-4, 
+                mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 4e-4, 
                 seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8, pretrain_model: str = None):
     
-    early_stopping = EarlyStopping(patience = 20, delta = 0, verbose = False)
+    early_stopping = EarlyStopping(patience = 10, delta = 0, verbose = False)
     
     cudnn.benchmark = True
     
@@ -51,13 +52,9 @@ def train_model(model_name: str, train_file: str, valid_file: str, eval_file: st
     if pretrain_model:
         model.load_state_dict(torch.load(f = os.path.join(output_path, pretrain_model), map_location = device, weights_only = True)["model_state_dict"])
         
-    criterion = nn.L1Loss()  
+    criterion = L1_Charbonnier_loss()  
     
-    optimizer = optim.Adam([
-        {'params': model.conv1.parameters(), 'lr': learning_rate},
-        {'params': model.conv2.parameters(), 'lr': learning_rate},
-        {'params': model.conv3.parameters(), 'lr': learning_rate * 0.1}
-    ])
+    optimizer = optim.Adam(model.parameters(), lr = learning_rate)
     
     starting_time = time.time()
 
