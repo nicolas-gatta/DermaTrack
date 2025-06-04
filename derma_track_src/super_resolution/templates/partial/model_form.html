@@ -8,7 +8,7 @@
 
 <div class="container mt-5 bg-light p-3">
   <h2 class="text-center mb-4">Model Configuration Form</h2>
-  <form id="model-form" method="POST" hx-post="{% url 'training_model' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML">
+  <form id="model-form" method="POST" hx-post="{% url 'training_model' %}" hx-target = "#dynamic-body" hx-swap = "innerHTML" onsubmit = "train_loading()">
     {% csrf_token %}
 
       <fieldset class="border p-3">
@@ -211,7 +211,7 @@
 </div>
 
 <script>
-  document.body.addEventListener('htmx:beforeRequest', function (evt) {
+  function train_loading(){
     showLoading("The model is training...", "Feel free to grab a coffee or a nice cup of tea just like our British mates would!");
-  });
+  }
 </script>

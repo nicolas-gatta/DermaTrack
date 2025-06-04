@@ -3,7 +3,7 @@
 <link href="{% static 'css/model_form.css' %}" rel="stylesheet" type="text/css">
 
 <div class="container mt-5 bg-light p-3">
-  <h2 class="text-center mb-4">Model Evaluation Form</h2>
+  <h2 class="text-center mb-4">Model Selection Form</h2>
   <form id="select-model-form" method="POST" hx-post="{% url 'select_model' %}" hx-target="#dynamic-body" hx-swap="innerHTML">
     {% csrf_token %}
 
@@ -11,7 +11,7 @@
         <legend class="w-auto text-primary">Model Selection</legend>
 
         <div class="col-md-12">
-            <label for="model-select" class="form-label">Model to Evaluate</label>
+            <label for="model-select" class="form-label">Select Model to use in the app</label>
             <select class="form-select" id="model-select" name="model" required>
                 <option value="">---Select Model---</option>
             </select>
@@ -19,6 +19,6 @@
 
     </fieldset>
 
-    <button type="submit" class="btn btn-primary mt-3">Evaluate</button>
+    <button type="submit" class="btn btn-primary mt-3">Select</button>
   </form>
 </div>

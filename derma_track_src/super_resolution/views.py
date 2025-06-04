@@ -4,8 +4,7 @@ import re
 import torch
 import json
 
-from django.template.loader import render_to_string
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
@@ -14,13 +13,12 @@ from super_resolution.services.ESRGAN import train as esrgan_train
 from super_resolution.services.SRGAN import train as srgan_train
 from super_resolution.services.EDVR import train as edvr_train
 from super_resolution.services.utils.prepare_dataset import dataset_exist_or_create
-from super_resolution.services.utils.json_manager import JsonManager
+from super_resolution.services.utils.json_manager import JsonManager, ModelField
 from super_resolution.services.utils.super_resolution import SuperResolution
 from super_resolution.services.utils.model_evaluation import ModelEvaluation
 from core.models import VisitBodyPart
 from utils.unique_filename import get_unique_filename
 from utils.checks import group_and_super_user_checks
-from django.views.decorators.csrf import csrf_exempt
 
 __model = None
 __test_model = None
@@ -196,22 +194,37 @@ def training_model(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def evaluate_model(request):
-    
-    output_path = os.path.join(settings.BASE_DIR, "super_resolution","models")
-    
+
     model_name = request.POST["model"]
     
-    model_info = torch.load(os.path.join(output_path, model_name), weights_only=True)
+    if "BICUBIC" not in model_name:
+        
+        output_path = os.path.join(settings.BASE_DIR, "super_resolution","models")
+            
+        model_info = torch.load(os.path.join(output_path, model_name), weights_only=True)
+        
+        use_bicubic = False
+        
+        bicubic_scale = None
+        
+    else:
+        model_info = None
+        
+        output_path = None
+        
+        use_bicubic = True
+        
+        bicubic_scale = 2 if "2" in model_name else 4
+        
+    scale = model_info["scale"] if model_info else bicubic_scale
     
-    scale = model_info["scale"]
+    mode = model_info["color_mode"] if model_info else "BGR2RGB"
     
-    mode = model_info["color_mode"]
+    resize_to_output = model_info["need_resize"] if model_info else None
     
+    multi_input = model_info["multi_input"] if model_info else None
+        
     eval_dataset = request.POST["eval-dataset"]
-    
-    resize_to_output = model_info["need_resize"]
-    
-    multi_input = model_info["multi_input"]
     
     max_angle_rotation = None
     
@@ -227,8 +240,14 @@ def evaluate_model(request):
                                         patch_size = None, stride = None, resize_rule = None, 
                                         resize_to_output = resize_to_output, base_dir = settings.BASE_DIR,
                                         multi_input = multi_input, max_angle_rotation = max_angle_rotation, angle_rotation_step = angle_rotation_step)
-    
-    ModelEvaluation.evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file, eval_file_name = eval_dataset)
+    if use_bicubic:
+        JsonManager.training_results_to_json(architecture = None, stride = None, patch_size = None, resize_rule = None, 
+                                    model_name = model_name, train_file = None, valid_file = None, 
+                                    eval_file = eval_dataset, mode = mode, scale = scale, learning_rate = None, seed = None, 
+                                    batch_size = None, num_epochs = None, num_workers = None, pretrain_model = None)
+        JsonManager.update_model_data(model_name = model_name, updated_fields={ModelField.COMPLETION_STATUS: "Completed"})
+
+    ModelEvaluation.evaluate_model(model_name = model_name, path_to_model = output_path, device = device, eval_file = eval_file, eval_file_name = eval_dataset, use_bicubic = use_bicubic, bicubic_scale = bicubic_scale)
         
     return render(request, 'partial/evaluate_model_form.html', {"form": None})
 
@@ -376,6 +395,10 @@ def load_model() -> SuperResolution:
     
     if __model != None and model_name in __model.path:
         return __model
+    elif "BICUBIC" in model_name:
+        bicubic_scale = 2 if "2" in model_name else 4
+        return SuperResolution(model_path = None, use_bicubic = True, bicubic_scale = bicubic_scale)
+    
     else:
         model_path = os.path.join(settings.BASE_DIR, "super_resolution", "models", f"{model_name}")
         return SuperResolution(model_path = model_path)

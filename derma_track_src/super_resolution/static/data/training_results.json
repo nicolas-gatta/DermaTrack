@@ -1040,5 +1040,65 @@
             "LPIPS": 0.3685
         },
         "execution_time": 1.1747
+    },
+    "BICUBIC_x2": {
+        "architecture": null,
+        "pretrained_model": null,
+        "stride": null,
+        "patch_size": null,
+        "resize_rule": null,
+        "train_file": null,
+        "valid_file": null,
+        "eval_file": "derma_eval_HR",
+        "scale": 2,
+        "mode": "BGR2RGB",
+        "learning_rate": null,
+        "seed": null,
+        "batch_size": null,
+        "num_epochs": null,
+        "num_workers": null,
+        "validation_losses": [],
+        "training_losses": [],
+        "completion_time": 0,
+        "completion_status": "Completed",
+        "timestamp": "2025-06-04 19:54:58",
+        "eval_metrics": {
+            "MSE": 0.0002,
+            "PSNR": 37.4271,
+            "SSIM": 0.9088,
+            "MSSIM": 0.9786,
+            "LPIPS": 0.334
+        },
+        "execution_time": 0.0004
+    },
+    "BICUBIC_x4": {
+        "architecture": null,
+        "pretrained_model": null,
+        "stride": null,
+        "patch_size": null,
+        "resize_rule": null,
+        "train_file": null,
+        "valid_file": null,
+        "eval_file": "derma_eval_HR",
+        "scale": 4,
+        "mode": "BGR2RGB",
+        "learning_rate": null,
+        "seed": null,
+        "batch_size": null,
+        "num_epochs": null,
+        "num_workers": null,
+        "validation_losses": [],
+        "training_losses": [],
+        "completion_time": 0,
+        "completion_status": "Completed",
+        "timestamp": "2025-06-04 19:55:29",
+        "eval_metrics": {
+            "MSE": 0.0004,
+            "PSNR": 35.6617,
+            "SSIM": 0.8717,
+            "MSSIM": 0.9672,
+            "LPIPS": 0.4306
+        },
+        "execution_time": 0.0001
     }
 }

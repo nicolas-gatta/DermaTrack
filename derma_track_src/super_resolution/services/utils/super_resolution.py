@@ -9,22 +9,30 @@ from super_resolution.services.SRResNet.model import SRResNet
 from super_resolution.services.RRDBNet.model import RRDBNet
 from basicsr.archs.edvr_arch import EDVR
 from image_encryption.services.advanced_encrypted_standard import AES
+import torch.nn.functional as F
 
 class SuperResolution:
-    def __init__(self, model_path: str):
+    def __init__(self, model_path: str, use_bicubic: bool = False, bicubic_scale: int = None):
         
-        if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Model file not found: {model_path}")
+        if use_bicubic:
+            self.use_bicubic = use_bicubic
+            
+            self.bicubic_scale = bicubic_scale
+
+        else:
+                    
+            if not os.path.exists(model_path):
+                raise FileNotFoundError(f"Model file not found: {model_path}")
         
-        self.path = model_path
-        
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-                
-        self.model, self.model_info = self.__load_model(model_path)
-        
-        self.model.to(self.device)
-        
-        self.model.eval()
+            self.path = model_path
+            
+            self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+                    
+            self.model, self.model_info = self.__load_model(model_path)
+            
+            self.model.to(self.device)
+            
+            self.model.eval()
         
     
     def __load_model(self, model_path):
@@ -80,6 +88,9 @@ class SuperResolution:
             preprocess_image = image
             postprocess_required = False
 
+        if self.use_bicubic:
+            return F.interpolate(preprocess_image, scale_factor = self.bicubic_scale, mode="bicubic", align_corners=False)
+        
         height, width = preprocess_image.shape[2:]
         quadrant_image_parts = []
         

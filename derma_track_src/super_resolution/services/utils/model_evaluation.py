@@ -3,22 +3,25 @@ from super_resolution.services.utils.dataloader import H5ImagesDataset
 from super_resolution.services.utils.batch_sampler import SizeBasedImageBatch
 from super_resolution.services.utils.image_evaluator import ImageEvaluator
 from torch.utils.data.dataloader import DataLoader
-from basicsr.archs.edvr_arch import EDVR
 from super_resolution.services.utils.json_manager import JsonManager, ModelField
 from super_resolution.services.utils.running_average import RunningAverage
 from tqdm import tqdm
 
 import os
 import torch
+import torch.nn.functional as F
 import time
 
 
 class ModelEvaluation:
     
     @staticmethod
-    def evaluate_model(model_name, path_to_model, device, eval_file, eval_file_name = None):
-    
-        model = SuperResolution(model_path = os.path.join(path_to_model, model_name))
+    def evaluate_model(model_name, path_to_model, device, eval_file, eval_file_name = None, use_bicubic = False, bicubic_scale = None):
+        
+        if not use_bicubic:
+            model = SuperResolution(model_path = os.path.join(path_to_model, model_name))
+        else:
+            model = SuperResolution(model_path = None, use_bicubic = True, bicubic_scale = bicubic_scale)
         
         eval_dataset = H5ImagesDataset(h5_path = eval_file)
         
@@ -37,8 +40,8 @@ class ModelEvaluation:
                     lr, hr = lr.to(device), hr.to(device)
                     
                     start_time = time.perf_counter()
-                     
-                    if model.model_info["multi_input"]:
+                    
+                    if not model.use_bicubic and model.model_info["multi_input"]:
                         output = model.process_images(lr)
                     else:
                         output = model.process_image(lr)
