@@ -8,6 +8,11 @@ from cryptography.hazmat.backends import default_backend
 # https://cryptography.io/en/latest/hazmat/primitives/padding/
  
 class AES():
+    """
+    Utility class for AES encryption and decryption using CBC mode and PKCS7 padding.
+
+    This class uses a secret key defined in Django settings as `AES_SECRET_KEY`.
+    """
     
     _key = settings.AES_SECRET_KEY
     
@@ -16,6 +21,15 @@ class AES():
     
     @staticmethod
     def encrypt_message(data: bytes) -> bytes:
+        """
+        Encrypts a byte string using AES encryption in CBC mode with PKCS7 padding and a random 16-byte IV.
+
+        Args:
+            data (bytes): The plaintext data to encrypt.
+
+        Returns:
+            bytes: The IV followed by the encrypted ciphertext.
+        """
         
         iv = os.urandom(16)
     
@@ -31,6 +45,16 @@ class AES():
     
     @staticmethod 
     def decrypt_message(data: bytes) -> bytes:
+        """
+        Decrypts AES-encrypted data that was encrypted using `encrypt_message`.
+
+        Args:
+            data (bytes): The encrypted data (IV + ciphertext).
+
+        Returns:
+            bytes: The decrypted plaintext.
+        """
+        
         iv = data[:16]
     
         encrypted_text = data[16:]

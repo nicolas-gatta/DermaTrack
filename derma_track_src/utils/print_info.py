@@ -1,6 +1,16 @@
 import torch
 
 def print_pth_file_contents_dict_state(pth_path):
+    """
+    Print the dict state of the model pytorch
+    
+    Args:
+        pth_path (str): Path to the .pth file to be loaded.
+        
+    Raises:
+        Prints an error message if the file cannot be loaded or parsed.
+    """
+    
     try:
         data = torch.load(pth_path, map_location=torch.device('cpu'),  weights_only=True)
 
@@ -26,6 +36,16 @@ def print_pth_file_contents_dict_state(pth_path):
         print("Error loading .pth file:", str(e))
 
 def print_pth_file_contents(pth_path):
+    """
+    Loads and prints the contents of a PyTorch .pth file.
+    
+    Args:
+        pth_path (str): Path to the .pth file to be loaded.
+        
+    Raises:
+        Prints an error message if the file cannot be loaded or is not in the expected format.
+    """
+    
     try:
         data = torch.load(pth_path, map_location=torch.device('cpu'), weights_only=True)
 

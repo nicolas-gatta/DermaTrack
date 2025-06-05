@@ -4,27 +4,51 @@ from django.http import JsonResponse
 from django.db.models.functions import Concat
 from django.db.models import Value
 from django.views.decorators.csrf import csrf_exempt
-import os
 from django.contrib.auth.decorators import login_required
 from .forms import PatientForm, VisitForm, VisitFormAdmin
-
 from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart, Doctor
 from utils.checks import group_and_super_user_checks
 from image_encryption.services.advanced_encrypted_standard import AES
+
+import os
 import base64
 import json
 
 
-# Create your views here.
-
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def index(request):
+    """
+    Rendering the index page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'core/index.html' template with an empty context.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the index.
+    """
+    
     return render(request, 'core/index.html')
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def patient_list(request):
+    """
+    Rendering the patient_list page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/patient_list.html' template with patients list in the context.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the patient_list.
+    """
+    
     if request.headers.get('HX-Request'):
         patients = Patient.objects.all() 
         return render(request, 'partial/patient_list.html', {'patients': patients})
@@ -32,6 +56,19 @@ def patient_list(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def doctor_list(request):
+    """
+    Rendering the doctor_list page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/doctor_list.html' template with doctors list in the context.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the doctor_list.
+    """
+    
     if request.headers.get('HX-Request'):
         doctors = Doctor.objects.all()
         return render(request, 'partial/doctor_list.html', {'doctors': doctors})
@@ -39,6 +76,19 @@ def doctor_list(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def patient_profile(request, id):
+    """
+    Rendering the patient_form page to show the patient profile.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/patient_form.html' template with for in the context.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the patient_form.
+    """
+    
     if request.method == "GET":
         patient = Patient.objects.get(pk = id)
 
@@ -52,6 +102,17 @@ def patient_profile(request, id):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def visit_status_change(request):
+    """
+    Updates the status of a visit (Started, Finished, or Canceled),
+    and refreshes the visit list.
+
+    Args:
+        request (HttpRequest): POST request with 'id' and 'status'.
+
+    Returns:
+        HttpResponse: Rendered visit list.
+    """
+    
     if request.method == "POST":
         
         status = request.POST['status']
@@ -83,12 +144,38 @@ def visit_status_change(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def image_capture(request):
+    """
+    Rendering the image_capture page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/image_capture.html' template with an empty context.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the image_capture.
+    """
+    
     if request.headers.get('HX-Request'):
         return render(request, 'partial/image_capture.html')
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def visit_list(request):
+    """
+    Rendering the visit_list page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/visit_list.html' template with visits in context.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the visit_list.
+    """
+    
     if request.headers.get('HX-Request'):
         visits = None
         if request.user.is_superuser:
@@ -101,13 +188,188 @@ def visit_list(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def visit_view(request):
+    """
+    Rendering the visit_view page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/visit_view.html' template with visit in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the visit_view.
+    """
+    
     visit = Visit.objects.get(pk = request.POST['id'])
     return render(request, 'partial/visit_view.html', {'visit': visit})
+
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def create_patient(request):
+    """
+    Create a patient using the information in the forms.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/patient_form.html' template with form in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the patient_form or patient_list when the patient is save.
+    """
+    
+    if request.method == "POST":
+        form = PatientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            patients = Patient.objects.all() 
+            return render(request, 'partial/patient_list.html', {'patients': patients})
+        return render(request, "partial/patient_form.html", {"form": form, "is_form": True})
+    else:
+        form = PatientForm()
+        return render(request, "partial/patient_form.html", {"form": form, "is_form": True})
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def create_visit(request):
+    """
+    Create a visit using the information in the forms.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/visit_form.html' template with form in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the visit_form or visit_list when the patient is save.
+    """
+    
+    if request.method == "POST":
+        form = VisitFormAdmin(request.POST) if request.user.is_superuser else VisitForm(request.POST)
+        if form.is_valid():
+            if request.user.is_superuser:
+                form.save()
+            else:
+                visit = form.save(commit=False)
+                visit.doctor = Doctor.objects.get(user = request.user)
+                visit.status = Status.SCHEDULED
+                visit.save()
+            if request.user.is_superuser:
+                visits = Visit.objects.select_related('doctor', 'patient').all()
+            elif request.user.groups.filter(name__in=["Doctor"]).exists():
+                visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
+            
+            return render(request, 'partial/visit_list.html', {'visits': visits})
+        return render(request, "partial/visit_form.html", {"form": form})
+    else:
+        form = VisitFormAdmin() if request.user.is_superuser else VisitForm()
+        return render(request, "partial/visit_form.html", {"form": form})
+    
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def get_visit_by_patient_name(request):
+    """
+    Rendering the filter visit_view page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/visit_view.html' template with visit in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the visit_view.
+    """
+    
+    if request.method == "GET":
+        
+        patient_name = request.GET['name']
+        
+        visits = Visit.objects.select_related('doctor', 'patient').all()
+        
+        visits = visits.annotate(full_name = Concat('patient__name', Value(' '), 'patient__surname'))
+        
+        visits = visits.filter(full_name__icontains = patient_name)
+        
+        if not request.user.is_superuser and request.user.groups.filter(name__in=["Doctor"]).exists():
+            visits = Visit.objects.filter(doctor__user=request.user)
+
+        return render(request, 'partial/visit_list.html', {'visits': visits})
+    
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def get_patient_by_name(request):
+    """
+    Rendering the filter patient_list page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/patient_list.html' template with patients in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the patient_list.
+    """
+    
+    if request.method == "GET":
+        
+        patient_name = request.GET['name']
+        
+        patients = Patient.objects.all()
+        
+        patients = patients.annotate(full_name = Concat('name', Value(' '), 'surname'))
+        
+        patients = patients.filter(full_name__icontains = patient_name)
+
+        return render(request, 'partial/patient_list.html', {'patients': patients})
+    
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
+def get_doctor_by_name(request):
+    """
+    Rendering the filter doctor_list page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/doctor_list.html' template with doctors in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the doctor_list.
+    """
+    
+    if request.method == "GET":
+        
+        doctor_name = request.GET['name']
+        
+        doctors = Doctor.objects.all()
+        
+        doctors = doctors.annotate(full_name = Concat('name', Value(' '), 'surname'))
+        
+        doctors = doctors.filter(full_name__icontains = doctor_name)
+
+        return render(request, 'partial/doctor_list.html', {'doctors': doctors})
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def list_visit_folders(request, visit_id):    
+    """
+    Returns the list of distinct body part folders associated with a given visit.
 
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+        visit_id (int): The ID of the visit to retrieve folders for.
+
+    Returns:
+        JsonResponse: A list of distinct body part names under the 'folders' key.
+    """
+    
     folder_names = VisitBodyPart.objects.filter(visit_id=visit_id).values_list('body_part__name', flat=True).distinct()
 
     return JsonResponse({"folders": list(folder_names)})
@@ -115,7 +377,18 @@ def list_visit_folders(request, visit_id):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def list_visit_folder_images(request, visit_id, body_part):
+    """
+    Returns the list of images associated with a given visit.
 
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+        visit_id (int): The ID of the visit to retrieve folders for.
+        body_part (str): The name of the body part.
+
+    Returns:
+        JsonResponse: A list of images under the 'images' key.
+    """
+    
     try:
         visit_body_part = VisitBodyPart.objects.filter(visit_id = visit_id, body_part = BodyPart.objects.get(name = body_part).pk)
         
@@ -129,6 +402,17 @@ def list_visit_folder_images(request, visit_id, body_part):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def get_image(request, id):
+    """
+    Retrieves and decrypts the original image for a VisitBodyPart ID.
+
+    Args:
+        request (HttpRequest): GET request.
+        id (int): the id of the visitBodyPart.
+
+    Returns:
+        JsonResponse: Base64-encoded decrypted image, distance, pixel_size, focal and has_super.
+    """
+    
     if request.method == "GET" :
         visit_body_part = VisitBodyPart.objects.get(pk = id)
         
@@ -142,6 +426,17 @@ def get_image(request, id):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def get_enchanced_image(request, id):
+    """
+    Retrieves and decrypts the enchanced image for a VisitBodyPart ID.
+
+    Args:
+        request (HttpRequest): GET request.
+        id (int): the id of the visitBodyPart.
+
+    Returns:
+        JsonResponse: Base64-encoded decrypted enchanced image, distance, pixel_size, focal and has_super..
+    """
+    
     if request.method == "GET" :
         visit_body_part = VisitBodyPart.objects.get(pk = id)
         
@@ -155,6 +450,17 @@ def get_enchanced_image(request, id):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def get_annotations(request, id):
+    """
+    Retrieves the annotation for a VisitBodyPart ID.
+
+    Args:
+        request (HttpRequest): GET request.
+        id (int): the id of the visitBodyPart.
+
+    Returns:
+        JsonResponse: annotations into Json format.
+    """
+    
     if request.method == "GET" :
         try:
             annotations = VisitBodyPart.objects.get(pk = id).annotations
@@ -171,6 +477,17 @@ def get_annotations(request, id):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def update_visit_body_part(request, id):
+    """
+    Updates fields of a VisitBodyPart instance via PUT request.
+
+    Args:
+        request (HttpRequest): PUT request with JSON payload.
+        id (int): ID of the VisitBodyPart to update.
+
+    Returns:
+        JsonResponse: Success or error message.
+    """
+    
     if request.method == "PUT" :
         try:
             visit_body_part = VisitBodyPart.objects.get(pk=id)
@@ -198,6 +515,18 @@ def update_visit_body_part(request, id):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def delete_image(request, id):
+    """
+    Deletes all associated files (encrypted, preview, enhanced) of a VisitBodyPart,
+    and removes the database entry.
+
+    Args:
+        request (HttpRequest): DELETE request.
+        id (int): ID of the VisitBodyPart to delete.
+
+    Returns:
+        JsonResponse: Deletion confirmation or error.
+    """
+    
     if request.method == "DELETE":
         try:
             visit_body_part = VisitBodyPart.objects.get(pk = id)
@@ -237,89 +566,3 @@ def delete_image(request, id):
             
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
-
-@login_required(login_url='/')
-@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def create_patient(request):
-    if request.method == "POST":
-        form = PatientForm(request.POST)
-        if form.is_valid():
-            form.save()
-            patients = Patient.objects.all() 
-            return render(request, 'partial/patient_list.html', {'patients': patients})
-        return render(request, "partial/patient_form.html", {"form": form, "is_form": True})
-    else:
-        form = PatientForm()
-        return render(request, "partial/patient_form.html", {"form": form, "is_form": True})
-
-@login_required(login_url='/')
-@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def create_visit(request):
-    if request.method == "POST":
-        form = VisitFormAdmin(request.POST) if request.user.is_superuser else VisitForm(request.POST)
-        if form.is_valid():
-            if request.user.is_superuser:
-                form.save()
-            else:
-                visit = form.save(commit=False)
-                visit.doctor = Doctor.objects.get(user = request.user)
-                visit.status = Status.SCHEDULED
-                visit.save()
-            if request.user.is_superuser:
-                visits = Visit.objects.select_related('doctor', 'patient').all()
-            elif request.user.groups.filter(name__in=["Doctor"]).exists():
-                visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
-            
-            return render(request, 'partial/visit_list.html', {'visits': visits})
-        return render(request, "partial/visit_form.html", {"form": form})
-    else:
-        form = VisitFormAdmin() if request.user.is_superuser else VisitForm()
-        return render(request, "partial/visit_form.html", {"form": form})
-    
-@login_required(login_url='/')
-@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def get_visit_by_patient_name(request):
-    if request.method == "GET":
-        
-        patient_name = request.GET['name']
-        
-        visits = Visit.objects.select_related('doctor', 'patient').all()
-        
-        visits = visits.annotate(full_name = Concat('patient__name', Value(' '), 'patient__surname'))
-        
-        visits = visits.filter(full_name__icontains = patient_name)
-        
-        if not request.user.is_superuser and request.user.groups.filter(name__in=["Doctor"]).exists():
-            visits = Visit.objects.filter(doctor__user=request.user)
-
-        return render(request, 'partial/visit_list.html', {'visits': visits})
-    
-@login_required(login_url='/')
-@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def get_patient_by_name(request):
-    if request.method == "GET":
-        
-        patient_name = request.GET['name']
-        
-        patients = Patient.objects.all()
-        
-        patients = patients.annotate(full_name = Concat('name', Value(' '), 'surname'))
-        
-        patients = patients.filter(full_name__icontains = patient_name)
-
-        return render(request, 'partial/patient_list.html', {'patients': patients})
-    
-@login_required(login_url='/')
-@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def get_doctor_by_name(request):
-    if request.method == "GET":
-        
-        doctor_name = request.GET['name']
-        
-        doctors = Doctor.objects.all()
-        
-        doctors = doctors.annotate(full_name = Concat('name', Value(' '), 'surname'))
-        
-        doctors = doctors.filter(full_name__icontains = doctor_name)
-
-        return render(request, 'partial/doctor_list.html', {'doctors': doctors})

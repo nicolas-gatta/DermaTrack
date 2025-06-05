@@ -15,9 +15,30 @@ import numpy as np
 # Create your views here.
 
 def video_stream(request):
+    """
+    Rendering the video_stream page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/video_stream.html' template with an empty context.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the video_stream.
+    """
     return render(request, 'partial/video_stream.html')
 
 def detect(request):
+    """
+    Detects the body part from an image.
+
+    Args:
+        request (HttpRequest): The HTTP request containing JSON with an "image" key.
+
+    Returns:
+        JsonResponse: The name of the detected body part.
+    """
     
     data = json.loads(request.body)
     base64_image = data.get("image", "")
@@ -27,6 +48,16 @@ def detect(request):
 
 @csrf_exempt
 def save_image(request):
+    """
+    Saves an encrypted image with preview and updates the database.
+
+    Args:
+        request (HttpRequest): POST request with JSON including image and metadata.
+
+    Returns:
+        JsonResponse: Success with visit_body_part_id, image, visitId, bodyPart or error if method is invalid.
+    """
+    
     if request.method == "POST":
         data = json.loads(request.body)
         
@@ -99,6 +130,16 @@ def save_image(request):
 
 @csrf_exempt
 def create_visit_body_part(request):
+    """
+    Creates a VisitBodyPart entry in the database.
+
+    Args:
+        request (HttpRequest): POST request with bodyPartId, visitId, distance, and pixelSize.
+
+    Returns:
+        JsonResponse: Success with visit_body_part_id or error if method is invalid.
+    """
+    
     if request.method == "POST":
         data = json.loads(request.body)
         body_part = BodyPart.objects.get(pk = data.get("bodyPartId", None))
@@ -122,6 +163,16 @@ def create_visit_body_part(request):
 
 @csrf_exempt
 def save_image_without_db_update(request):
+    """
+    Saves and encrypted image to the file system without updating the database.
+
+    Args:
+        request (HttpRequest): POST request with image, index, visit ID, and body part name.
+
+    Returns:
+        JsonResponse: Success or error response.
+    """
+    
     if request.method == "POST":
         
         data = json.loads(request.body)
@@ -161,6 +212,16 @@ def save_image_without_db_update(request):
 
 @csrf_exempt
 def save_image_with_db_update(request):
+    """
+    Saves and encrypted image to the file system and updating the database.
+
+    Args:
+        request (HttpRequest): POST request with image, index, visit ID, and body part name.
+
+    Returns:
+        JsonResponse: Success or error response.
+    """
+    
     if request.method == "POST":
         data = json.loads(request.body)
         
@@ -220,6 +281,15 @@ def save_image_with_db_update(request):
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status = 400)   
         
 def get_body_parts(request):
+    """
+    Retrieves the list of all body parts from the database.
+
+    Args:
+        request (HttpRequest): GET request.
+
+    Returns:
+        JsonResponse: List of body part IDs and names.
+    """
     if request.method == "GET":
         body_part = list(BodyPart.objects.values_list("pk", "name"))
         return JsonResponse(body_part, safe=False)

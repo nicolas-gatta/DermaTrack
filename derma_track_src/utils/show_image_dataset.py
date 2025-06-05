@@ -9,6 +9,12 @@ import matplotlib.pyplot as plt
 
 
 def show_first_10_images(dataset):
+    """
+    Show the 10 first images in the dataset
+
+    Args:
+        dataset (str): Path to the dataset
+    """
     import numpy as np
     images_displayed = 0
     plt.figure(figsize=(12, 5))

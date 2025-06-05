@@ -14,6 +14,13 @@ class ModelFile(str, Enum):
 
 
 def add_missing_data(pth_path: str, values: dict):
+    """
+    Add the missing data into the models .pth file
+
+    Args:
+        pth_path (str): Path to the model
+        values (dict): Dict of keys and values to add or update.
+    """
     try:
         data = torch.load(pth_path, map_location='cpu', weights_only=True)
 

@@ -26,6 +26,18 @@ __test_model = None
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def training_model(request):
+    """
+    Trains a super-resolution model (SRCNN, SRGAN, ESRGAN, or EDVR) based on user-provided parameters.
+
+    It supports training from scratch or fine-tuning a pre-trained model.
+    It can also handle advanced options such as image subdivision, resizing, and rotation.
+
+    Args:
+        request (HttpRequest): The incoming HTTP POST request containing training parameters.
+
+    Returns:
+        HttpResponse: Renders the model form view after training starts.
+    """
     
     output_path = os.path.join(settings.BASE_DIR, "super_resolution","models")
     
@@ -194,7 +206,18 @@ def training_model(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def evaluate_model(request):
+    """
+    Evaluate a super-resolution model (SRCNN, SRGAN, ESRGAN, or EDVR) based on user-provided parameters.
 
+    It can also handle advanced options such as image subdivision, resizing, and rotation.
+
+    Args:
+        request (HttpRequest): The incoming HTTP POST request containing evaluation parameters.
+
+    Returns:
+        HttpResponse: Renders the model form view after evaluation starts.
+    """
+    
     model_name = request.POST["model"]
     
     if "BICUBIC" not in model_name:
@@ -254,6 +277,19 @@ def evaluate_model(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def show_models(request):
+    """
+    Rendering the show_models page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/show_models.html' template with form in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the show_models.
+    """
+    
     if request.headers.get('HX-Request'):
         models = JsonManager.load_training_results()
         return render(request, 'partial/show_models.html', {"models": models})
@@ -261,6 +297,19 @@ def show_models(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def model_form(request):
+    """
+    Rendering the model_form page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/model_form.html' template with form in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the model_form.
+    """
+    
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/model_form.html', {"form": None})
@@ -268,6 +317,17 @@ def model_form(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def load_test_model(request, model_name):
+    """
+    Loads a super-resolution model.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+        model_name (str): The name of the model file to load.
+        
+    Returns:
+        HttpResponse: A response indicating that the model has been loaded.
+    """
+    
     global __test_model
     if model_name != "":
         model_path = os.path.join(settings.BASE_DIR, "super_resolution", "models", f"{model_name}")
@@ -278,6 +338,16 @@ def load_test_model(request, model_name):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def apply_test_sr(request, image_name):
+    """
+    Applies a super-resolution model to a degraded image and returns the URL of the enhanced image.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: The url of the image.
+    """
+    
     global __test_model
     if (__test_model != None and image_name != ""):
         output_path = os.path.join(settings.MEDIA_ROOT, "output_test")
@@ -290,6 +360,19 @@ def apply_test_sr(request, image_name):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def dataset_form(request):
+    """
+    Rendering the dataset_form page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/dataset_form.html' template with form in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the dataset_form.
+    """
+    
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/dataset_form.html', {"form": None})
@@ -297,6 +380,19 @@ def dataset_form(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def evaluation_form(request):
+    """
+    Rendering the evaluate_model_form page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/evaluate_model_form.html' template with form in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the evaluate_model_form.
+    """
+    
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/evaluate_model_form.html', {"form": None})
@@ -304,6 +400,19 @@ def evaluation_form(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def test_model_view(request):
+    """
+    Rendering the test_model page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/test_model.html' template with form in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the test_model.
+    """
+    
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/test_model.html', {"form": None})
@@ -311,6 +420,15 @@ def test_model_view(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def create_dataset(request):
+    """
+    Handles the creation or retrieval of a dataset.
+    
+    Args:
+        request (HttpRequest): The HTTP request object containing POST data
+        
+    Returns:
+        HttpResponse: The rendered HTML response for the dataset form.
+    """
     
     dataset_exist_or_create(dataset = request.POST["dataset"], 
                              mode = request.POST["mode"], 
@@ -322,6 +440,17 @@ def create_dataset(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def get_datasets(request, category):
+    """
+    Retrieve the list of dataset directories for a given category.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+        category (str): The category name used to locate the datasets.
+        
+    Returns:
+        JsonResponse: A JSON response containing a list of dataset.
+    """
+    
     base_path = os.path.join(settings.BASE_DIR, "super_resolution", "base_datasets", category)
     try:
         datasets = os.listdir(base_path)
@@ -333,6 +462,15 @@ def get_datasets(request, category):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def get_all_test_images(request):
+    """
+    Retrieve all test image filenames from the 'test' directory.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+        
+    Returns:
+        JsonResponse: A JSON response containing a list of image filenames.
+    """
     
     base_path = os.path.join(settings.MEDIA_ROOT, "test")
     
@@ -347,6 +485,16 @@ def get_all_test_images(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def get_test_image(request, name):
+    """
+    Returns the URL to a test image.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+        name (str): The name of the image file.
+        
+    Returns:
+        JsonResponse: A JSON response with the key 'url' pointing to the constructed image URL.
+    """
     
     base_path = os.path.join(settings.MEDIA_URL, "test", name)
     
@@ -355,6 +503,17 @@ def get_test_image(request, name):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def degrade_and_save_image(request, name, scale):
+    """
+    Degrades an input image by applying Gaussian blur and downscaling, then saves the result.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+        name (str): The filename of the image to be degraded.
+        scale (int): The factor by which to downscale the image dimensions.
+        
+    Returns:
+        JsonResponse: A JSON response containing the URL to the degraded image.
+    """
     
     base_path = os.path.join(settings.MEDIA_ROOT, "test", name)
     
@@ -373,6 +532,16 @@ def degrade_and_save_image(request, name, scale):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
 def get_models(request):
+    """
+    Retrive all the available model.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: Contain all the available models.
+    """
+    
     base_path = os.path.join(settings.BASE_DIR, "super_resolution", "models")
     try:
         models = [
@@ -407,6 +576,18 @@ def load_model() -> SuperResolution:
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def apply_sr(request):
+    """
+    Applies the selected super-resolution model to a medical image.
+
+    The result is saved as a enhanced image and updates the VisitBodyPart model instance.
+
+    Args:
+        request (HttpRequest): The HTTP POST request containing 'visit_body_part_id'.
+
+    Returns:
+        JsonResponse: Success message when enhancement is done.
+    """
+    
     if request.method == "POST" :
         
         model = load_model()
@@ -437,6 +618,16 @@ def apply_sr(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def select_model(request):
+    """
+    Handles the selection of a super-resolution model.
+    
+    Args:
+        request (HttpRequest): The HTTP request object.
+        
+    Returns:
+        HttpResponse: The rendered model selection form template.
+    """
+    
     if request.method == "POST" :
         
         output_file = os.path.join(settings.BASE_DIR, "super_resolution", "static", "data", "model_selection.json")
@@ -453,6 +644,18 @@ def select_model(request):
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def model_selection_form(request):
+    """
+    Rendering the model_selection_form page.
+
+    This view is protected by login and group/superuser access checks.
+    It renders the 'partial/model_selection_form.html' template with form in the context
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: The rendered HTML response for the model_selection_form.
+    """
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/model_selection_form.html', {"form": None})

@@ -8,6 +8,16 @@ from .forms.login_form import LoginForm
     
 # Create your views here.
 def login_view(request):
+    """
+    Handles user login and redirects based on role (superuser or standard user).
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: A redirect to the appropriate dashboard or the login page.
+    """
+
     if request.method == "POST":
         username = request.POST["login"]
         password = request.POST["password"]
@@ -31,5 +41,15 @@ def login_view(request):
         return render(request, "login/index.html", {"form": form })
 
 def logout_view(request):
+    """
+    Logs out the current user and redirects to the login page.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        HttpResponse: A redirect to the root login page.
+    """
+    
     logout(request)
     return redirect("/")

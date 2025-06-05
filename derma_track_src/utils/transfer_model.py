@@ -12,6 +12,19 @@ import torch
 
 
 def get_layers(architecture, scale: int = None):
+     """
+     Get the state dict describing the layers of the architecture
+
+     Args:
+         architecture (str): 
+         scale (int, optional): _description_. Defaults to None.
+
+     Raises:
+         ValueError: _description_
+
+     Returns:
+         _type_: _description_
+     """
      model_layers = []
      model = None
      
@@ -95,8 +108,5 @@ def main(inputs_model_path, output_model_path, architecture, scale, mode, invert
 
 if __name__ == "__main__":
      
-     # main(inputs_model_path = "C:\\Users\\Utilisateur\\Desktop\\backup model\\Pretrained_EDVR_x4_BGR2RGB.pth", output_model_path = "C:\\Users\\Utilisateur\\Downloads\\Pretrained_EDVR_x4_BGR2RGB.pth", 
-     #      architecture = "EDVR", scale = 4, mode = "BGR2RGB", invert_mode = "RGB2BGR", patch_size = 256, stride = None)
-     
-     main(inputs_model_path = "C:\\Users\\Utilisateur\\Downloads\\ESRGAN_PSNR_SRx4_DF2K_official-150ff491.pth", output_model_path = "C:\\Users\\Utilisateur\\Downloads\\Pretrained_ESRGAN_x4_BGR2RGB.pth", 
-          architecture = "ESRGAN", scale = 4, mode = "BGR2RGB", invert_mode = "RGB2BGR", patch_size = 128, stride = None)
+     main(inputs_model_path = "C:\\Users\\Utilisateur\\Downloads\\RRDB_ESRGAN_x4.pth", output_model_path = "C:\\Users\\Utilisateur\\Downloads\\Pretrained_RRDB_PSNR_x4_BGR2RGB.pth", 
+          architecture = "SRCNN", scale = 2, mode = "BGR2RGB", invert_mode = "RGB2BGR", patch_size = 128, stride = None)
