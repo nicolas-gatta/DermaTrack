@@ -75,7 +75,7 @@ def doctor_list(request):
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
-def patient_profile(request, id):
+def patient_profile(request, id: int):
     """
     Rendering the patient_form page to show the patient profile.
 
@@ -84,6 +84,7 @@ def patient_profile(request, id):
 
     Args:
         request (HttpRequest): The HTTP request object.
+        id (int): The id of the patient
 
     Returns:
         HttpResponse: The rendered HTML response for the patient_form.
@@ -407,7 +408,7 @@ def get_image(request, id):
 
     Args:
         request (HttpRequest): GET request.
-        id (int): the id of the visitBodyPart.
+        id (int): The id of the visitBodyPart.
 
     Returns:
         JsonResponse: Base64-encoded decrypted image, distance, pixel_size, focal and has_super.
@@ -431,7 +432,7 @@ def get_enchanced_image(request, id):
 
     Args:
         request (HttpRequest): GET request.
-        id (int): the id of the visitBodyPart.
+        id (int): The id of the visitBodyPart.
 
     Returns:
         JsonResponse: Base64-encoded decrypted enchanced image, distance, pixel_size, focal and has_super..
@@ -455,7 +456,7 @@ def get_annotations(request, id):
 
     Args:
         request (HttpRequest): GET request.
-        id (int): the id of the visitBodyPart.
+        id (int): The id of the visitBodyPart.
 
     Returns:
         JsonResponse: annotations into Json format.
@@ -482,7 +483,7 @@ def update_visit_body_part(request, id):
 
     Args:
         request (HttpRequest): PUT request with JSON payload.
-        id (int): ID of the VisitBodyPart to update.
+        id (int): The ID of the VisitBodyPart to update.
 
     Returns:
         JsonResponse: Success or error message.
@@ -521,7 +522,7 @@ def delete_image(request, id):
 
     Args:
         request (HttpRequest): DELETE request.
-        id (int): ID of the VisitBodyPart to delete.
+        id (int): THe ID of the VisitBodyPart to delete.
 
     Returns:
         JsonResponse: Deletion confirmation or error.

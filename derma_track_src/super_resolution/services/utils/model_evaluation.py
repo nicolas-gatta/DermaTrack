@@ -35,6 +35,7 @@ class ModelEvaluation:
         
         if not use_bicubic:
             model = SuperResolution(model_path = os.path.join(path_to_model, model_name))
+            
         else:
             model = SuperResolution(model_path = None, use_bicubic = True, bicubic_scale = bicubic_scale)
         

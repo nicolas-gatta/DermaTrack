@@ -25,6 +25,27 @@ from super_resolution.services.utils.model_evaluation import ModelEvaluation
 def train_model(model_name: str, train_file: str, valid_file: str, eval_file: str, output_path: str, 
                 mode: str, scale: int, invert_mode: str, patch_size: int, stride: int, learning_rate: float = 1e-5, 
                 seed: int = 1, batch_size: int = 16, num_epochs: int = 100, num_workers: int = 8, pretrain_model: str = None):
+    """
+    Trains an SRGAN super-resolution model using the specified training, validation, and evaluation datasets.
+    
+    Args:
+        model_name (str): Name for saving the trained model and updating metadata.
+        train_file (str): Path to the HDF5 file containing training data.
+        valid_file (str): Path to the HDF5 file containing validation data.
+        eval_file (str): Path to the HDF5 file containing evaluation data for post-training evaluation.
+        output_path (str): Directory where the trained model and related files will be saved.
+        mode (str): Color mode used for training (e.g., 'RGB', 'L').
+        scale (int): Upscaling factor for super-resolution.
+        invert_mode (str): Specifies if color inversion is applied.
+        patch_size (int): Size of image patches used for training.
+        stride (int): Stride for patch extraction.
+        learning_rate (float, optional): Learning rate for the optimizer. Default is 4e-4.
+        seed (int, optional): Random seed for reproducibility. Default is 1.
+        batch_size (int, optional): Number of samples per batch. Default is 16.
+        num_epochs (int, optional): Maximum number of training epochs. Default is 100.
+        num_workers (int, optional): Number of worker processes for data loading. Default is 8.
+        pretrain_model (str, optional): Path to a pretrained model to initialize weights. Default is None.
+    """
     
     if not pretrain_model:
         pretrained_model_name = f"SRResNet_x{scale}_{mode}.pth"

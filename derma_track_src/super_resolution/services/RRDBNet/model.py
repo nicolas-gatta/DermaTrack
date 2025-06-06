@@ -4,7 +4,20 @@ import numpy as np
 import torch.nn.functional as F
 
 class Interpolate(nn.Module):
-    def __init__(self, scale_factor = 2, mode = "nearest"):
+    """
+    A custom PyTorch module for upsampling input tensors using interpolation.
+    Args:
+        scale_factor (int or float, optional): Multiplier for spatial size. Default is 2.
+        mode (str, optional): Algorithm used for upsampling. Default is "bicubic".
+            
+    Forward Args:
+        x (torch.Tensor): Input tensor to be upsampled.
+        
+    Returns:
+        torch.Tensor: Upsampled tensor.
+    """
+    
+    def __init__(self, scale_factor = 2, mode = "bicubic"):
         super().__init__()
         self.scale_factor = scale_factor
         self.mode = mode
@@ -14,6 +27,10 @@ class Interpolate(nn.Module):
 
 # Dense Block 
 class ResidualDenseBlock(nn.Module):
+    """
+    ResidualDenseBlock implements a residual dense block as used in super-resolution networks like ESRGAN.
+    """
+    
     def __init__(self, num_features = 64, growth_channels = 32, bias = True):
         super(ResidualDenseBlock, self).__init__()
         
@@ -48,6 +65,10 @@ class ResidualDenseBlock(nn.Module):
         return (final * 0.2) + x
     
 class ResidualInResidualDenseBlock(nn.Module):
+    """
+    A Residual-in-Residual Dense Block (RRDB) as used in ESRGAN and similar super-resolution networks.
+    """
+    
     def __init__(self, num_features = 64, growth_channels = 32, bias = True):
         super(ResidualInResidualDenseBlock, self).__init__()
         
@@ -63,10 +84,14 @@ class ResidualInResidualDenseBlock(nn.Module):
         
 # Sub-Pixel Convolution Layers (Increase Image resolution) each block is 2x factor
 class UpsampleBlock(nn.Module):
+    """
+    UpsampleBlock that performs upsampling.
+    """
+    
     def __init__(self, in_channels = 64, out_channels = 64):
         super(UpsampleBlock, self).__init__()
         self.block = nn.Sequential(
-            Interpolate(scale_factor = 2, mode = "nearest"),
+            Interpolate(scale_factor = 2, mode = "bicubic"),
             nn.Conv2d(in_channels = in_channels, out_channels = out_channels, kernel_size = 3, stride = 1, padding = 1),
             nn.LeakyReLU(negative_slope = 0.2, inplace = True)
         )
@@ -75,6 +100,30 @@ class UpsampleBlock(nn.Module):
         return self.block(x)
 
 class RRDBNet(nn.Module):
+    """
+    RRDBNet: Residual-in-Residual Dense Block Network for Image Super-Resolution.
+    
+    Args:
+        in_channels (int): Number of input image channels. Default is 3 (RGB).
+        out_channels (int): Number of output image channels. Default is 3 (RGB).
+        num_features (int): Number of feature maps in the intermediate layers. Default is 64.
+        growth_channels (int): Number of growth channels in dense blocks. Default is 32.
+        bias (bool): Whether to use bias in convolutional layers. Default is True.
+        num_blocks (int): Number of RRDB blocks. Default is 23.
+        up_scale (int): Upscaling factor (should be a power of 2, e.g., 2, 4, 8). Default is 4.
+        
+    Attributes:
+        initial (nn.Conv2d): Initial convolutional layer.
+        RRDB_layer (nn.Sequential): Sequence of RRDB blocks.
+        post_RRDB (nn.Conv2d): Convolutional layer after RRDB blocks.
+        upsampling (nn.Sequential): Sequence of upsampling blocks.
+        conv (nn.Conv2d): Convolutional layer after upsampling.
+        conv_final (nn.Conv2d): Final convolutional layer to produce output image.
+
+    Returns:
+        torch.Tensor: Super-resolved image tensor of shape (N, out_channels, H * up_scale, W * up_scale).
+    """
+    
     def __init__(self, in_channels = 3, out_channels = 3, num_features = 64, growth_channels = 32, bias = True, num_blocks = 23, up_scale = 4):
         super(RRDBNet, self).__init__()
         

@@ -3,6 +3,9 @@ import torch.optim as optim
 
 
 class SRCNN(nn.Module):
+    """
+    Super-Resolution Convolutional Neural Network (SRCNN) implementation.
+    """
     
     def __init__(self, in_channels = 3, out_channels = 64, kernels_size: list = [9, 5, 5]):
         super(SRCNN, self).__init__()
@@ -20,6 +23,15 @@ class SRCNN(nn.Module):
         
 
     def forward(self, x):
+        """
+        Performs a forward pass through the SRCNN model.
+        
+        Args:
+            x (torch.Tensor): Input low-resolution image tensor of shape (N, C, H, W).
+                
+        Returns:
+            torch.Tensor: Output high-resolution image tensor of the same shape as input.
+        """
         
         # Feature Extraction Layer
         out = self.relu(self.conv1(x))

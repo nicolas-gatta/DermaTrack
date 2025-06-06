@@ -2,6 +2,10 @@ import torch.nn as nn
 import torch
 
 class DiscriminatorBlock(nn.Module):
+    """
+    DiscriminatorBlock for the discriminator network in SRGAN
+    """
+    
     def __init__(self, in_channels, out_channels, stride):
         super(DiscriminatorBlock, self).__init__()
         self.block = nn.Sequential(
@@ -15,6 +19,18 @@ class DiscriminatorBlock(nn.Module):
 
 
 class SRGANDiscriminator(nn.Module):
+    """
+    SRGANDiscriminator is a PyTorch neural network module implementing the discriminator architecture for SRGAN (Super-Resolution Generative Adversarial Network).
+    
+    Args:
+        crop_size (int, optional): The spatial size of the input image patches. Default is 96.
+        
+    Attributes:
+        initial (nn.Sequential): Initial convolutional layer followed by LeakyReLU activation.
+        blocks (nn.Sequential): Sequence of DiscriminatorBlock layers for feature extraction and downsampling.
+        fc (nn.Sequential): Fully connected layers for final classification, outputting a probability via Sigmoid.
+    """
+    
     def __init__(self, crop_size = 96):
         super(SRGANDiscriminator, self).__init__()
         

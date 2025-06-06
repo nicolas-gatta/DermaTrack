@@ -316,7 +316,7 @@ def model_form(request):
     
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
-def load_test_model(request, model_name):
+def load_test_model(request, model_name: str):
     """
     Loads a super-resolution model.
     
@@ -337,12 +337,13 @@ def load_test_model(request, model_name):
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
-def apply_test_sr(request, image_name):
+def apply_test_sr(request, image_name: str):
     """
     Applies a super-resolution model to a degraded image and returns the URL of the enhanced image.
 
     Args:
         request (HttpRequest): The HTTP request object.
+        image_name (str): The name of the image.
 
     Returns:
         JsonResponse: The url of the image.
@@ -439,13 +440,13 @@ def create_dataset(request):
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
-def get_datasets(request, category):
+def get_datasets(request, category: str):
     """
     Retrieve the list of dataset directories for a given category.
     
     Args:
         request (HttpRequest): The HTTP request object.
-        category (str): The category name used to locate the datasets.
+        category (str): The category name.
         
     Returns:
         JsonResponse: A JSON response containing a list of dataset.
@@ -484,7 +485,7 @@ def get_all_test_images(request):
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
-def get_test_image(request, name):
+def get_test_image(request, name: str):
     """
     Returns the URL to a test image.
     
@@ -502,7 +503,7 @@ def get_test_image(request, name):
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=[""], redirect_url="/")
-def degrade_and_save_image(request, name, scale):
+def degrade_and_save_image(request, name: str, scale: int):
     """
     Degrades an input image by applying Gaussian blur and downscaling, then saves the result.
     
@@ -554,6 +555,12 @@ def get_models(request):
     return JsonResponse({'models': models})
 
 def load_model() -> SuperResolution:
+    """
+    Load the model to be use in the user side of the app
+
+    Returns:
+        SuperResolution: The super resolution model
+    """
     global __model
     
     json_path = os.path.join(settings.BASE_DIR, "super_resolution", "static", "data", "model_selection.json")
@@ -656,6 +663,7 @@ def model_selection_form(request):
     Returns:
         HttpResponse: The rendered HTML response for the model_selection_form.
     """
+    
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/model_selection_form.html', {"form": None})
