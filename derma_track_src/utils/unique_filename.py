@@ -1,6 +1,6 @@
 import os
 
-def get_unique_filename(model_name, output_path):
+def get_unique_filename(model_name: str, output_path: str) -> str:
     """
     Generates a unique filename by removing the extension and appending a numeric suffix if needed.
 

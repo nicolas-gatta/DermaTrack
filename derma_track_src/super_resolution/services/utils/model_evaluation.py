@@ -14,9 +14,24 @@ import time
 
 
 class ModelEvaluation:
+    """
+    Class for evaluating super-resolution models on a given dataset.
+    """
     
     @staticmethod
-    def evaluate_model(model_name, path_to_model, device, eval_file, eval_file_name = None, use_bicubic = False, bicubic_scale = None):
+    def evaluate_model(model_name, path_to_model, device, eval_file, eval_file_name = None, use_bicubic = False, bicubic_scale = None) -> None:
+        """
+        Evaluates a super-resolution model or bicubic interpolation on a given evaluation dataset.
+        
+        Args:
+            model_name (str): Name of the model to evaluate.
+            path_to_model (str): Path to the directory containing the model file.
+            device (torch.device): Device on which to run the evaluation (e.g., 'cpu' or 'cuda').
+            eval_file (str): Path to the HDF5 file dataset.
+            eval_file_name (str, optional): Name of the evaluation file to be recorded in the model's metadata. Defaults to None.
+            use_bicubic (bool, optional): If True, evaluates using bicubic interpolation instead of the model. Defaults to False.
+            bicubic_scale (int or float, optional): Scale factor for bicubic interpolation. Required if use_bicubic is True.
+        """
         
         if not use_bicubic:
             model = SuperResolution(model_path = os.path.join(path_to_model, model_name))

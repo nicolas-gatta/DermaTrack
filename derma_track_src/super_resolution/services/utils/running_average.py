@@ -1,4 +1,8 @@
 class RunningAverage:
+    """
+    Class to calculate the running average
+    """
+    
     def __init__(self):
         self.total = 0.0
         self.count = 0.0

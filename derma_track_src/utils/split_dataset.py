@@ -2,7 +2,7 @@ import os
 import random
 import shutil
 
-def split_dataset(dataset_path: str, output_path: str, train_split: float = 0.70, val_split: float = 0.15, test_split: float = 0.15, seed = 25):
+def split_dataset(dataset_path: str, output_path: str, train_split: float = 0.70, val_split: float = 0.15, test_split: float = 0.15, seed: int = 25) -> None:
     """
     Splits images from one folder into train/val/test folders.
 

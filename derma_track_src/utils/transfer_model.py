@@ -11,20 +11,21 @@ from basicsr.archs.edvr_arch import EDVR
 import torch
 
 
-def get_layers(architecture, scale: int = None):
+def get_layers(architecture: str, scale: int = None) -> dict:
      """
      Get the state dict describing the layers of the architecture
 
      Args:
-         architecture (str): 
-         scale (int, optional): _description_. Defaults to None.
+         architecture (str): The type of architecture of the model
+         scale (int, optional): The scale of the model. Defaults to None.
 
      Raises:
-         ValueError: _description_
+         ValueError: If the model is unknown
 
      Returns:
-         _type_: _description_
+         dict: Dict with the state dict
      """
+     
      model_layers = []
      model = None
      
@@ -50,7 +51,20 @@ def get_layers(architecture, scale: int = None):
           
      return model_layers
 
-def verify_model(architecture, model_path):
+def verify_model(architecture: str, model_path: str) -> None:
+     """
+     Verifies and loads a model based on the specified architecture and model checkpoint file.
+     
+     Args:
+         architecture (str): The type of architecture of the model
+         model_path (str): The to the model.
+          
+     Returns:
+          model (torch.nn.Module): The instantiated model with loaded weights.
+          
+     Raises:
+          ValueError: If the model is unknown.
+     """
      
      model_info = torch.load(model_path, weights_only=True)
      
@@ -75,7 +89,7 @@ def verify_model(architecture, model_path):
 
      model.load_state_dict(model_info["model_state_dict"])
 
-def main(inputs_model_path, output_model_path, architecture, scale, mode, invert_mode, patch_size, stride ):
+def main(inputs_model_path: str, output_model_path: str, architecture: str, scale: int, mode: str, invert_mode: str, patch_size: int, stride: int) -> None:
      
      print(f"Strating Transfer of the model {architecture} !")
      model_layers = get_layers(architecture = architecture, scale = scale)

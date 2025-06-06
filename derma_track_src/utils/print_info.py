@@ -1,6 +1,6 @@
 import torch
 
-def print_pth_file_contents_dict_state(pth_path):
+def print_pth_file_contents_dict_state(pth_path: str) -> None:
     """
     Print the dict state of the model pytorch
     
@@ -35,7 +35,7 @@ def print_pth_file_contents_dict_state(pth_path):
     except Exception as e:
         print("Error loading .pth file:", str(e))
 
-def print_pth_file_contents(pth_path):
+def print_pth_file_contents(pth_path: str) -> None:
     """
     Loads and prints the contents of a PyTorch .pth file.
     

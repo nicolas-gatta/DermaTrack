@@ -4,11 +4,11 @@ class EarlyStopping:
     A class to implement early stopping during training to prevent overfitting.
     """
     
-    def __init__(self, patience = 10, delta = 0.0, verbose = True):
+    def __init__(self, patience: int = 10, delta: float = 0.0, verbose: bool = True):
         """
         Initialize the EarlyStopping Class
 
-        args:
+        Args:
             __patience (int): Number of epochs to wait for improvement before stopping. Default = 10.
             __delta (float): Minimum change in the monitored loss to qualify as an improvement. Default = 0.0.
             __verbose (bool): If True, prints a message for each epoch without improvement. Default = True.

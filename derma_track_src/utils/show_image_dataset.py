@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 
 
-def show_first_10_images(dataset):
+def show_first_10_images(dataset: str) -> None:
     """
     Show the 10 first images in the dataset
 

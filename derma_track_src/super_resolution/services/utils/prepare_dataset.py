@@ -3,14 +3,15 @@ import os
 import numpy as np
 import h5py
 import math
-
 from tqdm import tqdm
-
 from super_resolution.services.utils.image_converter import ImageConverter, ImageColorConverter
-
 from enum import Enum
 
 class ResizeRule(str, Enum):
+    """
+    An enumeration representing rules for resizing operations.
+    """
+    
     BIGGEST = "max"
     SMALLEST = "min"
 
@@ -18,6 +19,32 @@ def __prepare_image(file: str, hr: np.ndarray, scale: int, hi_res_images: h5py.G
                     patch_size: int, stride: int, resize_rule: ResizeRule, preprocessing_required: bool = True, 
                     resize_to_output: bool = True, multi_input: bool = False, target_size: int = None, max_translation: int = None,
                     image_info_list: list = None, count: int = None):
+    
+    """
+    Prepares high-resolution (HR) and low-resolution (LR) image pairs for a super-resolution dataset.
+    
+    Args:
+        file (str): Path or identifier of the image file being processed.
+        hr (np.ndarray): High-resolution image as a NumPy array.
+        scale (int): Downscaling factor for generating the low-resolution image.
+        hi_res_images (h5py.Group): HDF5 group for storing high-resolution images.
+        low_res_images (h5py.Group): HDF5 group for storing low-resolution images.
+        patch_size (int): Size of the patches to extract from the images. If None, no patch extraction is performed.
+        stride (int): Stride for patch extraction.
+        resize_rule (ResizeRule): Rule or method for resizing images. If None, resizing is skipped.
+        preprocessing_required (bool, optional): Whether to apply preprocessing steps. Defaults to True.
+        resize_to_output (bool, optional): Whether to resize LR images to match HR output size. Defaults to True.
+        multi_input (bool, optional): Whether to prepare images for multi-input models. Defaults to False.
+        target_size (int, optional): Target size for resizing images (height, width). Used if patch_size is None.
+        max_translation (int, optional): Maximum translation for multi-input preparation.
+        image_info_list (list, optional): List to store image metadata and information.
+        count (int, optional): Counter for the number of processed images.
+        
+    Returns:
+        tuple: 
+            - image_info_list (list): Updated list with information of the images.
+            - count (int): Updated count of processed images.
+    """
     
     blur_image = cv2.GaussianBlur(hr, (5, 5), 1.5)
     
@@ -114,7 +141,18 @@ def __crop_rectangle(w, h, angle):
 
     return int(wr), int(hr)
 
-def __rotate_and_crop_image(image, angle, scale):
+def __rotate_and_crop_image(image: np.ndarray, angle: float, scale: int):
+    """
+    Rotates an image by a specified angle, then crops or pads it to a new size that is a multiple of the given scale.
+    
+    Args:
+        image (numpy.ndarray): The input image to be rotated and cropped.
+        angle (float): The angle (in degrees) to rotate the image.
+        scale (int): The scale factor used to determine the final cropped size.
+        
+    Returns:
+        numpy.ndarray: The rotated and cropped (or padded) image with dimensions that are multiples of the scale.
+    """
     
     (h, w) = image.shape[:2]
     
@@ -133,7 +171,29 @@ def __rotate_and_crop_image(image, angle, scale):
 
 def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConverter, hi_res_images: h5py.Group, low_res_images: h5py.Group, image_info: h5py.Group,
                              patch_size: int, stride: int, resize_rule: ResizeRule, preprocessing_required: bool = True, resize_to_output: bool = True, multi_input: bool = False,
-                             max_angle_rotation: int = None, angle_rotation_step: int = None):
+                             max_angle_rotation: int = None, angle_rotation_step: int = None) -> None:
+    """
+    Prepares and adds images from a specified folder to HDF5 datasets for high-resolution and low-resolution images.
+    
+    Args:
+        image_folder (str): Path to the folder containing input images.
+        scale (int): Downscaling factor for generating low-resolution images.
+        mode (ImageColorConverter): Color conversion mode to apply to images.
+        hi_res_images (h5py.Group): HDF5 group to store high-resolution image patches.
+        low_res_images (h5py.Group): HDF5 group to store low-resolution image patches.
+        image_info (h5py.Group): HDF5 group to store image metadata (e.g., patch sizes).
+        patch_size (int): Size of the patches to extract from images.
+        stride (int): Stride for patch extraction.
+        resize_rule (ResizeRule): Rule for resizing images before patch extraction.
+        preprocessing_required (bool, optional): Whether to apply preprocessing to images. Defaults to True.
+        resize_to_output (bool, optional): Whether to resize images to the output size. Defaults to True.
+        multi_input (bool, optional): Whether to generate multiple input variants per image. Defaults to False.
+        max_angle_rotation (int, optional): Maximum angle (in degrees) for image rotation augmentation. If None, no rotation is applied.
+        angle_rotation_step (int, optional): Step size (in degrees) for rotation augmentation. Used if max_angle_rotation is set.
+        
+    Returns:
+        None. The function modifies the provided HDF5 groups in-place by adding processed image patches and metadata.
+    """
     
     images_file_name = [file for file in os.listdir(image_folder) if file.lower().endswith(('.png', '.jpg', '.jpeg'))]
     
@@ -179,7 +239,18 @@ def __prepare_and_add_images(image_folder: str, scale: int, mode: ImageColorConv
     
     image_info.create_dataset("image_size", data = np.array(image_info_list), dtype = np.dtype('int64'))
         
-def __crop_or_pad_image(image: np.ndarray, target_height, target_width):
+def __crop_or_pad_image(image: np.ndarray, target_height: int, target_width: int) -> np.ndarray:
+    """
+    Crops or pads an image to the specified target height and width.
+    
+    Args:
+        image (np.ndarray): Input image as a NumPy array of shape (H, W, C).
+        target_height (int): Desired height for the image.
+        target_width (int): Desired width for the image.
+        
+    Returns:
+        np.ndarray: The cropped or padded image with shape (target_height, target_width, C).
+    """
     
     height, width, _ = image.shape
     
@@ -200,7 +271,24 @@ def __crop_or_pad_image(image: np.ndarray, target_height, target_width):
     return np.pad(array = image, pad_width=[(pad_top, pad_bottom), (pad_left, pad_right), (0, 0)], mode = 'reflect')
 
 
-def __add_image(file: str, hr: np.ndarray, lr: np.ndarray, hi_res_images: h5py.Group, low_res_images: h5py.Group, count: int, image_info_list: list, multi_input: bool = False, max_translation: int = 20):
+def __add_image(file: str, hr: np.ndarray, lr: np.ndarray, hi_res_images: h5py.Group, low_res_images: h5py.Group, count: int, image_info_list: list, multi_input: bool = False, max_translation: int = 20) -> list:
+    """
+    Adds a high-resolution (HR) and low-resolution (LR) image pair to HDF5 groups, processes them for PyTorch compatibility, and updates image metadata.
+    
+    Args:
+        file (str): The file path or identifier for the image.
+        hr (np.ndarray): High-resolution image as a NumPy array (Height x Width x Channels).
+        lr (np.ndarray): Low-resolution image as a NumPy array (Height x Width x Channels).
+        hi_res_images (h5py.Group): HDF5 group to store high-resolution images.
+        low_res_images (h5py.Group): HDF5 group to store low-resolution images.
+        count (int): Index or count for naming the dataset in the HDF5 group.
+        image_info_list (list): List to append image metadata (height, width, index).
+        multi_input (bool, optional): If True, creates a burst of LR images for multi-frame input. Defaults to False.
+        max_translation (int, optional): Maximum translation for burst image creation. Defaults to 20.
+        
+    Returns:
+        list: Updated image_info_list with metadata for the added image.
+    """
     
     image_info_list.append((hr.shape[0], hr.shape[1], count - 1))
     
@@ -222,6 +310,17 @@ def __add_image(file: str, hr: np.ndarray, lr: np.ndarray, hi_res_images: h5py.G
     return image_info_list
 
 def __create_burst_image(lr: np.ndarray, burst_size: int = 5, max_translation: int = 20) -> np.ndarray:
+    """
+    Generates a burst of low-resolution images by applying spatial translations to the input image.
+    
+    Args:
+        lr (np.ndarray): Input low-resolution image as a NumPy array of shape (channels, height, width).
+        burst_size (int, optional): Number of images to generate in the burst. Defaults to 5.
+        max_translation (int, optional): Maximum number of pixels to translate the image in both height and width. Defaults to 20.
+        
+    Returns:
+        np.ndarray: A NumPy array of shape (burst_size, channels, cropped_height, cropped_width) containing the burst of images.
+    """
     
     burst_lr = []
     height, width = lr.shape[1:]
@@ -241,7 +340,20 @@ def __create_burst_image(lr: np.ndarray, burst_size: int = 5, max_translation: i
     
     return np.stack(burst_lr)
     
-def __get_extreme_image_size(images_file_name: list, image_folder: str, resize_rule: ResizeRule = ResizeRule.BIGGEST) -> tuple[float, float]:
+def __get_extreme_image_size(images_file_name: list, image_folder: str, resize_rule: ResizeRule = ResizeRule.BIGGEST) -> tuple:
+    """
+    Calculates the extreme (biggest or smallest) height and width among a list of images.
+    
+    Args:
+        images_file_name (list): List of image file names to process.
+        image_folder (str): Path to the folder containing the images.
+        resize_rule (ResizeRule, optional): Rule to determine whether to find the biggest or smallest image size.
+            Defaults to ResizeRule.BIGGEST.
+            
+    Returns:
+        tuple: A tuple containing the extreme height and width found among the images.
+    """
+    
     
     extreme_height, extreme_width = 0.0, 0.0 if resize_rule == ResizeRule.BIGGEST else float('inf'), float('inf')
     
@@ -268,7 +380,24 @@ def __get_extreme_image_size(images_file_name: list, image_folder: str, resize_r
 
 def create_h5_image_file(input_path: str, scale: int, output_path: str, mode: ImageColorConverter, patch_size: int = None, stride: int = None, 
                          resize_rule: ResizeRule = None, preprocessing_required: bool = True, resize_to_output: bool = True, multi_input: bool = False,
-                         max_angle_rotation: int = None, angle_rotation_step: int = None):
+                         max_angle_rotation: int = None, angle_rotation_step: int = None) -> None:
+    """
+    Creates an HDF5 (.h5) file containing high-resolution and low-resolution image datasets.
+    
+    Args:
+        input_path (str): Path to the directory containing input images.
+        scale (int): The scaling factor for generating low-resolution images from high-resolution images.
+        output_path (str): Path where the output HDF5 file will be saved.
+        mode (ImageColorConverter): The color conversion mode to apply to images (e.g., RGB, grayscale).
+        patch_size (int, optional): Size of image patches to extract. If None, uses full images.
+        stride (int, optional): Stride for patch extraction. If None, uses default stride.
+        resize_rule (ResizeRule, optional): Rule for resizing images before processing.
+        preprocessing_required (bool, optional): Whether to apply preprocessing steps to images. Defaults to True.
+        resize_to_output (bool, optional): Whether to resize images to match output dimensions. Defaults to True.
+        multi_input (bool, optional): Whether to support multiple input images per sample. Defaults to False.
+        max_angle_rotation (int, optional): Maximum angle for image rotation augmentation. If None, no rotation is applied.
+        angle_rotation_step (int, optional): Step size for angle rotation augmentation. If None, no rotation is applied.
+    """
     
     with h5py.File(output_path, 'w', libver='latest') as h5_file:
         
@@ -285,8 +414,28 @@ def create_h5_image_file(input_path: str, scale: int, output_path: str, mode: Im
                                  angle_rotation_step = angle_rotation_step)
 
 def dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, patch_size: int, stride: int, resize_rule: str, 
-                            resize_to_output: bool, base_dir: str, multi_input: bool, max_angle_rotation: int, angle_rotation_step: int):
-
+                            resize_to_output: bool, base_dir: str, multi_input: bool, max_angle_rotation: int, angle_rotation_step: int) -> str:
+    """
+    Checks if a preprocessed dataset file exists for the given parameters or creates it if it does not exist.
+    
+    Args:
+        dataset (str): Name of the dataset.
+        mode (str): Image color mode (e.g., grayscale, RGB).
+        scale (int): Upscaling factor for super-resolution.
+        category (str): Dataset category (e.g., 'train', 'validation', 'evaluation').
+        patch_size (int): Size of image patches to extract (if applicable).
+        stride (int): Stride for patch extraction (if applicable).
+        resize_rule (str): Rule for resizing images (if applicable).
+        resize_to_output (bool): Whether to resize images to the output size.
+        base_dir (str): Base directory containing datasets.
+        multi_input (bool): Whether to use multiple input images.
+        max_angle_rotation (int): Maximum angle for image rotation augmentation.
+        angle_rotation_step (int): Step size for rotation augmentation.
+        
+    Returns:
+        str: Path to the (existing or newly created) HDF5 dataset file.
+    """
+    
     file_name = f"{dataset}_{mode}_x{scale}"
     
     c_resize_rule = None

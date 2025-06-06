@@ -8,6 +8,10 @@ from super_resolution.services.utils.prepare_dataset import ResizeRule
 from django.conf import settings
 
 class ModelField(str, Enum):
+    """
+    Enumeration of model configuration fields used in the super resolution.
+    """
+    
     ARCHITECTURE = "architecture"
     TRAIN_FILE = "train_file"
     VALID_FILE = "valid_file"

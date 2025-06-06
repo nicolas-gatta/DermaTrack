@@ -166,7 +166,6 @@ class SuperResolution:
 
         
     def __fetch_image(self, image_source: str, is_encrypted: bool = False):
-        
         """
         Fetch an image from a local file path
 
@@ -180,6 +179,7 @@ class SuperResolution:
         Returns:
             MatLike: The loaded image
         """
+        
         images = []
         if os.path.exists(image_source):
             if os.path.isdir(image_source):

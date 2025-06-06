@@ -13,7 +13,7 @@ class ModelFile(str, Enum):
 
 
 
-def add_missing_data(pth_path: str, values: dict):
+def add_missing_data(pth_path: str, values: dict) -> None:
     """
     Add the missing data into the models .pth file
 

@@ -5,6 +5,9 @@ from pytorch_msssim import ssim, ms_ssim
 from super_resolution.services.utils.running_average import RunningAverage
 
 class ImageEvaluator:
+    """
+    Class to help to compare the super resolute image with the high resolution image using multiple metrics
+    """
     
     def __init__(self):
         
