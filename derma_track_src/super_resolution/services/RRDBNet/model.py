@@ -6,15 +6,10 @@ import torch.nn.functional as F
 class Interpolate(nn.Module):
     """
     A custom PyTorch module for upsampling input tensors using interpolation.
+    
     Args:
         scale_factor (int or float, optional): Multiplier for spatial size. Default is 2.
         mode (str, optional): Algorithm used for upsampling. Default is "bicubic".
-            
-    Forward Args:
-        x (torch.Tensor): Input tensor to be upsampled.
-        
-    Returns:
-        torch.Tensor: Upsampled tensor.
     """
     
     def __init__(self, scale_factor = 2, mode = "bicubic"):
