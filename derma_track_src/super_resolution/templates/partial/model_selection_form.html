@@ -1,9 +1,16 @@
 {% load static %}
 <script src="{% static 'js/loadAllSelectModel.js' %}" defer></script>
+<script src="{% static 'js/loadSelectedModel.js' %}" defer></script>
 <link href="{% static 'css/model_form.css' %}" rel="stylesheet" type="text/css">
 
 <div class="container mt-5 bg-light p-3">
   <h2 class="text-center mb-4">Model Selection Form</h2>
+  <div class="card border-success mb-3 shadow-sm">
+    <div class="card-body text-success text-center">
+      <h5 class="card-title mb-0">Model Loaded: </h5>
+      <p class="card-text fw-bold" id = "selected-model"></p>
+    </div>
+  </div>
   <form id="select-model-form" method="POST" hx-post="{% url 'select_model' %}" hx-target="#dynamic-body" hx-swap="innerHTML">
     {% csrf_token %}
 

@@ -18,6 +18,7 @@ urlpatterns = [
     path("get_datasets/<str:category>", views.get_datasets,  name = "get_datasets"),
     path("get_test_images", views.get_all_test_images,  name = "get_test_images"),
     path("get_models", views.get_models,  name = "get_models"),
+    path("get_selected_model", views.get_selected_model,  name = "get_selected_model"),
     path("create_dataset", views.create_dataset,  name = "create_dataset"),
     path("get_test_image/<str:name>", views.get_test_image,  name = "get_test_image"),
     path("degrade_and_save_image/<str:name>/<int:scale>", views.degrade_and_save_image,  name = "degrade_and_save_image"),

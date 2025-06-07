@@ -477,6 +477,8 @@ def get_all_test_images(request):
     
     try:
         images = os.listdir(base_path)
+        images = [ file for file in os.listdir(base_path) if os.path.isfile(os.path.join(base_path, file)) and file.lower().endswith((".png", ".jpg", ".jpeg"))
+        ]
     except FileNotFoundError:
         images = []
     
@@ -553,6 +555,27 @@ def get_models(request):
         models = []
     
     return JsonResponse({'models': models})
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=[""], redirect_url="/")
+def get_selected_model(request):
+    """
+    Retrive the current model used.
+
+    Args:
+        request (HttpRequest): The HTTP request object.
+
+    Returns:
+        JsonResponse: Contain current model used.
+    """
+    
+    json_path = os.path.join(settings.BASE_DIR, "super_resolution", "static", "data", "model_selection.json")
+    
+    with open(json_path, "r") as f:
+        model_info = json.load(f)
+        model_name = model_info["model_name"]
+    
+    return JsonResponse({'model_name': model_name})
 
 def load_model() -> SuperResolution:
     """
@@ -667,3 +690,4 @@ def model_selection_form(request):
     if request.headers.get('HX-Request'):
         #form = TrainingForm()
         return render(request, 'partial/model_selection_form.html', {"form": None})
+    
