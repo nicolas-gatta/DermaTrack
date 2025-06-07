@@ -14,10 +14,11 @@ class AES():
     This class uses a secret key defined in Django settings as `AES_SECRET_KEY`.
     """
     
-    _key = settings.AES_SECRET_KEY
+    _key = None
     
     def __init__(self):
-        pass
+        if AES._key == None:
+            AES._key = settings.AES_SECRET_KEY
     
     @staticmethod
     def encrypt_message(data: bytes) -> bytes:

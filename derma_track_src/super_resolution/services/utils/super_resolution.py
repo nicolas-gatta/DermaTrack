@@ -21,6 +21,8 @@ class SuperResolution:
         self.use_bicubic = use_bicubic
             
         self.bicubic_scale = bicubic_scale
+          
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
             
         if not use_bicubic:
                     
@@ -32,14 +34,18 @@ class SuperResolution:
             self.bicubic_scale = None
             
             self.path = model_path
-            
-            self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
                     
             self.model, self.model_info = self.__load_model(model_path)
             
             self.model.to(self.device)
             
             self.model.eval()
+            
+        else:
+            self.model_info = dict()
+            self.model_info["color_mode"] = ImageColorConverter.BGR2RGB.name
+            self.model_info["invert_color_mode"] = ImageColorConverter.RGB2BGR.name
         
     
     def __load_model(self, model_path: str) -> tuple:
@@ -97,7 +103,7 @@ class SuperResolution:
             str: Path to the saved super-resolved image.
         """
         
-        if self.model_info["multi_input"]:
+        if not self.use_bicubic and self.model_info["multi_input"]:
             postprocess_image = self.process_images(images = self.__fetch_image(image_source = folder_path, is_encrypted = is_encrypted))
         else:
             postprocess_image = self.process_image(image = self.__fetch_image(image_source = image_path, is_encrypted = is_encrypted))
@@ -125,22 +131,22 @@ class SuperResolution:
             postprocess_required = False
 
         if self.use_bicubic:
-            return F.interpolate(preprocess_image, scale_factor = self.bicubic_scale, mode="bicubic", align_corners=False)
-        
-        height, width = preprocess_image.shape[2:]
-        quadrant_image_parts = []
-        
-        if height >= 1600 or width >= 1200:
-            quadrant_image_parts = self.__split_image(height = height, width = width, img = preprocess_image)
-            sr_part = []
-            with torch.no_grad():
-                for part in quadrant_image_parts:
-                    sr_part.append(self.model(part))
-                
-                sr_image = self.__merge_images(*sr_part)
+            sr_image = F.interpolate(preprocess_image, scale_factor = self.bicubic_scale, mode="bicubic", align_corners=False)
         else:
-            with torch.no_grad():
-                sr_image = self.model(preprocess_image)
+            height, width = preprocess_image.shape[2:]
+            quadrant_image_parts = []
+            
+            if height >= 1600 or width >= 1200:
+                quadrant_image_parts = self.__split_image(height = height, width = width, img = preprocess_image)
+                sr_part = []
+                with torch.no_grad():
+                    for part in quadrant_image_parts:
+                        sr_part.append(self.model(part))
+                    
+                    sr_image = self.__merge_images(*sr_part)
+            else:
+                with torch.no_grad():
+                    sr_image = self.model(preprocess_image)
 
 
         sr_image = torch.clamp(sr_image, 0.0, 1.0)
@@ -301,7 +307,7 @@ class SuperResolution:
             torch.Tensor: The preprocessed image as a 4D tensor (batch, channels, height, width).
         """
         
-        if self.model_info["need_resize"]:
+        if not self.use_bicubic and self.model_info["need_resize"]:
             image = cv2.resize(image, (image.shape[1] * self.model_info["scale"], image.shape[0] * self.model_info["scale"]))
         convert_image = ImageConverter.convert_image(image, ImageColorConverter[self.model_info["color_mode"]])
         tensor_image = torch.from_numpy(convert_image).permute(2, 0, 1).float() / 255

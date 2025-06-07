@@ -41,9 +41,7 @@ def __prepare_image(file: str, hr: np.ndarray, scale: int, hi_res_images: h5py.G
         count (int, optional): Counter for the number of processed images.
         
     Returns:
-        tuple: 
-            - image_info_list (list): Updated list with information of the images.
-            - count (int): Updated count of processed images.
+        tuple: image_info_list, count
     """
     
     blur_image = cv2.GaussianBlur(hr, (5, 5), 1.5)
@@ -440,7 +438,7 @@ def dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, 
     
     c_resize_rule = None
             
-    preprocessing_required = (category != "evaluation") and not multi_input and ((patch_size != None and stride != None) or resize_rule != None)
+    preprocessing_required = (category != "evaluation") and not multi_input
     
     if preprocessing_required:
         if patch_size != None and stride != None:
@@ -450,14 +448,14 @@ def dataset_exist_or_create(dataset: str, mode: str, scale: int, category: str, 
             file_name += f"_{resize_rule}"
             c_resize_rule = ResizeRule[resize_rule]
     
+    if not resize_to_output:
+        file_name += "_nrto"
+    
     if max_angle_rotation != None and angle_rotation_step != None:
         file_name += f"_r{max_angle_rotation}_sp{angle_rotation_step}"
         
     if multi_input:
         file_name += "_mi"
-    
-    if not resize_to_output:
-        file_name += "_nrto"
     
     output_path = os.path.join(base_dir, "super_resolution", "datasets", category, f"{file_name}.hdf5")
     
