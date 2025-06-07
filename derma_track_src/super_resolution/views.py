@@ -630,7 +630,7 @@ def apply_sr(request):
         
         filename = f"enchanced_image_{visit_body_part.pk}.enc"
                     
-        if model.model_info["multi_input"]:
+        if not model.use_bicubic and model.model_info["multi_input"]:
             output_path, height, width = model.apply_super_resolution(image_path = None, output_path = output_path, filename = filename, folder_path = visit_body_part.multi_image_path, is_encrypted = True)
         else:
             image_path = visit_body_part.image_path.path
