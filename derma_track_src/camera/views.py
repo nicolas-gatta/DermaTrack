@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 from camera.services.pose_estimator import detect_body_part
-from django.views.decorators.csrf import csrf_exempt
 from core.models import BodyPart, VisitBodyPart, Visit
 from image_encryption.services.advanced_encrypted_standard import AES
+from django.contrib.auth.decorators import login_required
+from utils.checks import group_and_super_user_checks
 
 import base64
 import json
@@ -14,6 +15,8 @@ import numpy as np
 
 # Create your views here.
 
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def video_stream(request):
     """
     Rendering the video_stream page.
@@ -29,6 +32,8 @@ def video_stream(request):
     """
     return render(request, 'partial/video_stream.html')
 
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def detect(request):
     """
     Detects the body part from an image.
@@ -46,7 +51,8 @@ def detect(request):
     detected_body_part = detect_body_part(base64_image = base64_image)
     return JsonResponse({"body_part": detected_body_part})
 
-@csrf_exempt
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def save_image(request):
     """
     Saves an encrypted image with preview and updates the database.
@@ -128,7 +134,8 @@ def save_image(request):
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status = 400)
 
 
-@csrf_exempt
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def create_visit_body_part(request):
     """
     Creates a VisitBodyPart entry in the database.
@@ -161,7 +168,8 @@ def create_visit_body_part(request):
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status = 400)
 
 
-@csrf_exempt
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def save_image_without_db_update(request):
     """
     Saves and encrypted image to the file system without updating the database.
@@ -210,7 +218,8 @@ def save_image_without_db_update(request):
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status = 400)
 
-@csrf_exempt
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
 def save_image_with_db_update(request):
     """
     Saves and encrypted image to the file system and updating the database.
@@ -279,7 +288,9 @@ def save_image_with_db_update(request):
         return JsonResponse({"status": "success", "visit_body_part_id": visit_body_part.pk ,"image": preview_filename, "visitId": visit_body_part.visit.pk, "bodyPart": visit_body_part.body_part.name}, status = 200)
 
     return JsonResponse({"status": "error", "message": "Invalid request method"}, status = 400)   
-        
+
+@login_required(login_url='/')
+@group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")   
 def get_body_parts(request):
     """
     Retrieves the list of all body parts from the database.

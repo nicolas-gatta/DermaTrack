@@ -530,6 +530,7 @@ def delete_image(request, id):
     
     if request.method == "DELETE":
         try:
+            
             visit_body_part = VisitBodyPart.objects.get(pk = id)
             
             body_part_name = visit_body_part.body_part.name

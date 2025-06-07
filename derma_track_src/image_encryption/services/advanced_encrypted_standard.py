@@ -14,11 +14,8 @@ class AES():
     This class uses a secret key defined in Django settings as `AES_SECRET_KEY`.
     """
     
-    _key = None
-    
     def __init__(self):
-        if AES._key == None:
-            AES._key = settings.AES_SECRET_KEY
+        pass
     
     @staticmethod
     def encrypt_message(data: bytes) -> bytes:
@@ -37,7 +34,7 @@ class AES():
         padder = padding.PKCS7(algorithms.AES.block_size).padder()
         padded_data = padder.update(data) + padder.finalize()
         
-        cipher = Cipher(algorithms.AES(AES._key), modes.CBC(iv), backend=default_backend())
+        cipher = Cipher(algorithms.AES(settings.AES_SECRET_KEY), modes.CBC(iv), backend=default_backend())
         encryptor = cipher.encryptor()
         encrypted_data = encryptor.update(padded_data) + encryptor.finalize()
         
@@ -61,7 +58,7 @@ class AES():
         encrypted_text = data[16:]
         
         # Decrypt the data
-        cipher = Cipher(algorithms.AES(AES._key), modes.CBC(iv), backend=default_backend())
+        cipher = Cipher(algorithms.AES(settings.AES_SECRET_KEY), modes.CBC(iv), backend=default_backend())
         decryptor = cipher.decryptor()
         decrypted_padded_data = decryptor.update(encrypted_text) + decryptor.finalize()
 

@@ -52,7 +52,7 @@ async function stream() {
     if (true || await isCameraConnected(deviceId)){
         let video = document.getElementById("stream");
         video.muted = true;
-        navigator.mediaDevices.getUserMedia({video: {width: { exact:  1920} , height: { exact: 1080 }}})
+        navigator.mediaDevices.getUserMedia({video: {width: { ideal:  1920} , height: { ideal: 1080 }}})
             .then((stream) => {
                 video.srcObject = stream;
             })
@@ -272,7 +272,8 @@ async function createVisitBodyPart(bodyPartId, distance){
         const response = await fetch(`/camera/create_visit_body_part/`,{
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify({visitId: visitId, bodyPartId: bodyPartId, distance :distance, pixelSize: 0.0014})
         })
@@ -295,7 +296,8 @@ async function saveImageWithoutUpdate(visit_body_part_id, visitId, bodyPart, ima
         await fetch(`/camera/save_image_without_db_update/`, {
             method: "POST",
             headers: { 
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify({visit_body_part_id: visit_body_part_id, visit: visitId, body_part: bodyPart, image: imageUrl, imageWidth: imageWidth, imageHeigth: imageHeigth, index})
         })
@@ -317,7 +319,8 @@ async function saveImageWithUpdate(visit_body_part_id, imageUrl, imageWidth, ima
         await fetch(`/camera/save_image_with_db_update/`, {
             method: "POST",
             headers: { 
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
             },
             body: JSON.stringify({visit_body_part_id: visit_body_part_id, image: imageUrl, imageWidth: imageWidth, imageHeigth: imageHeigth, index})
         })
