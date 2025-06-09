@@ -169,6 +169,5 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-*.pth
 *.hdf5
 .idea
