@@ -1,6 +1,16 @@
 from django.db import models
 from login.models import Doctor
 from multiselectfield import MultiSelectField
+import os
+
+def get_image_path(instance, filename):
+    return os.path.join('visits', f"visit_{str(instance.visit.pk)}", instance.body_part.name, f"image_{instance.pk}", filename)
+
+def get_preview_path(instance, filename):
+    return os.path.join('visits', f"visit_{str(instance.visit.pk)}", instance.body_part.name, filename)
+
+def get_super_path(instance, filename):
+    return os.path.join('visits', f"visit_{str(instance.visit.pk)}", instance.body_part.name, filename)
 
 class Status(models.TextChoices):
     """
@@ -40,6 +50,14 @@ class Allergy(models.TextChoices):
     FISH        = 'fish', 'Fish'
     SESAME      = 'sesame', 'Sesame'
 
+class Sex(models.TextChoices):
+    """
+    Enumeration for the Sex.
+    """
+    MALE    = 'male', 'Male'
+    FEMALE  = 'female', 'Female'
+    OTHER   = 'other', 'Other'
+
 # Create your models here.
 class Patient(models.Model):
     """
@@ -66,6 +84,7 @@ class Patient(models.Model):
     date_of_birth = models.DateField(blank=False)
     blood_group = models.CharField(max_length=30, choices=BloodGroup.choices, default=BloodGroup.A_POSITIVE, blank=False)
     allergies = MultiSelectField(choices=Allergy.choices, max_length=200, blank=True, default = None)
+    sex = models.CharField(max_length=30, choices=Sex.choices, default=Sex.OTHER, blank=False)
     street = models.CharField(max_length=255, blank=False)
     number = models.IntegerField(blank=False)
     city = models.CharField(max_length=255, blank=False)
@@ -174,15 +193,15 @@ class VisitBodyPart(models.Model):
         visit (Visit): Related visit.
     """
     
-    image_path = models.ImageField(null = True, blank = True)
+    image_path = models.FileField(upload_to = get_image_path, null = True, blank = True)
     image_name = models.CharField(null = True, blank = True, max_length=255)
     image_height = models.IntegerField(default = 0)
     image_width = models.IntegerField(default = 0)
-    image_preview_path = models.ImageField(null = True, blank = True)
+    image_preview_path = models.FileField(upload_to = get_preview_path, null = True, blank = True)
     image_preview_name = models.CharField(null = True, blank = True, max_length=255)
     image_preview_height = models.IntegerField(default = 0)
     image_preview_width = models.IntegerField(default = 0)
-    image_super_path = models.ImageField(null = True, blank = True)
+    image_super_path = models.FileField(upload_to = get_super_path, null = True, blank = True)
     image_super_name = models.CharField(null = True, blank = True, max_length=255, default = "")
     image_super_height = models.IntegerField(default = 0)
     image_super_width = models.IntegerField(default = 0)

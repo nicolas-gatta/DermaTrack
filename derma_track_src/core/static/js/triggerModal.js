@@ -121,7 +121,7 @@ async function createFileExplorerImage(id, body_part){
                         const allFigures = document.querySelectorAll(".file-item");
                         allFigures.forEach(f => f.classList.remove("selected"));
 
-                        if (selectedImageId === image["pk"]) {
+                        if (selectedImageId == image["pk"]) {
                             selectedImageId = null;
                             deleteButton.disabled = true;
                         } else {
@@ -200,6 +200,8 @@ function setBackgroundImage(id, url, pixel_size, distance, focal) {
 
 async function deleteImage(){
     if (!selectedImageId) return;
+
+    console.log(selectedImageId);
 
     try{
         await fetch(`/core/visit_list/delete_image/${selectedImageId}/`, {

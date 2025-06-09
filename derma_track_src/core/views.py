@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.db.models.functions import Concat
 from django.db.models import Value
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from .forms import PatientForm, VisitForm, VisitFormAdmin
 from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart, Doctor
@@ -541,10 +542,10 @@ def delete_image(request, id):
             
             preview_path = visit_body_part.image_preview_path.path if visit_body_part.image_preview_path else None
             
-            multi_path = visit_body_part.multi_image_path if visit_body_part.multi_image_path else None
+            multi_path = os.path.join(settings.MEDIA_ROOT, visit_body_part.multi_image_path) if visit_body_part.multi_image_path else None
             
             super_path = visit_body_part.image_super_path.path if visit_body_part.image_super_path else None
-
+            
             for internal_path in [image_path, preview_path, multi_path, super_path]:
                 
                 if internal_path != None and os.path.exists(internal_path):

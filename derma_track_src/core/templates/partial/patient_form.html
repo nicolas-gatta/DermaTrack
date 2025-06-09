@@ -4,7 +4,12 @@
             <form method="POST" hx-post="/core/create_patient/" hx-target="#dynamic-body" hx-swap="innerHTML" onsubmit="dismissModal()">
                 {% csrf_token %}
                 <div class="modal-header bg-light border-bottom">
-                    <h5 class="modal-title">Add New Patient</h5>
+                    {% if is_form %}
+                        <h5 class="modal-title">Add New Patient</h5>
+                    
+                    {% else %}
+                        <h5 class="modal-title">{{ form.surname.value }} {{ form.name.value}}</h5>
+                    {% endif %}
                 </div>
 
                 <div class="modal-body">
@@ -22,6 +27,9 @@
 
                                 <label class="form-label mt-3">Date of Birth (required)</label>
                                 {{ form.date_of_birth}}
+
+                                <label class="form-label mt-3">Sex (required)</label>
+                                {{ form.sex }}
 
                                 <label class="form-label mt-3">Blood Group (required)</label>
                                 {{ form.blood_group}}

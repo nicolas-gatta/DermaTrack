@@ -6,6 +6,7 @@ from core.models import BodyPart, VisitBodyPart, Visit
 from image_encryption.services.advanced_encrypted_standard import AES
 from django.contrib.auth.decorators import login_required
 from utils.checks import group_and_super_user_checks
+from django.core.files.base import ContentFile
 
 import base64
 import json
@@ -255,33 +256,33 @@ def save_image_with_db_update(request):
         img_binary = base64.b64decode(encoded)
         
         num_image = visit_body_part.pk
-          
-        multi_input_path = os.path.join(folder_path,f"image_{num_image}")
-        
+
         image_name = f"image_{num_image}_{index}"
             
         filename, preview_filename = f"{image_name}.enc", f"preview_{image_name}.png"
         
-        file_path, preview_path = os.path.join(multi_input_path, filename), os.path.join(folder_path, preview_filename)
+        image = cv2.imdecode(np.frombuffer(img_binary, dtype=np.uint8), cv2.IMREAD_COLOR)
         
-        image = cv2.imdecode(np.frombuffer(img_binary, dtype=np.uint8), cv2.IMREAD_COLOR)    
+        preview_image = cv2.resize(image, (preview_height, preview_width))
         
-        with open(file_path, "wb") as f:
-            f.write(AES.encrypt_message(img_binary))
+        success, buffer = cv2.imencode(".png", preview_image)
+        
+        if not success:
+            raise ValueError("Failed to encode preview image to PNG")
+        
+        visit_body_part.image_path.save(filename, ContentFile(AES.encrypt_message(img_binary)))
 
-        cv2.imwrite(preview_path, cv2.resize(image, (preview_height, preview_width)))
+        visit_body_part.image_preview_path.save(preview_filename, ContentFile(buffer.tobytes()))
         
         visit_body_part.image_preview_name = preview_filename
-        visit_body_part.image_preview_path = preview_path 
         visit_body_part.image_preview_height = preview_height
         visit_body_part.image_preview_width = preview_width
         
         visit_body_part.image_name = filename
-        visit_body_part.image_path = file_path
         visit_body_part.image_height = image_height
         visit_body_part.image_width = image_width
         
-        visit_body_part.multi_image_path = multi_input_path
+        visit_body_part.multi_image_path = os.path.join("visits", f"visit_{visit_body_part.visit.pk}", visit_body_part.body_part.name, f"image_{num_image}")
         
         visit_body_part.save()
         

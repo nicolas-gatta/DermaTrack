@@ -19,6 +19,7 @@ from super_resolution.services.utils.model_evaluation import ModelEvaluation
 from core.models import VisitBodyPart
 from utils.unique_filename import get_unique_filename
 from utils.checks import group_and_super_user_checks
+from django.core.files import File
 
 __model = None
 __test_model = None
@@ -631,7 +632,8 @@ def apply_sr(request):
         filename = f"enchanced_image_{visit_body_part.pk}.enc"
                     
         if not model.use_bicubic and model.model_info["multi_input"]:
-            output_path, height, width = model.apply_super_resolution(image_path = None, output_path = output_path, filename = filename, folder_path = visit_body_part.multi_image_path, is_encrypted = True)
+            folder_path = os.path.join(settings.MEDIA_ROOT,visit_body_part.multi_image_path)
+            output_path, height, width = model.apply_super_resolution(image_path = None, output_path = output_path, filename = filename, folder_path = folder_path, is_encrypted = True)
         else:
             image_path = visit_body_part.image_path.path
             output_path, height, width = model.apply_super_resolution(image_path = image_path, output_path = output_path, filename = filename, is_encrypted = True)
@@ -639,8 +641,8 @@ def apply_sr(request):
         visit_body_part.image_super_height = height
         visit_body_part.image_super_width = width
         visit_body_part.image_super_name = filename
-        visit_body_part.image_super_path = output_path
-        
+        visit_body_part.image_super_path.name = os.path.join("visits", f"visit_{visit_body_part.visit.pk}", visit_body_part.body_part.name, filename) 
+
         visit_body_part.save()
         
         return JsonResponse({"message": "Enhanced Sucessful"}, status=200)

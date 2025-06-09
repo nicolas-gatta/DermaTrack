@@ -6,7 +6,7 @@ from django.utils.timezone import now
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ["national_number", "name", "surname", "date_of_birth", "blood_group", "allergies", "street", 
+        fields = ["national_number", "name", "surname", "date_of_birth", "blood_group", "sex", "allergies", "street", 
                   "number", "city", "zip_code", "phone_number", "other_phone_number"]
         widgets = {
             'date_of_birth': forms.DateInput(attrs={'type': 'date'}),
@@ -21,6 +21,7 @@ class PatientForm(forms.ModelForm):
         self.fields["surname"].widget.attrs.update({"class":"form-control"})
         self.fields["date_of_birth"].widget.attrs.update({"class":"form-control"})
         self.fields["blood_group"].widget.attrs.update({"class":"form-select"})
+        self.fields["sex"].widget.attrs.update({"class":"form-select"})
         self.fields["street"].widget.attrs.update({"class":"form-control"})
         self.fields["number"].widget.attrs.update({"class":"form-control"})
         self.fields["city"].widget.attrs.update({"class":"form-control"})
