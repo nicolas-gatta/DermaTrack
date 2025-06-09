@@ -13,3 +13,4 @@ torchmetrics==1.7.1
 torchvision==0.21.0
 tqdm==4.67.1
 django-multiselectfield==0.1.13
+basicsr-fixed==1.4.2
