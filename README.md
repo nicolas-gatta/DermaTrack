@@ -34,9 +34,6 @@ git clone "https://github.com/nicolas-gatta/DermaTrack.git"
 #### 3. Download The .env
 Download the [.env](https://www.python.org/downloads/release/python-31111/) file, unzip it and place it  in ```derma_track_src```
 
-#### 3. Download The models
-Download the [models](https://www.python.org/downloads/release/python-31111/) folders, unzip it and place them  in ```derma_track_src\super_resolution\models```
-
 #### 4. Go in the folder derma_track_src (if not done yet)
 ```bash
 cd derma_track_src
