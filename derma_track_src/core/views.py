@@ -418,11 +418,9 @@ def get_image(request, id):
     if request.method == "GET" :
         visit_body_part = VisitBodyPart.objects.get(pk = id)
         
-        image = visit_body_part.image_path.file
-        
-        encoded_string = base64.b64encode(AES.decrypt_message(image.read())).decode('utf-8')
-        
-        image.close()
+        with open(visit_body_part.image_path.path, "rb") as image:
+            
+            encoded_string = base64.b64encode(AES.decrypt_message(image.read())).decode('utf-8')
         
         has_super = visit_body_part.image_super_name != None and len(visit_body_part.image_super_name) != 0
         
@@ -446,11 +444,10 @@ def get_enchanced_image(request, id):
     if request.method == "GET" :
         visit_body_part = VisitBodyPart.objects.get(pk = id)
         
-        image = visit_body_part.image_super_path.file
         
-        encoded_string = base64.b64encode(AES.decrypt_message(image.read())).decode('utf-8')
+        with open(visit_body_part.image_super_path.path, "rb") as image:
         
-        image.close()
+            encoded_string = base64.b64encode(AES.decrypt_message(image.read())).decode('utf-8')
         
         has_super = len(visit_body_part.image_super_name) != 0
         
