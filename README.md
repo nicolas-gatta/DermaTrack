@@ -54,7 +54,7 @@ python manage.py migrate
 
 #### 7. Fill the database with the initial Data
 ```bash
-python manage.py create_sample_data
+python manage.py loaddata data.json
 ```
 
 ---
