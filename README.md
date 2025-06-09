@@ -32,7 +32,7 @@ git clone "https://github.com/nicolas-gatta/DermaTrack.git"
 ```
 
 #### 3. Download The .env
-Download the [.env](https://www.python.org/downloads/release/python-31111/) file, unzip it and place it  in ```derma_track_src```
+Download the [.env](https://www.python.org/downloads/release/python-31111/) file, unzip it, rename the file as ```.env``` and place it  in ```derma_track_src```
 
 #### 4. Go in the folder derma_track_src (if not done yet)
 ```bash
