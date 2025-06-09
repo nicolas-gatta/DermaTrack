@@ -200,9 +200,7 @@ function setBackgroundImage(id, url, pixel_size, distance, focal) {
 
 async function deleteImage(){
     if (!selectedImageId) return;
-
-    console.log(selectedImageId);
-
+    
     try{
         await fetch(`/core/visit_list/delete_image/${selectedImageId}/`, {
             method: "DELETE"
@@ -214,7 +212,7 @@ async function deleteImage(){
                 const bodyPart = data.body_part;
                 createFileExplorerImage(visitId, bodyPart);
             } else {
-                console.error("Failed to delete image");
+                console.error("Failed to delete image: "+ data.message);
             }
         });
     } catch (error) {

@@ -418,7 +418,11 @@ def get_image(request, id):
     if request.method == "GET" :
         visit_body_part = VisitBodyPart.objects.get(pk = id)
         
-        encoded_string = base64.b64encode(AES.decrypt_message(visit_body_part.image_path.file.read())).decode('utf-8')
+        image = visit_body_part.image_path.file
+        
+        encoded_string = base64.b64encode(AES.decrypt_message(image.read())).decode('utf-8')
+        
+        image.close()
         
         has_super = visit_body_part.image_super_name != None and len(visit_body_part.image_super_name) != 0
         
@@ -442,7 +446,11 @@ def get_enchanced_image(request, id):
     if request.method == "GET" :
         visit_body_part = VisitBodyPart.objects.get(pk = id)
         
-        encoded_string = base64.b64encode(AES.decrypt_message(visit_body_part.image_super_path.file.read())).decode('utf-8')
+        image = visit_body_part.image_super_path.file
+        
+        encoded_string = base64.b64encode(AES.decrypt_message(image.read())).decode('utf-8')
+        
+        image.close()
         
         has_super = len(visit_body_part.image_super_name) != 0
         
@@ -539,12 +547,12 @@ def delete_image(request, id):
             visit_id = visit_body_part.visit.pk
             
             image_path = visit_body_part.image_path.path if visit_body_part.image_path else None
-            
+
             preview_path = visit_body_part.image_preview_path.path if visit_body_part.image_preview_path else None
+
+            super_path = visit_body_part.image_super_path.path if visit_body_part.image_super_path else None
             
             multi_path = os.path.join(settings.MEDIA_ROOT, visit_body_part.multi_image_path) if visit_body_part.multi_image_path else None
-            
-            super_path = visit_body_part.image_super_path.path if visit_body_part.image_super_path else None
             
             for internal_path in [image_path, preview_path, multi_path, super_path]:
                 
