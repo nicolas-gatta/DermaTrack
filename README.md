@@ -31,25 +31,28 @@ Reference: [Python Version 3.11.11](https://www.python.org/downloads/release/pyt
 git clone "https://github.com/nicolas-gatta/DermaTrack.git"
 ```
 
-#### 3. Download The .env
-Download the [.env](https://www.python.org/downloads/release/python-31111/) file, unzip it, rename the file as ```.env``` and place it  in ```derma_track_src```
+#### 3. Download The .env (if not present)
+Download the [.env](https://github.com/nicolas-gatta/DermaTrack/releases/download/V1.0.0/default.env) file, rename it ```.env``` and place it  in ```derma_track_src```
 
-#### 4. Go in the folder derma_track_src (if not done yet)
+#### 4. Dataset (optional)
+If you want to try and train the model, you have to download the dataset for the [training](https://github.com/nicolas-gatta/DermaTrack/releases/download/V1.0.0/training.zip), [validation](https://github.com/nicolas-gatta/DermaTrack/releases/download/V1.0.0/validation.zip) and [evaluation](https://github.com/nicolas-gatta/DermaTrack/releases/download/V1.0.0/evaluation.zip), you have to download them, unzip them and place them in ```derma_track_src\super_resolution\base_datasets```
+
+#### 5. Go in the folder derma_track_src (if not done yet)
 ```bash
 cd derma_track_src
 ```
 
-#### 5. Install requirements
+#### 6. Install requirements
 ```bash
 pip install -r requirements.txt
 ```
 
-#### 6. Initialize the Databse
+#### 7. Initialize the Databse
 ```bash
 python manage.py migrate
 ```
 
-#### 7. Fill the database with the initial Data
+#### 8. Fill the database with the initial Data
 ```bash
 python manage.py loaddata data.json
 ```
