@@ -57,6 +57,196 @@
   }
 },
 {
+"model": "login.doctor",
+"pk": 4,
+"fields": {
+    "user": 5,
+    "national_number": "79030145678",
+    "INAMI": "123456789001",
+    "name": "Brown",
+    "surname": "Matthew",
+    "date_of_birth": "1979-03-01",
+    "street": "Maple Street",
+    "number": 101,
+    "city": "Greenville",
+    "zip_code": 12345,
+    "phone_number": "+3245550001",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
+"model": "login.doctor",
+"pk": 5,
+"fields": {
+    "user": 6,
+    "national_number": "85042278912",
+    "INAMI": "123456789002",
+    "name": "Wilson",
+    "surname": "Sarah",
+    "date_of_birth": "1985-04-22",
+    "street": "Elm Street",
+    "number": 202,
+    "city": "Hilltown",
+    "zip_code": 54321,
+    "phone_number": "+3245550002",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
+"model": "login.doctor",
+"pk": 6,
+"fields": {
+    "user": 7,
+    "national_number": "76031545698",
+    "INAMI": "123456789003",
+    "name": "Clark",
+    "surname": "James",
+    "date_of_birth": "1976-03-15",
+    "street": "Oak Avenue",
+    "number": 303,
+    "city": "Brookfield",
+    "zip_code": 65432,
+    "phone_number": "+3245550003",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
+"model": "login.doctor",
+"pk": 7,
+"fields": {
+    "user": 8,
+    "national_number": "82070122334",
+    "INAMI": "123456789004",
+    "name": "Martin",
+    "surname": "Lisa",
+    "date_of_birth": "1982-07-01",
+    "street": "Cedar Lane",
+    "number": 404,
+    "city": "Springfield",
+    "zip_code": 11223,
+    "phone_number": "+3245550004",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
+"model": "login.doctor",
+"pk": 8,
+"fields": {
+    "user": 9,
+    "national_number": "78081955667",
+    "INAMI": "123456789005",
+    "name": "Lee",
+    "surname": "David",
+    "date_of_birth": "1978-08-19",
+    "street": "Birch Way",
+    "number": 505,
+    "city": "Sunnydale",
+    "zip_code": 33445,
+    "phone_number": "+3245550005",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
+"model": "login.doctor",
+"pk": 9,
+"fields": {
+    "user": 10,
+    "national_number": "90050288900",
+    "INAMI": "123456789006",
+    "name": "Thompson",
+    "surname": "Emma",
+    "date_of_birth": "1990-05-02",
+    "street": "Willow Blvd",
+    "number": 606,
+    "city": "Newport",
+    "zip_code": 55667,
+    "phone_number": "+3245550006",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
+"model": "login.doctor",
+"pk": 10,
+"fields": {
+    "user": 11,
+    "national_number": "73020333312",
+    "INAMI": "123456789007",
+    "name": "Anderson",
+    "surname": "Michael",
+    "date_of_birth": "1973-02-03",
+    "street": "Ash Drive",
+    "number": 707,
+    "city": "Fairview",
+    "zip_code": 77889,
+    "phone_number": "+3245550007",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
+"model": "login.doctor",
+"pk": 11,
+"fields": {
+    "user": 12,
+    "national_number": "84080911111",
+    "INAMI": "123456789008",
+    "name": "Davis",
+    "surname": "Rebecca",
+    "date_of_birth": "1984-08-09",
+    "street": "Poplar Court",
+    "number": 808,
+    "city": "Riverdale",
+    "zip_code": 88990,
+    "phone_number": "+3245550008",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
+"model": "login.doctor",
+"pk": 12,
+"fields": {
+    "user": 13,
+    "national_number": "81011276543",
+    "INAMI": "123456789009",
+    "name": "Moore",
+    "surname": "Joshua",
+    "date_of_birth": "1981-01-12",
+    "street": "Fir Circle",
+    "number": 909,
+    "city": "Greenfield",
+    "zip_code": 99887,
+    "phone_number": "+3245550009",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
+"model": "login.doctor",
+"pk": 13,
+"fields": {
+    "user": 14,
+    "national_number": "86092345678",
+    "INAMI": "123456789010",
+    "name": "Walker",
+    "surname": "Anna",
+    "date_of_birth": "1986-09-23",
+    "street": "Hemlock Street",
+    "number": 1001,
+    "city": "Stonebridge",
+    "zip_code": 11234,
+    "phone_number": "+3245550010",
+    "other_phone_number": "",
+    "is_retired": false
+    }
+},
+{
   "model": "core.patient",
   "pk": 1,
   "fields": {
@@ -114,13 +304,412 @@
   }
 },
 {
+  "model": "core.patient",
+  "pk": 5,
+  "fields": {
+    "national_number": "123456789",
+    "name": "Coukard",
+    "surname": "Fabienne",
+    "date_of_birth": "1965-02-08",
+    "blood_group": "A+",
+    "allergies": "soy,wheat,sesame",
+    "sex": "female",
+    "street": "Rue des bouleaux",
+    "number": 27,
+    "city": "Courcelles",
+    "zip_code": 6180,
+    "phone_number": "0485296374",
+    "other_phone_number": ""
+  }
+},
+{
+  "model": "core.patient",
+  "pk": 6,
+  "fields": {
+    "national_number": "12345678910",
+    "name": "Gatta",
+    "surname": "Giuseppe",
+    "date_of_birth": "1965-03-19",
+    "blood_group": "A+",
+    "allergies": "gluten,sesame",
+    "sex": "male",
+    "street": "Rue des bouleaux",
+    "number": 27,
+    "city": "Courcelles",
+    "zip_code": 6180,
+    "phone_number": "047512369",
+    "other_phone_number": ""
+  }
+},
+{
+"model": "core.patient",
+"pk": 7,
+"fields": {
+    "national_number": "12345678911",
+    "name": "Durand",
+    "surname": "Sophie",
+    "date_of_birth": "1985-07-12",
+    "blood_group": "O+",
+    "allergies": "pollen",
+    "sex": "female",
+    "street": "Rue Centrale",
+    "number": 15,
+    "city": "Charleroi",
+    "zip_code": 6000,
+    "phone_number": "0475111122",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 8,
+"fields": {
+    "national_number": "12345678912",
+    "name": "Lemoine",
+    "surname": "Antoine",
+    "date_of_birth": "1970-11-04",
+    "blood_group": "B-",
+    "allergies": "",
+    "sex": "male",
+    "street": "Avenue Louise",
+    "number": 23,
+    "city": "Bruxelles",
+    "zip_code": 1050,
+    "phone_number": "0475333344",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 9,
+"fields": {
+    "national_number": "12345678913",
+    "name": "Nguyen",
+    "surname": "Thi",
+    "date_of_birth": "1992-06-20",
+    "blood_group": "AB+",
+    "allergies": "lactose",
+    "sex": "female",
+    "street": "Rue des Lilas",
+    "number": 7,
+    "city": "Namur",
+    "zip_code": 5000,
+    "phone_number": "0475667788",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 10,
+"fields": {
+    "national_number": "12345678914",
+    "name": "Smith",
+    "surname": "John",
+    "date_of_birth": "1980-05-01",
+    "blood_group": "A-",
+    "allergies": "",
+    "sex": "male",
+    "street": "Rue de l'Église",
+    "number": 33,
+    "city": "Liège",
+    "zip_code": 4000,
+    "phone_number": "0475889900",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 11,
+"fields": {
+    "national_number": "12345678915",
+    "name": "Martin",
+    "surname": "Claire",
+    "date_of_birth": "1975-09-23",
+    "blood_group": "O-",
+    "allergies": "penicillin",
+    "sex": "female",
+    "street": "Rue du Parc",
+    "number": 48,
+    "city": "Mons",
+    "zip_code": 7000,
+    "phone_number": "0475223344",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 12,
+"fields": {
+    "national_number": "12345678916",
+    "name": "Moreau",
+    "surname": "Julien",
+    "date_of_birth": "1988-12-30",
+    "blood_group": "B+",
+    "allergies": "",
+    "sex": "male",
+    "street": "Rue Neuve",
+    "number": 52,
+    "city": "Namur",
+    "zip_code": 5000,
+    "phone_number": "0475112233",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 13,
+"fields": {
+    "national_number": "12345678917",
+    "name": "De Smet",
+    "surname": "Anne",
+    "date_of_birth": "1991-03-14",
+    "blood_group": "AB-",
+    "allergies": "aspirin",
+    "sex": "female",
+    "street": "Rue Verte",
+    "number": 5,
+    "city": "Tournai",
+    "zip_code": 7500,
+    "phone_number": "0475445566",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 14,
+"fields": {
+    "national_number": "12345678918",
+    "name": "Jacobs",
+    "surname": "Nicolas",
+    "date_of_birth": "1993-10-10",
+    "blood_group": "A+",
+    "allergies": "",
+    "sex": "male",
+    "street": "Rue du Moulin",
+    "number": 8,
+    "city": "Arlon",
+    "zip_code": 6700,
+    "phone_number": "0475778899",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 15,
+"fields": {
+    "national_number": "12345678919",
+    "name": "Leroy",
+    "surname": "Camille",
+    "date_of_birth": "1983-08-08",
+    "blood_group": "O+",
+    "allergies": "",
+    "sex": "female",
+    "street": "Rue Haute",
+    "number": 64,
+    "city": "Charleroi",
+    "zip_code": 6000,
+    "phone_number": "0475990001",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 16,
+"fields": {
+    "national_number": "12345678920",
+    "name": "Bertrand",
+    "surname": "Louis",
+    "date_of_birth": "1960-01-17",
+    "blood_group": "B+",
+    "allergies": "nuts",
+    "sex": "male",
+    "street": "Rue des Champs",
+    "number": 19,
+    "city": "Liège",
+    "zip_code": 4000,
+    "phone_number": "0475901234",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 17,
+"fields": {
+    "national_number": "12345678921",
+    "name": "Renard",
+    "surname": "Lucie",
+    "date_of_birth": "1990-02-22",
+    "blood_group": "A-",
+    "allergies": "",
+    "sex": "female",
+    "street": "Rue du Lion",
+    "number": 2,
+    "city": "Ottignies",
+    "zip_code": 1340,
+    "phone_number": "0475678901",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 18,
+"fields": {
+    "national_number": "12345678922",
+    "name": "Dubois",
+    "surname": "Marcel",
+    "date_of_birth": "1955-04-15",
+    "blood_group": "AB+",
+    "allergies": "latex",
+    "sex": "male",
+    "street": "Rue Royale",
+    "number": 100,
+    "city": "Bruxelles",
+    "zip_code": 1000,
+    "phone_number": "0475234567",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 19,
+"fields": {
+    "national_number": "12345678923",
+    "name": "Petit",
+    "surname": "Emma",
+    "date_of_birth": "2000-09-09",
+    "blood_group": "O-",
+    "allergies": "shellfish",
+    "sex": "female",
+    "street": "Rue de la Gare",
+    "number": 77,
+    "city": "Dinant",
+    "zip_code": 5500,
+    "phone_number": "0475987654",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 20,
+"fields": {
+    "national_number": "12345678924",
+    "name": "Thomas",
+    "surname": "Alain",
+    "date_of_birth": "1982-06-06",
+    "blood_group": "B-",
+    "allergies": "",
+    "sex": "male",
+    "street": "Rue des Écoles",
+    "number": 29,
+    "city": "La Louvière",
+    "zip_code": 7100,
+    "phone_number": "0475123123",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 21,
+"fields": {
+    "national_number": "12345678925",
+    "name": "Vermeulen",
+    "surname": "Sarah",
+    "date_of_birth": "1998-11-11",
+    "blood_group": "A+",
+    "allergies": "dust",
+    "sex": "female",
+    "street": "Rue de l'Industrie",
+    "number": 31,
+    "city": "Anderlecht",
+    "zip_code": 1070,
+    "phone_number": "0475789654",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 22,
+"fields": {
+    "national_number": "12345678926",
+    "name": "Benoit",
+    "surname": "Maxime",
+    "date_of_birth": "1977-12-01",
+    "blood_group": "O+",
+    "allergies": "paracetamol",
+    "sex": "male",
+    "street": "Rue du Commerce",
+    "number": 21,
+    "city": "Namur",
+    "zip_code": 5000,
+    "phone_number": "0475443322",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 23,
+"fields": {
+    "national_number": "12345678927",
+    "name": "Carlier",
+    "surname": "Julie",
+    "date_of_birth": "1996-02-14",
+    "blood_group": "B+",
+    "allergies": "",
+    "sex": "female",
+    "street": "Rue du Midi",
+    "number": 18,
+    "city": "Charleroi",
+    "zip_code": 6000,
+    "phone_number": "0475009988",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 24,
+"fields": {
+    "national_number": "12345678928",
+    "name": "Fabre",
+    "surname": "Isabelle",
+    "date_of_birth": "1989-04-04",
+    "blood_group": "AB-",
+    "allergies": "",
+    "sex": "female",
+    "street": "Rue du Château",
+    "number": 90,
+    "city": "Binche",
+    "zip_code": 7130,
+    "phone_number": "0475998877",
+    "other_phone_number": ""
+    }
+},
+{
+"model": "core.patient",
+"pk": 25,
+"fields": {
+    "national_number": "12345678929",
+    "name": "Delvaux",
+    "surname": "Michel",
+    "date_of_birth": "1950-07-07",
+    "blood_group": "A-",
+    "allergies": "pollen",
+    "sex": "male",
+    "street": "Rue du Faubourg",
+    "number": 42,
+    "city": "Mons",
+    "zip_code": 7000,
+    "phone_number": "0475111455",
+    "other_phone_number": ""
+    }
+},
+{
   "model": "core.visit",
   "pk": 20,
   "fields": {
     "date": "2025-06-25T08:00:00Z",
     "note": "",
-    "is_patient_present": false,
-    "status": "scheduled",
+    "is_patient_present": true,
+    "status": "started",
     "patient": 2,
     "doctor": 1
   }
@@ -147,6 +736,18 @@
     "status": "canceled",
     "patient": 3,
     "doctor": 2
+  }
+},
+{
+  "model": "core.visit",
+  "pk": 23,
+  "fields": {
+    "date": "2025-08-05T05:00:00Z",
+    "note": "",
+    "is_patient_present": true,
+    "status": "started",
+    "patient": 2,
+    "doctor": 3
   }
 },
 {
@@ -232,7 +833,14 @@
     "distance_from_subject": null,
     "focal": 3.543,
     "pixel_size": 0.0014,
-    "annotations": null,
+    "annotations": [
+      {
+        "startX": 869,
+        "startY": 593.5,
+        "endX": 909,
+        "endY": 606.5
+      }
+    ],
     "body_part": 7,
     "visit": 21
   }
@@ -729,7 +1337,7 @@
   "pk": 4,
   "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
-    "last_login": "2025-06-07T13:44:52.894Z",
+    "last_login": "2025-06-21T15:14:10.849Z",
     "is_superuser": false,
     "username": "alijoh",
     "first_name": "Alice",
@@ -743,5 +1351,205 @@
     ],
     "user_permissions": []
   }
+},
+{
+"model": "auth.user",
+"pk": 5,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "mabrow",
+    "first_name": "Matthew",
+    "last_name": "Brown",
+    "email": "matthewbrown@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
+},
+{
+"model": "auth.user",
+"pk": 6,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "sarwil",
+    "first_name": "Sarah",
+    "last_name": "Wilson",
+    "email": "sarahwilson@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
+},
+{
+"model": "auth.user",
+"pk": 7,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "jamcla",
+    "first_name": "James",
+    "last_name": "Clark",
+    "email": "jamesclark@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
+},
+{
+"model": "auth.user",
+"pk": 8,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "lismar",
+    "first_name": "Lisa",
+    "last_name": "Martin",
+    "email": "lisamartin@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
+},
+{
+"model": "auth.user",
+"pk": 9,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "davle",
+    "first_name": "David",
+    "last_name": "Lee",
+    "email": "davidlee@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
+},
+{
+"model": "auth.user",
+"pk": 10,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "emmtho",
+    "first_name": "Emma",
+    "last_name": "Thompson",
+    "email": "emmathompson@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
+},
+{
+"model": "auth.user",
+"pk": 11,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "mikand",
+    "first_name": "Michael",
+    "last_name": "Anderson",
+    "email": "michaelanderson@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
+},
+{
+"model": "auth.user",
+"pk": 12,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "rebdav",
+    "first_name": "Rebecca",
+    "last_name": "Davis",
+    "email": "rebeccadavis@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
+},
+{
+"model": "auth.user",
+"pk": 13,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "josmoo",
+    "first_name": "Joshua",
+    "last_name": "Moore",
+    "email": "joshuamoore@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
+},
+{
+"model": "auth.user",
+"pk": 14,
+"fields": {
+    "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "annwal",
+    "first_name": "Anna",
+    "last_name": "Walker",
+    "email": "annawalker@derma.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-01-18T16:34:13.060Z",
+    "groups": [
+        1
+    ],
+    "user_permissions": []
+    }
 }
 ]

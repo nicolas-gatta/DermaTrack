@@ -2,13 +2,13 @@
 
 <div class="container-fluid p-3 bg-light rounded shadow-sm">
     <div class="d-flex gap-2">
-        <form class="d-flex flex-grow-1" method ="GET" hx-get="/core/get_patient_by_name/" hx-target="#dynamic-body" hx-swap="innerHTML">
+        <form class="d-flex flex-grow-1" method ="GET" hx-get="{% url 'get_patient_by_name' %}" hx-target="#dynamic-body" hx-swap="innerHTML">
             <input type="text" id="search-patient" name = "name" class="form-control rounded-start" placeholder="Search by Name or Surname...">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-search"></i> Search
             </button>
         </form>
-        <form method ="GET" hx-get="/core/create_patient/" hx-target="#pop-up" hx-swap="innerHTML">
+        <form method ="GET" hx-get="{% url 'create_patient' %}" hx-target="#pop-up" hx-swap="innerHTML">
             <button type="submit" class="btn btn-success" >
                 <i class="fas fa-user-plus"></i> Add Patient
             </button>
@@ -33,7 +33,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for patient in patients %}
+                {% for patient in page.object_list %}
                 <tr>
                     <td class="patient-name">{{ patient.name }}</td>
                     <td class="patient-surname">{{ patient.surname }}</td>
@@ -58,11 +58,11 @@
 
     <nav class = "mt-auto">
         <ul class="pagination justify-content-center mt-3">
-            <li class="page-item {% if not patients.has_previous %}disabled{% endif %}">
+            <li class="page-item {% if not page.has_previous %}disabled{% endif %}">
                 <a class="page-link" 
                    href="#" 
-                   {% if patients.has_previous %}
-                       hx-get="?page=1" 
+                   {% if page.has_previous %}
+                       hx-get="{% url 'patient_list' %}?page=1" 
                        hx-target="#dynamic-body" 
                        hx-swap="innerHTML"
                    {% endif %}
@@ -71,11 +71,11 @@
                 </a>
             </li>
         
-            <li class="page-item {% if not patients.has_previous %}disabled{% endif %}">
+            <li class="page-item {% if not page.has_previous %}disabled{% endif %}">
                 <a class="page-link" 
                    href="#"
-                   {% if patients.has_previous %}
-                       hx-get="?page={{ patients.previous_page_number }}" 
+                   {% if page.has_previous %}
+                       hx-get="{% url 'patient_list' %}?page={{ page.previous_page_number }}" 
                        hx-target="#dynamic-body" 
                        hx-swap="innerHTML"
                    {% endif %}
@@ -86,15 +86,15 @@
         
             <li class="page-item active">
                 <span class="page-link">
-                    Page {{ patients.number }} of {{ patients.paginator.num_pages }}
+                    Page {{ page.number }} of {{ page.paginator.num_pages }}
                 </span>
             </li>
         
-            <li class="page-item {% if not patients.has_next %}disabled{% endif %}">
+            <li class="page-item {% if not page.has_next %}disabled{% endif %}">
                 <a class="page-link" 
                    href="#"
-                   {% if patients.has_next %}
-                       hx-get="?page={{ patients.next_page_number }}" 
+                   {% if page.has_next %}
+                       hx-get="{% url 'patient_list' %}?page={{ page.next_page_number }}" 
                        hx-target="#dynamic-body" 
                        hx-swap="innerHTML"
                    {% endif %}
@@ -103,11 +103,11 @@
                 </a>
             </li>
         
-            <li class="page-item {% if not patients.has_next %}disabled{% endif %}">
+            <li class="page-item {% if not page.has_next %}disabled{% endif %}">
                 <a class="page-link" 
                    href="#"
-                   {% if patients.has_next %}
-                       hx-get="?page={{ patients.paginator.num_pages }}" 
+                   {% if page.has_next %}
+                       hx-get="{% url 'patient_list' %}?page={{ page.paginator.num_pages }}" 
                        hx-target="#dynamic-body" 
                        hx-swap="innerHTML"
                    {% endif %}

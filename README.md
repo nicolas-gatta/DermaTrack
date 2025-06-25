@@ -7,6 +7,7 @@ The aim of this application is to allow dermatological monitoring of patients.
 2. [Prerequisites](#prerequisites)
 3. [Start Django Server](#start-the-django-server)
 4. [User Login](#user-login-credentials)
+5. [Usefull commands](#usefull-commands)
 
 ---
 
@@ -80,3 +81,20 @@ admin               | 1234         | Administator |
 alijoh              | 1234         | Doctor       |
 jansmi              | 1234         | Doctor       |
 johdoe              | 1234         | Doctor       |
+mabrow              | 1234         | Doctor       |
+sarwil              | 1234         | Doctor       |
+jamcla              | 1234         | Doctor       |
+lismar              | 1234         | Doctor       |
+davlee              | 1234         | Doctor       |
+emmtho              | 1234         | Doctor       |
+mikand              | 1234         | Doctor       |
+rebdav              | 1234         | Doctor       |
+josmoo              | 1234         | Doctor       |
+annwal              | 1234         | Doctor       |
+
+---
+## Usefull Commands
+
+```bash
+python manage.py dumpdata --exclude admin --exclude contenttypes --exclude sessions --indent 2 > data.json
+``` 

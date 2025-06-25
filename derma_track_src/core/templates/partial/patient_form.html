@@ -1,7 +1,7 @@
 <div class="modal fade" id="mainModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
-            <form method="POST" hx-post="/core/create_patient/" hx-target="#dynamic-body" hx-swap="innerHTML" onsubmit="dismissModal()">
+            <form method="POST" hx-post="{% url 'create_patient' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onsubmit="dismissModal()">
                 {% csrf_token %}
                 <div class="modal-header bg-light border-bottom">
                     {% if is_form %}

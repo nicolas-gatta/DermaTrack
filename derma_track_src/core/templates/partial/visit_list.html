@@ -2,13 +2,13 @@
 
 <div class="container-fluid p-3 bg-light rounded shadow-sm">
     <div class="d-flex gap-2">
-        <form class="d-flex flex-grow-1" method ="GET" hx-get="/core/get_visit_by_patient_name/" hx-target="#dynamic-body" hx-swap="innerHTML">
+        <form class="d-flex flex-grow-1" method ="GET" hx-get="{% url 'get_visit_by_patient_name' %}" hx-target="#dynamic-body" hx-swap="innerHTML">
             <input type="text" id="search-patient" name = "name" class="form-control rounded-start" placeholder="Search by Name or Surname...">
             <button type="submit" class="btn btn-primary">
                 <i class="fas fa-search"></i> Search
             </button>
         </form>
-        <form method ="GET" hx-get="/core/create_visit/" hx-target="#pop-up" hx-swap="innerHTML">
+        <form method ="GET" hx-get="{% url 'create_visit' %}" hx-target="#pop-up" hx-swap="innerHTML">
             <button type="submit" class="btn btn-success">
                 <i class="fas fa-user-plus"></i> Add Visit
             </button>
@@ -30,9 +30,9 @@
                 </tr>
             </thead>
             <tbody>
-                {% for visit in visits %}
+                {% for visit in page.object_list %}
                 <tr>
-                    <td>{{ visit.date|date:"D d M Y"}}</td>
+                    <td>{{ visit.date|date:"l d F Y"}}</td>
                     <td>{{ visit.date|time:"H:i" }}</td>
                     <td>{{ visit.doctor.full_name }}</td>
                     <td class="patient-name">{{ visit.patient.full_name }}</td>
@@ -52,14 +52,14 @@
                     <td>       
                         <div style="display: flex; align-items: center; gap: 10px;">
                             {% if visit.status == "canceled" or visit.status == "finished" or visit.status == "started" %}
-                            <form class="button-form" hx-post="/core/visit_view" hx-target="#pop-up" hx-swap="innerHTML" method='POST'>
+                            <form class="button-form" hx-post="{% url 'visit_view' %}" hx-target="#pop-up" hx-swap="innerHTML" method='POST'>
                                 {% csrf_token %}
                                 <input type="hidden" name="id" class="form-control" value="{{visit.pk}}" required=""> 
                                 <button type="submit" class="btn btn-success" data-mdb-ripple-color="dark"> View </button>
                             </form>
                             {% endif %}
 
-                            <form class="button-form" hx-post="/core/visit_status" hx-target="#dynamic-body" hx-swap="innerHTML" method='POST'>
+                            <form class="button-form" hx-post="{% url 'visit_status' %}" hx-target="#dynamic-body" hx-swap="innerHTML" method='POST'>
                                 {% csrf_token %}
                                 <input type="hidden" name="id" class="form-control" value="{{visit.pk}}" required=""> 
                                 {% if visit.status == "scheduled" %}
@@ -79,11 +79,11 @@
 
     <nav class = "mt-auto">
         <ul class="pagination justify-content-center mt-3">
-            <li class="page-item {% if not visits.has_previous %}disabled{% endif %}">
+            <li class="page-item {% if not page.has_previous %}disabled{% endif %}">
                 <a class="page-link" 
                    href="#" 
-                   {% if visits.has_previous %}
-                       hx-get="?page=1" 
+                   {% if page.has_previous %}
+                       hx-get="{% url 'visit_list' %}?page=1" 
                        hx-target="#dynamic-body" 
                        hx-swap="innerHTML"
                    {% endif %}
@@ -92,11 +92,11 @@
                 </a>
             </li>
         
-            <li class="page-item {% if not visits.has_previous %}disabled{% endif %}">
+            <li class="page-item {% if not page.has_previous %}disabled{% endif %}">
                 <a class="page-link" 
                    href="#"
-                   {% if visits.has_previous %}
-                       hx-get="?page={{ visits.previous_page_number }}" 
+                   {% if page.has_previous %}
+                       hx-get="{% url 'visit_list' %}?page={{ page.previous_page_number }}" 
                        hx-target="#dynamic-body" 
                        hx-swap="innerHTML"
                    {% endif %}
@@ -107,15 +107,15 @@
         
             <li class="page-item active">
                 <span class="page-link">
-                    Page {{ visits.number }} of {{ visits.paginator.num_pages }}
+                    Page {{ page.number }} of {{ page.paginator.num_pages }}
                 </span>
             </li>
         
-            <li class="page-item {% if not visits.has_next %}disabled{% endif %}">
+            <li class="page-item {% if not page.has_next %}disabled{% endif %}">
                 <a class="page-link" 
                    href="#"
-                   {% if visits.has_next %}
-                       hx-get="?page={{ visits.next_page_number }}" 
+                   {% if page.has_next %}
+                       hx-get="{% url 'visit_list' %}?page={{ page.next_page_number }}" 
                        hx-target="#dynamic-body" 
                        hx-swap="innerHTML"
                    {% endif %}
@@ -124,11 +124,11 @@
                 </a>
             </li>
         
-            <li class="page-item {% if not visits.has_next %}disabled{% endif %}">
+            <li class="page-item {% if not page.has_next %}disabled{% endif %}">
                 <a class="page-link" 
                    href="#"
-                   {% if visits.has_next %}
-                       hx-get="?page={{ visits.paginator.num_pages }}" 
+                   {% if page.has_next %}
+                       hx-get="{% url 'visit_list' %}?page={{ page.paginator.num_pages }}" 
                        hx-target="#dynamic-body" 
                        hx-swap="innerHTML"
                    {% endif %}

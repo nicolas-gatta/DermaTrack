@@ -10,6 +10,8 @@ from .forms import PatientForm, VisitForm, VisitFormAdmin
 from core.models import Patient, Visit, Status, VisitBodyPart, BodyPart, Doctor
 from utils.checks import group_and_super_user_checks
 from image_encryption.services.advanced_encrypted_standard import AES
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import render
 
 import os
 import base64
@@ -51,8 +53,18 @@ def patient_list(request):
     """
     
     if request.headers.get('HX-Request'):
-        patients = Patient.objects.all() 
-        return render(request, 'partial/patient_list.html', {'patients': patients})
+        
+        patients = Patient.objects.all().order_by("name", "surname")
+         
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(patients, 10)
+       
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+
+        return render(request, 'partial/patient_list.html', {'page': page})
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -71,8 +83,16 @@ def doctor_list(request):
     """
     
     if request.headers.get('HX-Request'):
-        doctors = Doctor.objects.all()
-        return render(request, 'partial/doctor_list.html', {'doctors': doctors})
+        doctors = Doctor.objects.all().order_by("name", "surname")
+        
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(doctors, 10)
+    
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+        return render(request, 'partial/doctor_list.html', {'page': page})
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -137,11 +157,19 @@ def visit_status_change(request):
         
         visits = None
         if request.user.is_superuser:
-            visits = Visit.objects.select_related('doctor', 'patient').all()
+            visits = Visit.objects.select_related('doctor', 'patient').all().order_by("-date")
         elif request.user.groups.filter(name__in=["Doctor"]).exists():
-            visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
+            visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user).order_by("-date")
         
-        return render(request, 'partial/visit_list.html', {'visits': visits})
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(visits, 10)
+       
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+            
+        return render(request, 'partial/visit_list.html', {'page': page})
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -180,12 +208,22 @@ def visit_list(request):
     
     if request.headers.get('HX-Request'):
         visits = None
+            
         if request.user.is_superuser:
-            visits = Visit.objects.select_related('doctor', 'patient').all()
+            visits = Visit.objects.select_related('doctor', 'patient').all().order_by("-date")
         elif request.user.groups.filter(name__in=["Doctor"]).exists():
-            visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
+            visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user).order_by("-date")
 
-        return render(request, 'partial/visit_list.html', {'visits': visits})
+                
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(visits, 10)
+       
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+            
+        return render(request, 'partial/visit_list.html', {'page': page})
     
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -227,8 +265,17 @@ def create_patient(request):
         form = PatientForm(request.POST)
         if form.is_valid():
             form.save()
-            patients = Patient.objects.all() 
-            return render(request, 'partial/patient_list.html', {'patients': patients})
+            patients = Patient.objects.all().order_by("name","surname") 
+            
+            page_number = request.GET.get('page', 1)
+            paginator = Paginator(patients, 10)
+        
+            try:
+                page = paginator.page(page_number)
+            except EmptyPage:
+                page = paginator.page(paginator.num_pages)
+                
+            return render(request, 'partial/patient_list.html', {'page': page})
         return render(request, "partial/patient_form.html", {"form": form, "is_form": True})
     else:
         form = PatientForm()
@@ -261,11 +308,19 @@ def create_visit(request):
                 visit.status = Status.SCHEDULED
                 visit.save()
             if request.user.is_superuser:
-                visits = Visit.objects.select_related('doctor', 'patient').all()
+                visits = Visit.objects.select_related('doctor', 'patient').all().order_by("-date")
             elif request.user.groups.filter(name__in=["Doctor"]).exists():
-                visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user)
+                visits = Visit.objects.select_related('doctor', 'patient').filter(doctor__user=request.user).order_by("-date")
             
-            return render(request, 'partial/visit_list.html', {'visits': visits})
+            page_number = request.GET.get('page', 1)
+            paginator = Paginator(visits, 10)
+        
+            try:
+                page = paginator.page(page_number)
+            except EmptyPage:
+                page = paginator.page(paginator.num_pages)
+                
+            return render(request, 'partial/visit_list.html', {'page': page})
         return render(request, "partial/visit_form.html", {"form": form})
     else:
         form = VisitFormAdmin() if request.user.is_superuser else VisitForm()
@@ -300,7 +355,17 @@ def get_visit_by_patient_name(request):
         if not request.user.is_superuser and request.user.groups.filter(name__in=["Doctor"]).exists():
             visits = Visit.objects.filter(doctor__user=request.user)
 
-        return render(request, 'partial/visit_list.html', {'visits': visits})
+        visits = visits.order_by("-date")
+        
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(visits, 10)
+    
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+            
+        return render(request, 'partial/visit_list.html', {'page': page})
     
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -322,13 +387,21 @@ def get_patient_by_name(request):
         
         patient_name = request.GET['name']
         
-        patients = Patient.objects.all()
+        patients = Patient.objects.all().order_by("name", "surname")
         
         patients = patients.annotate(full_name = Concat('name', Value(' '), 'surname'))
         
         patients = patients.filter(full_name__icontains = patient_name)
 
-        return render(request, 'partial/patient_list.html', {'patients': patients})
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(patients, 10)
+    
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+            
+        return render(request, 'partial/patient_list.html', {'page': page})
     
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")
@@ -350,13 +423,21 @@ def get_doctor_by_name(request):
         
         doctor_name = request.GET['name']
         
-        doctors = Doctor.objects.all()
+        doctors = Doctor.objects.all().order_by("name", "surname")
         
         doctors = doctors.annotate(full_name = Concat('name', Value(' '), 'surname'))
         
         doctors = doctors.filter(full_name__icontains = doctor_name)
 
-        return render(request, 'partial/doctor_list.html', {'doctors': doctors})
+        page_number = request.GET.get('page', 1)
+        paginator = Paginator(doctors, 10)
+    
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(paginator.num_pages)
+            
+        return render(request, 'partial/doctor_list.html', {'page': page})
 
 @login_required(login_url='/')
 @group_and_super_user_checks(group_names=["Doctor"], redirect_url="/")

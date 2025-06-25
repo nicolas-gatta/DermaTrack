@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             
-            <form id = "visit-form" method="POST" hx-post="/core/create_visit/" hx-target="#dynamic-body" hx-swap="innerHTML" onsubmit="dismissModal()">
+            <form id = "visit-form" method="POST" hx-post="{% url 'create_visit' %}" hx-target="#dynamic-body" hx-swap="innerHTML" onsubmit="dismissModal()">
                 {% csrf_token %}
 
                 <div class="modal-header bg-light border-bottom">
