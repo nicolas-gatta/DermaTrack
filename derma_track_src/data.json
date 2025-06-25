@@ -57,9 +57,9 @@
   }
 },
 {
-"model": "login.doctor",
-"pk": 4,
-"fields": {
+  "model": "login.doctor",
+  "pk": 4,
+  "fields": {
     "user": 5,
     "national_number": "79030145678",
     "INAMI": "123456789001",
@@ -73,12 +73,12 @@
     "phone_number": "+3245550001",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
-"model": "login.doctor",
-"pk": 5,
-"fields": {
+  "model": "login.doctor",
+  "pk": 5,
+  "fields": {
     "user": 6,
     "national_number": "85042278912",
     "INAMI": "123456789002",
@@ -92,12 +92,12 @@
     "phone_number": "+3245550002",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
-"model": "login.doctor",
-"pk": 6,
-"fields": {
+  "model": "login.doctor",
+  "pk": 6,
+  "fields": {
     "user": 7,
     "national_number": "76031545698",
     "INAMI": "123456789003",
@@ -111,12 +111,12 @@
     "phone_number": "+3245550003",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
-"model": "login.doctor",
-"pk": 7,
-"fields": {
+  "model": "login.doctor",
+  "pk": 7,
+  "fields": {
     "user": 8,
     "national_number": "82070122334",
     "INAMI": "123456789004",
@@ -130,12 +130,12 @@
     "phone_number": "+3245550004",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
-"model": "login.doctor",
-"pk": 8,
-"fields": {
+  "model": "login.doctor",
+  "pk": 8,
+  "fields": {
     "user": 9,
     "national_number": "78081955667",
     "INAMI": "123456789005",
@@ -149,12 +149,12 @@
     "phone_number": "+3245550005",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
-"model": "login.doctor",
-"pk": 9,
-"fields": {
+  "model": "login.doctor",
+  "pk": 9,
+  "fields": {
     "user": 10,
     "national_number": "90050288900",
     "INAMI": "123456789006",
@@ -168,12 +168,12 @@
     "phone_number": "+3245550006",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
-"model": "login.doctor",
-"pk": 10,
-"fields": {
+  "model": "login.doctor",
+  "pk": 10,
+  "fields": {
     "user": 11,
     "national_number": "73020333312",
     "INAMI": "123456789007",
@@ -187,12 +187,12 @@
     "phone_number": "+3245550007",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
-"model": "login.doctor",
-"pk": 11,
-"fields": {
+  "model": "login.doctor",
+  "pk": 11,
+  "fields": {
     "user": 12,
     "national_number": "84080911111",
     "INAMI": "123456789008",
@@ -206,12 +206,12 @@
     "phone_number": "+3245550008",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
-"model": "login.doctor",
-"pk": 12,
-"fields": {
+  "model": "login.doctor",
+  "pk": 12,
+  "fields": {
     "user": 13,
     "national_number": "81011276543",
     "INAMI": "123456789009",
@@ -225,12 +225,12 @@
     "phone_number": "+3245550009",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
-"model": "login.doctor",
-"pk": 13,
-"fields": {
+  "model": "login.doctor",
+  "pk": 13,
+  "fields": {
     "user": 14,
     "national_number": "86092345678",
     "INAMI": "123456789010",
@@ -244,7 +244,7 @@
     "phone_number": "+3245550010",
     "other_phone_number": "",
     "is_retired": false
-    }
+  }
 },
 {
   "model": "core.patient",
@@ -342,9 +342,9 @@
   }
 },
 {
-"model": "core.patient",
-"pk": 7,
-"fields": {
+  "model": "core.patient",
+  "pk": 7,
+  "fields": {
     "national_number": "12345678911",
     "name": "Durand",
     "surname": "Sophie",
@@ -358,12 +358,12 @@
     "zip_code": 6000,
     "phone_number": "0475111122",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 8,
-"fields": {
+  "model": "core.patient",
+  "pk": 8,
+  "fields": {
     "national_number": "12345678912",
     "name": "Lemoine",
     "surname": "Antoine",
@@ -377,12 +377,12 @@
     "zip_code": 1050,
     "phone_number": "0475333344",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 9,
-"fields": {
+  "model": "core.patient",
+  "pk": 9,
+  "fields": {
     "national_number": "12345678913",
     "name": "Nguyen",
     "surname": "Thi",
@@ -396,12 +396,12 @@
     "zip_code": 5000,
     "phone_number": "0475667788",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 10,
-"fields": {
+  "model": "core.patient",
+  "pk": 10,
+  "fields": {
     "national_number": "12345678914",
     "name": "Smith",
     "surname": "John",
@@ -409,18 +409,18 @@
     "blood_group": "A-",
     "allergies": "",
     "sex": "male",
-    "street": "Rue de l'Église",
+    "street": "Rue de l'╔glise",
     "number": 33,
-    "city": "Liège",
+    "city": "LiÞge",
     "zip_code": 4000,
     "phone_number": "0475889900",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 11,
-"fields": {
+  "model": "core.patient",
+  "pk": 11,
+  "fields": {
     "national_number": "12345678915",
     "name": "Martin",
     "surname": "Claire",
@@ -434,12 +434,12 @@
     "zip_code": 7000,
     "phone_number": "0475223344",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 12,
-"fields": {
+  "model": "core.patient",
+  "pk": 12,
+  "fields": {
     "national_number": "12345678916",
     "name": "Moreau",
     "surname": "Julien",
@@ -453,12 +453,12 @@
     "zip_code": 5000,
     "phone_number": "0475112233",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 13,
-"fields": {
+  "model": "core.patient",
+  "pk": 13,
+  "fields": {
     "national_number": "12345678917",
     "name": "De Smet",
     "surname": "Anne",
@@ -472,12 +472,12 @@
     "zip_code": 7500,
     "phone_number": "0475445566",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 14,
-"fields": {
+  "model": "core.patient",
+  "pk": 14,
+  "fields": {
     "national_number": "12345678918",
     "name": "Jacobs",
     "surname": "Nicolas",
@@ -491,12 +491,12 @@
     "zip_code": 6700,
     "phone_number": "0475778899",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 15,
-"fields": {
+  "model": "core.patient",
+  "pk": 15,
+  "fields": {
     "national_number": "12345678919",
     "name": "Leroy",
     "surname": "Camille",
@@ -510,12 +510,12 @@
     "zip_code": 6000,
     "phone_number": "0475990001",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 16,
-"fields": {
+  "model": "core.patient",
+  "pk": 16,
+  "fields": {
     "national_number": "12345678920",
     "name": "Bertrand",
     "surname": "Louis",
@@ -525,16 +525,16 @@
     "sex": "male",
     "street": "Rue des Champs",
     "number": 19,
-    "city": "Liège",
+    "city": "LiÞge",
     "zip_code": 4000,
     "phone_number": "0475901234",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 17,
-"fields": {
+  "model": "core.patient",
+  "pk": 17,
+  "fields": {
     "national_number": "12345678921",
     "name": "Renard",
     "surname": "Lucie",
@@ -548,12 +548,12 @@
     "zip_code": 1340,
     "phone_number": "0475678901",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 18,
-"fields": {
+  "model": "core.patient",
+  "pk": 18,
+  "fields": {
     "national_number": "12345678922",
     "name": "Dubois",
     "surname": "Marcel",
@@ -567,12 +567,12 @@
     "zip_code": 1000,
     "phone_number": "0475234567",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 19,
-"fields": {
+  "model": "core.patient",
+  "pk": 19,
+  "fields": {
     "national_number": "12345678923",
     "name": "Petit",
     "surname": "Emma",
@@ -586,12 +586,12 @@
     "zip_code": 5500,
     "phone_number": "0475987654",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 20,
-"fields": {
+  "model": "core.patient",
+  "pk": 20,
+  "fields": {
     "national_number": "12345678924",
     "name": "Thomas",
     "surname": "Alain",
@@ -599,18 +599,18 @@
     "blood_group": "B-",
     "allergies": "",
     "sex": "male",
-    "street": "Rue des Écoles",
+    "street": "Rue des ╔coles",
     "number": 29,
-    "city": "La Louvière",
+    "city": "La LouviÞre",
     "zip_code": 7100,
     "phone_number": "0475123123",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 21,
-"fields": {
+  "model": "core.patient",
+  "pk": 21,
+  "fields": {
     "national_number": "12345678925",
     "name": "Vermeulen",
     "surname": "Sarah",
@@ -624,12 +624,12 @@
     "zip_code": 1070,
     "phone_number": "0475789654",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 22,
-"fields": {
+  "model": "core.patient",
+  "pk": 22,
+  "fields": {
     "national_number": "12345678926",
     "name": "Benoit",
     "surname": "Maxime",
@@ -643,12 +643,12 @@
     "zip_code": 5000,
     "phone_number": "0475443322",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 23,
-"fields": {
+  "model": "core.patient",
+  "pk": 23,
+  "fields": {
     "national_number": "12345678927",
     "name": "Carlier",
     "surname": "Julie",
@@ -662,12 +662,12 @@
     "zip_code": 6000,
     "phone_number": "0475009988",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 24,
-"fields": {
+  "model": "core.patient",
+  "pk": 24,
+  "fields": {
     "national_number": "12345678928",
     "name": "Fabre",
     "surname": "Isabelle",
@@ -675,18 +675,18 @@
     "blood_group": "AB-",
     "allergies": "",
     "sex": "female",
-    "street": "Rue du Château",
+    "street": "Rue du ChÔteau",
     "number": 90,
     "city": "Binche",
     "zip_code": 7130,
     "phone_number": "0475998877",
     "other_phone_number": ""
-    }
+  }
 },
 {
-"model": "core.patient",
-"pk": 25,
-"fields": {
+  "model": "core.patient",
+  "pk": 25,
+  "fields": {
     "national_number": "12345678929",
     "name": "Delvaux",
     "surname": "Michel",
@@ -700,7 +700,7 @@
     "zip_code": 7000,
     "phone_number": "0475111455",
     "other_phone_number": ""
-    }
+  }
 },
 {
   "model": "core.visit",
@@ -745,9 +745,93 @@
     "date": "2025-08-05T05:00:00Z",
     "note": "",
     "is_patient_present": true,
-    "status": "started",
+    "status": "canceled",
     "patient": 2,
     "doctor": 3
+  }
+},
+{
+  "model": "core.visit",
+  "pk": 24,
+  "fields": {
+    "date": "2025-06-25T19:00:00Z",
+    "note": "",
+    "is_patient_present": false,
+    "status": "scheduled",
+    "patient": 11,
+    "doctor": 3
+  }
+},
+{
+  "model": "core.visit",
+  "pk": 25,
+  "fields": {
+    "date": "2025-07-01T19:00:00Z",
+    "note": "",
+    "is_patient_present": false,
+    "status": "scheduled",
+    "patient": 8,
+    "doctor": 3
+  }
+},
+{
+  "model": "core.visit",
+  "pk": 26,
+  "fields": {
+    "date": "2025-09-01T08:50:00Z",
+    "note": "",
+    "is_patient_present": false,
+    "status": "scheduled",
+    "patient": 16,
+    "doctor": 3
+  }
+},
+{
+  "model": "core.visit",
+  "pk": 27,
+  "fields": {
+    "date": "2025-10-16T06:00:00Z",
+    "note": "",
+    "is_patient_present": false,
+    "status": "scheduled",
+    "patient": 5,
+    "doctor": 3
+  }
+},
+{
+  "model": "core.visit",
+  "pk": 28,
+  "fields": {
+    "date": "2025-12-05T08:50:00Z",
+    "note": "",
+    "is_patient_present": false,
+    "status": "scheduled",
+    "patient": 16,
+    "doctor": 12
+  }
+},
+{
+  "model": "core.visit",
+  "pk": 29,
+  "fields": {
+    "date": "2025-11-21T08:00:00Z",
+    "note": "",
+    "is_patient_present": false,
+    "status": "scheduled",
+    "patient": 20,
+    "doctor": 11
+  }
+},
+{
+  "model": "core.visit",
+  "pk": 30,
+  "fields": {
+    "date": "2026-05-20T12:08:00Z",
+    "note": "",
+    "is_patient_present": false,
+    "status": "scheduled",
+    "patient": 20,
+    "doctor": 2
   }
 },
 {
@@ -1279,7 +1363,7 @@
   "pk": 1,
   "fields": {
     "password": "pbkdf2_sha256$870000$Hd5G5eh4uaqHC6R2TZO5Px$Q+uQAoOp0z7MGuyI/KgrwnX1GRNeaxdOYb2Bdq5g1ns=",
-    "last_login": "2025-06-07T13:47:34.776Z",
+    "last_login": "2025-06-25T16:34:34.242Z",
     "is_superuser": true,
     "username": "admin",
     "first_name": "Nicolas",
@@ -1337,7 +1421,7 @@
   "pk": 4,
   "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
-    "last_login": "2025-06-21T15:14:10.849Z",
+    "last_login": "2025-06-25T15:32:26.363Z",
     "is_superuser": false,
     "username": "alijoh",
     "first_name": "Alice",
@@ -1353,9 +1437,9 @@
   }
 },
 {
-"model": "auth.user",
-"pk": 5,
-"fields": {
+  "model": "auth.user",
+  "pk": 5,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
     "last_login": null,
     "is_superuser": false,
@@ -1367,15 +1451,15 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 },
 {
-"model": "auth.user",
-"pk": 6,
-"fields": {
+  "model": "auth.user",
+  "pk": 6,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
     "last_login": null,
     "is_superuser": false,
@@ -1387,15 +1471,15 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 },
 {
-"model": "auth.user",
-"pk": 7,
-"fields": {
+  "model": "auth.user",
+  "pk": 7,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
     "last_login": null,
     "is_superuser": false,
@@ -1407,15 +1491,15 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 },
 {
-"model": "auth.user",
-"pk": 8,
-"fields": {
+  "model": "auth.user",
+  "pk": 8,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
     "last_login": null,
     "is_superuser": false,
@@ -1427,15 +1511,15 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 },
 {
-"model": "auth.user",
-"pk": 9,
-"fields": {
+  "model": "auth.user",
+  "pk": 9,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
     "last_login": null,
     "is_superuser": false,
@@ -1447,15 +1531,15 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 },
 {
-"model": "auth.user",
-"pk": 10,
-"fields": {
+  "model": "auth.user",
+  "pk": 10,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
     "last_login": null,
     "is_superuser": false,
@@ -1467,15 +1551,15 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 },
 {
-"model": "auth.user",
-"pk": 11,
-"fields": {
+  "model": "auth.user",
+  "pk": 11,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
     "last_login": null,
     "is_superuser": false,
@@ -1487,15 +1571,15 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 },
 {
-"model": "auth.user",
-"pk": 12,
-"fields": {
+  "model": "auth.user",
+  "pk": 12,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
     "last_login": null,
     "is_superuser": false,
@@ -1507,17 +1591,17 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 },
 {
-"model": "auth.user",
-"pk": 13,
-"fields": {
+  "model": "auth.user",
+  "pk": 13,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
-    "last_login": null,
+    "last_login": "2025-06-25T15:32:15.963Z",
     "is_superuser": false,
     "username": "josmoo",
     "first_name": "Joshua",
@@ -1527,15 +1611,15 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 },
 {
-"model": "auth.user",
-"pk": 14,
-"fields": {
+  "model": "auth.user",
+  "pk": 14,
+  "fields": {
     "password": "pbkdf2_sha256$870000$uvB1IrrjsNJ7SGLbMTskBT$Tl0ovF0zujM1z/QstjrUVkdJ5RBAUS6whBGySTkbVwI=",
     "last_login": null,
     "is_superuser": false,
@@ -1547,9 +1631,9 @@
     "is_active": true,
     "date_joined": "2025-01-18T16:34:13.060Z",
     "groups": [
-        1
+      1
     ],
     "user_permissions": []
-    }
+  }
 }
 ]
